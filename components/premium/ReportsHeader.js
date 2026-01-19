@@ -81,7 +81,7 @@ export default function ReportsHeader({ onViewFullReport, uniqueRoles = [], onFi
 
                             <div className="my-2 border-t border-slate-100" />
 
-                            {/* Job Role Section */}
+                            {/* Job Role Sections */}
                             <div className="px-3 py-2">
                                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2 flex items-center gap-1.5">
                                     <Briefcase size={10} />
