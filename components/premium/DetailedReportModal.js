@@ -148,7 +148,7 @@ export default function DetailedReportModal({ isOpen, onClose, reportData, jobRo
             `}</style>
 
             <div className="bg-white w-full max-w-5xl h-[90vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-300">
-                {/* Header */}
+                {/* Header code */}
                 <div className="bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-600 p-8 text-white flex items-center justify-between shadow-xl relative z-10">
                     <div className="flex items-center gap-4">
                         <div className="bg-white/20 p-3 rounded-2xl">
