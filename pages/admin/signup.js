@@ -335,46 +335,41 @@ const SignUp = () => {
     }
   }, []);
 
-  const handleCreateMultipleUsers = async () => {
-    const num = parseInt(count, 10);
+ const handleCreateMultipleUsers = async () => {
+  const num = parseInt(count, 10);
 
-    if (isNaN(num) || num <= 0) {
-      toast.error("Please enter a valid number greater than 0");
-      return;
-    }
+  if (isNaN(num) || num <= 0) {
+    toast.error("Please enter a valid number greater than 0");
+    return;
+  }
 
-    const newLinks = [];
+  const newLinks = [];
 
-    try {
-      for (let i = 0; i < num; i++) {
-        const res = await fetch(`/api/admin/createUser`, {
-          method: "POST",
-        });
-
-        const data = await res.json();
-        if (data.success) {
-          newLinks.push(data.loginLink);
-        } else {
-          toast.error(data.message || "Something went wrong");
-        }
-      }
-
-      if (newLinks.length > 0) {
-        setGeneratedLinks((prev) => [...prev, ...newLinks]);
-        toast.success(`${newLinks.length} user(s) created successfully!`, {
-          position: "top-left",
-          autoClose: 3000,
-          theme: "light",
-        });
-      }
-    } catch (err) {
-      toast.error("Server error", {
-        position: "top-left",
-        autoClose: 5000,
-        theme: "light",
+  try {
+    for (let i = 0; i < num; i++) {
+      const res = await fetch("/api/admin/createUser", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("Admintoken")}`,
+        },
       });
+
+      const data = await res.json();
+
+      if (data.success) {
+        newLinks.push(data.loginLink);
+      } else {
+        toast.error(data.message || "Something went wrong");
+      }
     }
-  };
+
+    setGeneratedLinks((prev) => [...prev, ...newLinks]);
+    toast.success(`${newLinks.length} user(s) created successfully`);
+  } catch (err) {
+    toast.error("Server error");
+  }
+};
+
 
   return (
     <>

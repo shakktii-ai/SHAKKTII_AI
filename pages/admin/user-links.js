@@ -10,33 +10,63 @@ import { CiLock } from "react-icons/ci";
 import { FaHandHoldingWater } from "react-icons/fa";
 export default function UserLinks() {
   const [users, setUsers] = useState([]);
+  const [admin, setAdmin] = useState(null);
+
   const [loading, setLoading] = useState(true);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [isGeneratingQRPDF, setIsGeneratingQRPDF] = useState(false);
   const router = useRouter();
   const qrRefs = useRef({});
 
+
   useEffect(() => {
-    fetchUsers();
-  }, []);
+  const adminStr = localStorage.getItem("admin");
+  const token = localStorage.getItem("Admintoken");
 
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch("/api/admin/getAllUsers");
-      const data = await response.json();
+  if (!adminStr || !token) {
+    router.push("/admin/login");
+    return;
+  }
 
-      if (data.success) {
-        setUsers(data.users);
-      } else {
-        toast.error("Failed to fetch users");
+  try {
+    const parsedAdmin = JSON.parse(adminStr);
+    setAdmin(parsedAdmin);
+  } catch (e) {
+    localStorage.clear();
+    router.push("/admin/login");
+  }
+}, [router]);
+
+
+  useEffect(() => {
+  if (!admin?.collageName) return; // wait till admin loads
+  fetchUsers(admin.collageName);
+}, [admin]);
+const fetchUsers = async (collageName) => {
+  try {
+    const response = await fetch(
+      `/api/admin/getAllUsers?collageName=${encodeURIComponent(collageName)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("Admintoken")}`,
+        },
       }
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      toast.error("Error fetching users");
-    } finally {
-      setLoading(false);
+    );
+
+    const data = await response.json();
+
+    if (data.success) {
+      setUsers(data.users);
+    } else {
+      toast.error("Failed to fetch users");
     }
-  };
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    toast.error("Error fetching users");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleString();

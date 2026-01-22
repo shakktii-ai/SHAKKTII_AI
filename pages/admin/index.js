@@ -32,7 +32,11 @@ export default function Index() {
   }, [router]);
 
   useEffect(() => {
-    const collageName = 'SPPU'; // Example company name
+
+    if (!user?.collageName) return; // wait till user loads
+
+  const collageName = user.collageName;
+// Example company name
 
     const fetchActiveTests = async () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/isActive?collageName=${collageName}`, {

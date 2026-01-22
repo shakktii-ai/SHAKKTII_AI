@@ -66,7 +66,7 @@ export default function Login() {
                 // Add role and save properly
                 localStorage.setItem(
                     'admin',
-                    JSON.stringify({ ...response.admin, role: "admin" })
+                    JSON.stringify({ ...response.user, role: "admin" })
                 );
 
                 toast.success('You are successfully logged in!', {
