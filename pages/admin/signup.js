@@ -371,68 +371,83 @@ const SignUp = () => {
 };
 
 
-  return (
-    <>
-      <ToastContainer />
-      <div className="relative grid grid-cols-1 place-items-center w-full min-h-screen">
-        <img
-          src="/bg.gif"
-          alt="background"
-          className="absolute top-0 left-0 w-full h-full object-cover z-[-1]"
-        />
-        <img
-          src="/Logoo.png"
-          alt="Shakti AI Logo"
-          className="absolute top-4 right-8 w-20 mb-5"
-        />
+return (
+  <>
+    <ToastContainer />
 
-        <div className="container ml-2 mr-2 w-full max-w-3xl p-6 rounded-lg bg-white bg-opacity-30 text-center">
-          <h1 className="text-2xl text-white mb-6">
-            Create <span className="text-pink-400">User Links</span>
-          </h1>
+    <div className="relative min-h-screen w-full flex items-center justify-center px-4">
+      {/* Background */}
+      <img
+        src="/bg.gif"
+        alt="background"
+        className="absolute inset-0 w-full h-full object-cover -z-10"
+      />
 
-          {/* Input + Button */}
-          <div className="flex flex-col md:flex-row items-center justify-center gap-3 mb-4">
-            <input
-              type="number"
-              min="1"
-              value={count}
-              onChange={(e) => setCount(e.target.value)}
-              placeholder="Enter number of links"
-              className="w-full md:w-1/2 px-4 py-2 rounded-md border focus:outline-none focus:ring-2 focus:ring-pink-400"
-            />
-            <button
-              onClick={handleCreateMultipleUsers}
-              className="px-6 py-2 bg-pink-400 text-white rounded-md hover:bg-pink-500 transition duration-300"
-            >
-              Generate
-            </button>
-          </div>
+      {/* Logo */}
+      <img
+        src="/Logoo.png"
+        alt="Logo"
+        className="absolute top-4 right-4 md:top-6 md:right-10 w-16 md:w-20"
+      />
 
-          {/* Generated Links */}
-          {generatedLinks.length > 0 && (
-            <div className="mt-6 p-4 bg-white rounded text-black break-words text-left">
-              <p className="font-semibold mb-2">User Login Links:</p>
-              <ul className="list-decimal pl-5 space-y-2">
-                {generatedLinks.map((link, idx) => (
-                  <li key={idx}>
-                    <a
-                      href={link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 underline"
-                    >
-                      {link}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+      {/* Centered Card */}
+      <div className="w-full max-w-2xl bg-white/20 backdrop-blur-xl border border-white/30 shadow-2xl rounded-3xl p-6 md:p-10 text-center">
+        <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+          Create <span className="text-pink-400">User Links</span>
+        </h1>
+        <p className="text-white/80 mb-6">
+          Generate multiple login links instantly
+        </p>
+
+        {/* Input + Button */}
+        <div className="flex flex-col sm:flex-row gap-3 items-center justify-center mb-6">
+          <input
+            type="number"
+            min="1"
+            value={count}
+            onChange={(e) => setCount(e.target.value)}
+            placeholder="Enter number of links"
+            className="w-full sm:w-2/3 px-4 py-3 rounded-xl border border-white/30 bg-white/80 focus:outline-none focus:ring-2 focus:ring-pink-400 text-gray-800"
+          />
+          <button
+            onClick={handleCreateMultipleUsers}
+            className="w-full sm:w-auto px-8 py-3 rounded-xl font-medium bg-gradient-to-r from-pink-400 to-fuchsia-500 text-white shadow-lg hover:scale-105 transition"
+          >
+            Generate
+          </button>
         </div>
+
+        {/* Generated Links */}
+        {generatedLinks.length > 0 && (
+          <div className="mt-6 bg-white rounded-2xl p-5 text-left shadow-lg">
+            <p className="font-semibold text-gray-800 mb-3">
+              Generated Login Links
+            </p>
+
+            <ul className="space-y-2 max-h-64 overflow-y-auto pr-2">
+              {generatedLinks.map((link, idx) => (
+                <li
+                  key={idx}
+                  className="p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition"
+                >
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 underline break-all"
+                  >
+                    {link}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
-    </>
-  );
+    </div>
+  </>
+);
+
 };
 
 export default SignUp;

@@ -731,313 +731,263 @@ const generateAllUsersQRPDF = async () => {
     }
   };
 
-  // Generate PDF for all users as MockMingle cards
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-500 border-t-transparent mx-auto mb-4"></div>
-          <h1 className="text-xl font-semibold text-gray-700">
-            Loading user links...
-          </h1>
-        </div>
-      </div>
-    );
-  }
-
+if (loading) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="p-6 md:p-10 max-w-7xl mx-auto">
-        <div className="bg-white shadow-2xl rounded-3xl p-8 border border-gray-100">
-          {/* Header Section */}
-          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-8 gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                MockMingle Student Cards
-              </h1>
-              <p className="text-gray-600">
-                Generate professional student login cards with QR codes
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={generateAllUsersPDF}
-                disabled={isGeneratingPDF || users.length === 0}
-                className={`px-6 py-3 text-white text-sm font-medium rounded-xl shadow-lg transition-all transform hover:scale-105 ${isGeneratingPDF || users.length === 0
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
-                  }`}
-              >
-                {isGeneratingPDF ? (
-                  <span className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Generating Cards...
-                  </span>
-                ) : (
-                  `Download All ${users.length} Login Cards`
-                )}
-              </button>
-               <button
-                onClick={generateAllUsersQRPDF}
-                disabled={isGeneratingQRPDF || users.length === 0}
-                className={`px-4 py-3 text-white text-sm font-medium rounded-xl shadow-lg transition-all transform hover:scale-105 ${isGeneratingQRPDF || users.length === 0
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
-                  }`}
-              >
-                {isGeneratingQRPDF ? (
-                  <span className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Generating Cards...
-                  </span>
-                ) : (
-                  `Download All ${users.length} QR Codes`
-                )}
-              </button>
-              <button
-                onClick={() => router.push("/admin")}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-medium rounded-xl shadow-lg hover:from-blue-600 hover:to-indigo-700 transition-all transform hover:scale-105"
-              >
-                Back to Dashboard
-              </button>
-            </div>
-          </div>
-
-          {/* Statistics */}
-          {users.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              <div className="bg-gradient-to-r from-cyan-50 to-blue-100 p-4 rounded-xl border border-cyan-200">
-                <h3 className="text-sm font-medium text-cyan-600 mb-1">Total Cards</h3>
-                <p className="text-2xl font-bold text-cyan-800">{users.length}</p>
-              </div>
-              <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
-                <h3 className="text-sm font-medium text-green-600 mb-1">Active Students</h3>
-                <p className="text-2xl font-bold text-green-800">
-                  {users.filter(u => !u.email?.includes("@placeholder.local")).length}
-                </p>
-              </div>
-              <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-xl border border-orange-200">
-                <h3 className="text-sm font-medium text-orange-600 mb-1">Pending Registration</h3>
-                <p className="text-2xl font-bold text-orange-800">
-                  {users.filter(u => u.email?.includes("@placeholder.local")).length}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* Preview Cards */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">📋 Card Preview</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {users.slice(0, 3).map((user, idx) => (
-                <div key={user._id} className="relative">
-                  {/* Card Preview matching your design */}
-                  <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700 shadow-2xl transform scale-90 origin-top">
-                    <div className="text-center">
-                      {/* Logo and Title */}
-                      <div className="mb-2">
-                        <div className="flex items-center justify-center ">
-                          {/* <div className="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center mr-3">
-                            <span className="text-white font-bold">M</span>
-                          </div> */}
-                          <img src="/MM_LOGO2.png" className="w-8 h-12 m-1" />
-                          <span>
-                            <h2 className="text-xl font-bold text-sky-500">MockMingle</h2>
-                            <p className="text-sky-700 text-sm">Student Login Card</p>
-                          </span>
-                        </div>
-
-                      </div>
-
-                      {/* QR Code with proper styling */}
-                      <div className="bg-white p-2 rounded mb-4 inline-block border-4 border-cyan-400 shadow-sm" >
-                        <QRCodeCanvas
-                          value={user.loginLink}
-                          size={100}
-                          bgColor="#ffffff"
-                          fgColor="#000000"
-                          level="H"
-                          includeMargin={false}
-                          ref={(el) => {
-                            if (el) qrRefs.current[user._id] = el.parentElement;
-                          }}
-                          className="rounded"
-                        />
-                      </div>
-
-                      {/* Serial Number */}
-                      <p className="text-sky-700 text-sm mb-4">
-                        Serial No: <span className="font-bold text-sky-200">SIMCA{String(idx + 1).padStart(2, '0')}</span>
-                      </p>
-
-                      {/* Instructions with icons */}
-                      <div className="text-left text-sm text-gray-300 space-y-2 ml-4">
-                        <div className="flex items-center gap-3">
-                         <img src="/card1.png" className="w-8 h-8"/>
-                          {/* <div className="w-6 h-6 bg-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-xs">1</div> */}
-                          <div>
-                            <p className="text-sky-200">Scan the QR code or visit</p>
-                            <p className="text-sky-800 font-bold">www.mockmingle.in</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                           <img src="/card2.png" className="w-8 h-8"/>
-                          {/* <div className="w-6 h-6 bg-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-xs">2</div> */}
-                          <p className="text-sky-200">Enter your Login ID & <p>Password (see front)</p></p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                           <img src="/hand.png" className="w-8 h-8"/>
-                          {/* <div className="w-6 h-6 bg-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-xs">3</div> */}
-                          <p className="text-sky-200">Begin your journey with
-                            <p>Mock Interviews, Skill Maps </p>
-                            <p> & Learning Pathways</p> </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-center mt-2">
-                    <p className="text-sm font-medium text-gray-700">{user.fullName || "N/A"}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Table */}
-          <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-lg">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
-                  <tr>
-                    {[
-                      "Student",
-                      "Email",
-                      "Status",
-                      "Created At",
-                      "QR Code",
-                      "Actions",
-                    ].map((heading) => (
-                      <th
-                        key={heading}
-                        className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"
-                      >
-                        {heading}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 bg-white">
-                  {users.length > 0 ? (
-                    users.map((user, idx) => (
-                      <tr
-                        key={user._id}
-                        className={`hover:bg-gradient-to-r hover:from-cyan-25 hover:to-blue-25 transition-all duration-200 ${idx % 2 === 0 ? "bg-white" : "bg-gray-25"
-                          }`}
-                      >
-                        <td className="px-6 py-5">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
-                              {(user.fullName || "U")[0].toUpperCase()}
-                            </div>
-                            <div>
-                              <div className="text-sm font-semibold text-gray-900">
-                                {user.fullName || "N/A"}
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                SIMCA{String(idx + 1).padStart(2, '0')}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-5 text-sm text-gray-700">
-                          {user.email?.includes("@placeholder.local")
-                            ? "Not registered yet"
-                            : user.email || "N/A"}
-                        </td>
-                        <td className="px-6 py-5">
-                          <span
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${user.email?.includes("@placeholder.local")
-                              ? "bg-orange-100 text-orange-800 border border-orange-200"
-                              : "bg-green-100 text-green-800 border border-green-200"
-                              }`}
-                          >
-                            {user.email?.includes("@placeholder.local")
-                              ? "Pending"
-                              : "Active"}
-                          </span>
-                        </td>
-                        <td className="px-6 py-5 text-sm text-gray-600">
-                          {formatDate(user.createdAt)}
-                        </td>
-                        <td className="px-6 py-5">
-                          {user.loginLink && (
-                            <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200">
-                              <QRCodeCanvas
-                                value={user.loginLink}
-                                size={60}
-                                bgColor="#ffffff"
-                                fgColor="#1f2937"
-                                level="H"
-                                includeMargin={true}
-                                ref={(el) => {
-                                  if (el) qrRefs.current[user._id] = el.parentElement;
-                                }}
-                                className="rounded"
-                              />
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-6 py-5">
-                          <div className="flex flex-col gap-2">
-                            <CopyToClipboard
-                              text={user.loginLink}
-                              onCopy={handleCopy}
-                            >
-                              <button className="px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-700 rounded-lg text-sm font-medium hover:from-blue-200 hover:to-blue-300 transition-all transform hover:scale-105 border border-blue-300">
-                                📋 Copy Link
-                              </button>
-                            </CopyToClipboard>
-
-                            <button
-                              onClick={() => generateUserPDF(user, idx)}
-                              disabled={isGeneratingPDF}
-                              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 border ${isGeneratingPDF
-                                ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-                                : "bg-gradient-to-r from-cyan-100 to-blue-200 text-cyan-700 hover:from-cyan-200 hover:to-blue-300 border-cyan-300"
-                                }`}
-                            >
-                              {isGeneratingPDF ? "⏳ Processing..." : "📱 Download Card"}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan="6"
-                        className="px-6 py-12 text-center text-gray-500"
-                      >
-                        <div className="flex flex-col items-center">
-                          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                            </svg>
-                          </div>
-                          <h3 className="text-lg font-medium text-gray-900 mb-2">No students found</h3>
-                          <p className="text-gray-500">Get started by creating some student accounts.</p>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+    <div className="min-h-screen w-full flex flex-col items-center justify-center bg-slate-50">
+      <div className="relative flex items-center justify-center">
+        <div className="absolute animate-ping inline-flex h-12 w-12 rounded-full bg-indigo-400 opacity-20"></div>
+        <div className="relative inline-flex h-12 w-12 rounded-full border-4 border-indigo-500 border-t-transparent animate-spin"></div>
       </div>
+      <h2 className="mt-6 text-base font-medium text-slate-600 animate-pulse">
+        Loading student records...
+      </h2>
     </div>
   );
+}
+
+return (
+  <div className="min-h-screen bg-slate-50/50 pb-20 font-sans">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      
+      {/* Page Header */}
+      <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-10">
+        <div className="flex-1">
+          <h1 className="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">
+            Student Identity Cards
+          </h1>
+          <p className="mt-2 text-slate-500 text-sm md:text-base max-w-2xl leading-relaxed">
+            Manage student access credentials, preview ID cards, and export QR codes for physical printing or digital distribution.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+          <button
+            onClick={() => router.push("/admin")}
+            className="flex-1 lg:flex-none px-4 py-2.5 bg-white border border-slate-300 text-slate-700 text-sm font-semibold rounded-lg hover:bg-slate-50 hover:text-slate-900 transition-all shadow-sm focus:ring-2 focus:ring-slate-200"
+          >
+            Dashboard
+          </button>
+          
+          <button
+            onClick={generateAllUsersQRPDF}
+            disabled={isGeneratingQRPDF || users.length === 0}
+            className={`flex-1 lg:flex-none px-4 py-2.5 text-sm font-semibold rounded-lg shadow-sm border border-transparent transition-all focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 ${
+              isGeneratingQRPDF || users.length === 0
+                ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                : "bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-indigo-200"
+            }`}
+          >
+            {isGeneratingQRPDF ? "Processing..." : "Export QR Codes"}
+          </button>
+
+          <button
+            onClick={generateAllUsersPDF}
+            disabled={isGeneratingPDF || users.length === 0}
+            className={`flex-1 lg:flex-none px-5 py-2.5 text-white text-sm font-semibold rounded-lg shadow-md transition-all focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 ${
+              isGeneratingPDF || users.length === 0
+                ? "bg-slate-400 cursor-not-allowed"
+                : "bg-indigo-600 hover:bg-indigo-700 hover:-translate-y-0.5"
+            }`}
+          >
+            {isGeneratingPDF ? "Generating PDF..." : `Download ${users.length} Cards`}
+          </button>
+        </div>
+      </div>
+
+      {/* Statistics Overview */}
+      {users.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col">
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Records</span>
+            <span className="text-2xl font-bold text-slate-800 mt-1">{users.length}</span>
+          </div>
+          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-50 rounded-bl-full -mr-2 -mt-2" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 z-10">Active Users</span>
+            <span className="text-2xl font-bold text-emerald-600 mt-1 z-10">
+              {users.filter(u => !u.email?.includes("@placeholder.local")).length}
+            </span>
+          </div>
+          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm flex flex-col relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-16 h-16 bg-amber-50 rounded-bl-full -mr-2 -mt-2" />
+            <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 z-10">Pending Registration</span>
+            <span className="text-2xl font-bold text-amber-500 mt-1 z-10">
+              {users.filter(u => u.email?.includes("@placeholder.local")).length}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {/* Card Preview Section */}
+      <div className="mb-12">
+        <div className="flex items-center gap-2 mb-6">
+          <div className="h-6 w-1 bg-indigo-500 rounded-full"></div>
+          <h2 className="text-lg font-bold text-slate-800">Live Card Preview</h2>
+        </div>
+        
+        {/* Horizontal Scroll / Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+          {users.slice(0, 3).map((user, idx) => (
+            <div key={user._id} className="flex flex-col items-center">
+              {/* ID Card Mockup */}
+              <div className="relative w-full max-w-[340px] aspect-[1.586/1] bg-slate-900 rounded-2xl shadow-xl overflow-hidden border border-slate-800 text-white flex flex-col group hover:shadow-2xl transition-all duration-300">
+                {/* Background Pattern */}
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-indigo-900/40 via-slate-900 to-slate-900"></div>
+                
+                {/* Card Content */}
+                <div className="relative z-10 flex flex-col h-full p-6">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                       <img src="/MM_LOGO2.png" alt="Logo" className="w-8 h-8 object-contain" />
+                       <div className="leading-tight">
+                          <h3 className="font-bold text-lg tracking-tight">MockMingle</h3>
+                          <p className="text-[10px] text-indigo-300 uppercase tracking-widest">Student Pass</p>
+                       </div>
+                    </div>
+                  </div>
+
+                  {/* Body: QR & Details */}
+                  <div className="flex flex-1 items-center gap-5">
+                    <div className="bg-white p-1.5 rounded-lg shrink-0" ref={(el) => { if (el) qrRefs.current[user._id] = el; }}>
+                       <QRCodeCanvas
+                         value={user.loginLink}
+                         size={80}
+                         level="H"
+                         bgColor="#ffffff"
+                         fgColor="#000000"
+                       />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-slate-400 uppercase tracking-wider mb-0.5">Student Name</p>
+                      <p className="text-lg font-bold truncate text-white mb-2">{user.fullName || "Unknown User"}</p>
+                      
+                      <p className="text-xs text-slate-400 uppercase tracking-wider mb-0.5">ID Number</p>
+                      <p className="font-mono text-sm text-indigo-300">SIMCA{String(idx + 1).padStart(2, "0")}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom decorative bar */}
+                <div className="h-2 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-500"></div>
+              </div>
+              
+              <p className="mt-3 text-sm text-slate-500 font-medium">Card {idx + 1} Preview</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Student Database Table */}
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+          <h3 className="font-bold text-slate-800">All Students</h3>
+          <span className="text-xs font-medium text-slate-500 bg-white px-2 py-1 rounded border border-slate-200">
+             Sorted by Latest
+          </span>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              <tr className="bg-slate-50/50 border-b border-slate-200">
+                {["Student Info", "Email Address", "Status", "Joined", "Quick Actions"].map((header, i) => (
+                  <th 
+                    key={i} 
+                    className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap"
+                  >
+                    {header}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {users.map((user, idx) => (
+                <tr key={user._id} className="group hover:bg-slate-50/80 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center gap-3">
+                      <div className="h-9 w-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                        {(user.fullName || "U").charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex flex-col">
+                        <span className="text-sm font-bold text-slate-800">{user.fullName || "N/A"}</span>
+                        <span className="text-xs text-slate-400 font-mono">SIMCA{String(idx + 1).padStart(2, "0")}</span>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
+                    {user.email?.includes("@placeholder.local") ? (
+                      <span className="italic text-slate-400">No email registered</span>
+                    ) : (
+                      user.email
+                    )}
+                  </td>
+
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {user.email?.includes("@placeholder.local") ? (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-100">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                        Pending
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-100">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Active
+                      </span>
+                    )}
+                  </td>
+
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                    {formatDate(user.createdAt)}
+                  </td>
+
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center gap-2">
+                      <CopyToClipboard text={user.loginLink} onCopy={handleCopy}>
+                        <button 
+                          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          title="Copy Link"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                          </svg>
+                        </button>
+                      </CopyToClipboard>
+
+                      <button
+                        onClick={() => generateUserPDF(user, idx)}
+                        disabled={isGeneratingPDF}
+                        className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                        title="Download PDF"
+                      >
+                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                         </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        
+        {/* Empty State if no users */}
+        {users.length === 0 && (
+          <div className="p-10 text-center">
+            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-slate-100 mb-4">
+               <svg className="w-6 h-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+               </svg>
+            </div>
+            <h3 className="text-sm font-medium text-slate-900">No students found</h3>
+            <p className="mt-1 text-sm text-slate-500">Get started by creating new user links in the dashboard.</p>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+);
 }

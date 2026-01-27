@@ -1,7 +1,11 @@
 import { useState, useEffect } from 'react';
 import 'react-circular-progressbar/dist/styles.css';
 import { useRouter } from 'next/router';
-import Link from 'next/link';
+import dynamic from 'next/dynamic';
+
+const Link = dynamic(() => import('next/link'), {
+  ssr: false, // Optional: if you want to skip SSR for links (usually not recommended for SEO but fits "lazy")
+});
 
 export default function Index() {
   const router = useRouter();
@@ -35,8 +39,8 @@ export default function Index() {
 
     if (!user?.collageName) return; // wait till user loads
 
-  const collageName = user.collageName;
-// Example company name
+    const collageName = user.collageName;
+    // Example company name
 
     const fetchActiveTests = async () => {
       const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/isActive?collageName=${collageName}`, {
@@ -103,77 +107,127 @@ export default function Index() {
     };
 
     fetchData();
-  }, []);
+  }, [user]); // Added 'user' to dependency array to ensure effect runs when user state is set
 
   return (
     <>
-      <main className="flex-1 p-8 bg-[#6c57ec] bg-opacity-20 m-20 rounded-xl">
-        <div className="bg-white text-center flex items-center justify-around gap-4 p-4 rounded-lg">
+      <main className="flex-1 px-4 sm:px-6 md:px-10 py-6 bg-gradient-to-br from-indigo-100 via-purple-100 to-indigo-200 min-h-screen">
+
+        {/* ===== Dashboard Header ===== */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-bold text-indigo-800">
+            Admin Dashboard
+          </h1>
+          <p className="text-gray-600 mt-1">
+            Overview of students activity and test performance
+          </p>
+        </div>
+
+        {/* ===== Total Users Card ===== */}
+        <div className="bg-white/70 backdrop-blur-xl border border-white/40 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
           <div>
-            <h2 className="text-4xl font-bold text-purple-700">Total User</h2>
-            <h2 className="text-xl">Number of registered Students</h2>
+            <h2 className="text-xl md:text-2xl font-semibold text-indigo-800">
+              Total Registered Students
+            </h2>
+            <p className="text-gray-600 text-sm mt-1">
+              Overall student count in your college
+            </p>
           </div>
-          <div className='bg-purple-200 p-5 rounded-full'>
-            <p className="text-center rounded-lg text-4xl text-purple-700 font-bold">{totalUsers}</p>
+
+          <div className="w-28 h-28 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg">
+            <span className="text-4xl font-bold text-white">
+              {totalUsers}
+            </span>
           </div>
         </div>
 
-        {/* Cards Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-white mt-20 rounded-xl p-4">
-          {/* Existing cards */}
-          <div className="m-2">
-            <h2 className="text-purple-700 font-bold text-lg">Active Tests</h2>
-            <div className="bg-purple-200 rounded-2xl p-4 w-full shadow-md">
-              <div className="flex items-center gap-4 mt-3">
-                <div className="w-20 h-16">
-                  <h2 className="text-center mt-2 text-4xl text-purple-700 font-bold">
-                    {activeTests}
-                  </h2>
-                </div>
-                <div>
-                  <p className="text-gray-700 font-semibold">Active Test</p>
-                  <p className="text-purple-600 text-sm">Ongoing tests being attempted</p>
-                </div>
+        {/* ===== Stats Cards ===== */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-12">
+
+          {/* Active Tests */}
+          <div className="bg-white/70 backdrop-blur-xl border border-white/40 rounded-2xl p-6 shadow-lg hover:scale-[1.02] transition">
+            <h3 className="text-indigo-700 font-semibold mb-4">
+              Active Tests
+            </h3>
+
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-20 rounded-xl bg-indigo-100 flex items-center justify-center">
+                <span className="text-4xl font-bold text-indigo-700">
+                  {activeTests}
+                </span>
+              </div>
+
+              <div>
+                <p className="font-medium text-gray-700">
+                  Ongoing Exams
+                </p>
+                <p className="text-sm text-gray-500">
+                  Currently active tests
+                </p>
               </div>
             </div>
           </div>
 
-          <div className="m-2">
-            <h2 className="text-purple-700 font-bold text-lg">Completed Tests</h2>
-            <div className="bg-purple-200 rounded-2xl p-4 w-full shadow-md">
-              <div className="flex items-center gap-4 mt-3">
-                <div className="w-20 h-16">
-                  <h2 className="text-center mt-2 text-4xl text-purple-700 font-bold">
-                    {totalCompleteTest}
-                  </h2>
-                </div>
-                <div>
-                  <p className="text-gray-700 font-semibold">Completed Tests</p>
-                  <p className="text-purple-600 text-sm">Total tests completed so far</p>
-                </div>
+          {/* Completed Tests */}
+          <div className="bg-white/70 backdrop-blur-xl border border-white/40 rounded-2xl p-6 shadow-lg hover:scale-[1.02] transition">
+            <h3 className="text-indigo-700 font-semibold mb-4">
+              Completed Tests
+            </h3>
+
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-20 rounded-xl bg-purple-100 flex items-center justify-center">
+                <span className="text-4xl font-bold text-purple-700">
+                  {totalCompleteTest}
+                </span>
+              </div>
+
+              <div>
+                <p className="font-medium text-gray-700">
+                  Tests Finished
+                </p>
+                <p className="text-sm text-gray-500">
+                  Successfully completed exams
+                </p>
               </div>
             </div>
           </div>
 
-          {/* New User Links Card */}
-          <div className="m-2">
-            <h2 className="text-purple-700 font-bold text-lg">User Management</h2>
-            <Link href="/admin/user-links">
-              <div className="bg-purple-200 rounded-2xl p-4 w-full shadow-md cursor-pointer hover:bg-purple-300 transition-colors">
-                <div className="flex items-center gap-4 mt-3">
-                  <div className="w-20 h-16 flex items-center justify-center">
-                    <svg className="w-12 h-12 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </div>
-                  <div>
-                    <p className="text-gray-700 font-semibold">Manage User Links</p>
-                    <p className="text-purple-600 text-sm">View and manage all user signup links</p>
-                  </div>
+          {/* User Management */}
+          <Link href="/admin/user-links">
+            <div className="cursor-pointer bg-white/70 backdrop-blur-xl border border-white/40 rounded-2xl p-6 shadow-lg hover:scale-[1.02] transition group">
+              <h3 className="text-indigo-700 font-semibold mb-4">
+                User Management
+              </h3>
+
+              <div className="flex items-center gap-4">
+                <div className="w-20 h-20 rounded-xl bg-indigo-600 flex items-center justify-center group-hover:bg-indigo-700 transition">
+                  <svg
+                    className="w-10 h-10 text-white"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"
+                    />
+                  </svg>
+                </div>
+
+                <div>
+                  <p className="font-medium text-gray-800">
+                    Manage Student Links
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Control registration & access
+                  </p>
                 </div>
               </div>
-            </Link>
-          </div>
+            </div>
+          </Link>
+
         </div>
       </main>
     </>

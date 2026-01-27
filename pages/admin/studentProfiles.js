@@ -589,137 +589,216 @@ function EmployeeProfiles() {
   };
 
   /* ---------------- UI ---------------- */
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6 bg-[#6c57ec] bg-opacity-20 m-10 rounded-xl">
 
-      {users.map((u) => {
-        const reports = u.report || [];
+return (
+<div className="flex-1 w-full min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-indigo-200 font-sans text-gray-600 pt-16 md:pt-0">    {/* Main Content Container */}
+    <div className="max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
+      
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-white/70 backdrop-blur-xl px-8 py-6 rounded-3xl shadow-lg border border-white/40">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold text-indigo-800 tracking-tight">
+            Student Profiles
+          </h1>
+          <p className="text-gray-600 text-sm mt-1.5 font-medium">
+            Manage student registrations and performance insights
+          </p>
+        </div>
+        
+        <div className="flex items-center gap-4 bg-white/50 p-2 pr-5 rounded-2xl border border-white/40 shadow-sm">
+          <div className="h-10 w-10 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-700">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+          <div className="flex flex-col">
+             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Total Students</span>
+             <span className="text-lg font-bold text-indigo-800 leading-none">{users.length}</span>
+          </div>
+        </div>
+      </div>
 
-        return (
-          <div
-            key={u.email}
-            className="p-4 bg-white rounded-2xl shadow-md border text-center"
-          >
-            <div className="flex items-center gap-4">
-              <Image
-                src={u.profileImg || "/BOT.png"}
-                width={60}
-                height={60}
-                className="rounded-full"
-                alt="Profile"
-              />
-              <div className="text-left">
-                <h1 className="font-semibold">{(() => {
-    const name = u.fullName || "";
+      {/* Responsive Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        {users.map((user) => {
+          const userReport = user.report || [];
+          const hasReport = userReport.length > 0;
+          
+          return (
+            <div 
+              key={user.email} 
+              className="group relative bg-white/70 backdrop-blur-xl rounded-3xl border border-white/40 shadow-sm hover:shadow-xl hover:scale-[1.01] transition-all duration-300 flex flex-col overflow-hidden"
+            >
+              {/* Card Header & Profile */}
+              <div className="p-6 pb-4 flex items-start gap-4">
+                <div className="relative shrink-0">
+                  <div className="w-16 h-16 rounded-2xl p-0.5 bg-gradient-to-br from-indigo-500 to-purple-600 shadow-md">
+                    <div className="bg-white rounded-[14px] w-full h-full overflow-hidden">
+                      <Image
+                        src={user.profileImg || '/BOT.png'}
+                        width={64}
+                        height={64}
+                        alt="Profile"
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  </div>
+                  {/* Status Indicator Dot */}
+                  <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-[3px] border-white rounded-full shadow-sm"></span>
+                </div>
+                
+                <div className="flex-1 min-w-0 pt-0.5">
+                  <h2 className="text-lg font-bold text-gray-800 truncate group-hover:text-indigo-700 transition-colors">
+                    {user.fullName || 'Unknown User'}
+                  </h2>
+                  <p className="text-sm font-medium text-gray-500 truncate mb-2">{user.education || 'Student'}</p>
+                  
+                  <div className="inline-flex items-center px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-100 max-w-full">
+                    <svg className="w-3 h-3 text-indigo-400 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span className="text-xs text-indigo-700 font-medium truncate">{user.email}</span>
+                  </div>
+                </div>
+              </div>
 
-    // if looks like token / placeholder email
-    if (name.includes("@placeholder.local")) {
-      return name
-        .replace(/[^a-zA-Z]/g, "") // letters only
-        .slice(0, 10);             // first 10 letters
-    }
+              {/* Stats Strip */}
+              <div className="px-6 py-3 mx-6 bg-white/50 rounded-xl border border-white/60 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                     <div className="p-1.5 rounded-full bg-purple-100 text-purple-700">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
+                     </div>
+                     <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-gray-500 uppercase">Reports</span>
+                        <span className="text-sm font-bold text-gray-700 leading-none">{userReport.length}</span>
+                     </div>
+                  </div>
+                  <div className="h-8 w-px bg-indigo-200/40"></div>
+                  <div className="flex items-center gap-2">
+                     <div className="p-1.5 rounded-full bg-indigo-100 text-indigo-700">
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                     </div>
+                     <div className="flex flex-col">
+                        <span className="text-[10px] font-bold text-gray-500 uppercase">Joined</span>
+                        <span className="text-xs font-bold text-gray-700 leading-none">
+                            {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                        </span>
+                     </div>
+                  </div>
+              </div>
 
-    // normal full name
-    return name;
-  })()}</h1>
-                <p className="text-sm text-gray-600">{u.education}</p>
-                <p className="text-xs text-gray-500">{(() => {
-    const name = u.email || "";
+              {/* Action Buttons */}
+              <div className="p-6 mt-auto grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setSelectedReport(userReport[0]);
+                    setIsReportOpen(true);
+                  }}
+                  disabled={!hasReport}
+                  className={`col-span-1 py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all duration-200 
+                    ${!hasReport
+                      ? 'bg-white/40 text-gray-400 border-white/40 cursor-not-allowed' 
+                      : 'bg-white text-gray-700 border-white/60 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 shadow-sm'}`}
+                >
+                  View Report
+                </button>
 
-    // if looks like token / placeholder email
-    if (name.includes("@placeholder.local")) {
-      return name
-        .replace(/[^a-zA-Z]/g, "") // letters only
-        .slice(0, 10);             // first 10 letters
-    }
+                <button
+                  onClick={() => {
+                      fetchChartData(user.email);
+                      setShowChart(true);
+                  }}
+                  disabled={!hasReport}
+                  className={`col-span-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-md
+                      ${!hasReport
+                          ? 'bg-white/40 text-gray-400 border border-white/40 cursor-not-allowed shadow-none'
+                          : 'bg-indigo-600 text-white border border-transparent hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200'}`}
+                >
+                    <svg className="w-4 h-4 opacity-90" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                    Analytics
+                </button>
 
-    // normal full name
-    return name;
-  })()}</p>
+                <button
+                  onClick={() => {
+                    setSelectedUser(user);
+                    setNewFullName(user.fullName);
+                    setNewDOB(user.DOB);
+                    setNewEmail(user.email);
+                    setNewMobileNo(user.mobileNo);
+                    setNewEducation(user.education);
+                    setNewAddress(user.address);
+                    setIsModalOpen(true);
+                  }}
+                  className="col-span-2 mt-2 flex items-center justify-center gap-2 py-2 text-xs font-semibold text-gray-500 hover:text-indigo-700 transition-colors duration-200 group/edit"
+                >
+                  <Edit size={14} className="group-hover/edit:scale-110 transition-transform text-indigo-400" />
+                  Edit Profile Details
+                </button>
               </div>
             </div>
-
-            <hr className="my-3" />
-
-            <p className="text-sm text-gray-600">NUMBER OF ASSESSMENT</p>
-            <p className="text-lg font-bold">{reports.length}</p>
-
-            <div className="flex gap-2 mt-4">
-              <button
-                onClick={() => {
-                  setSelectedUser(u);
-                  setSelectedReport(reports[0]);
-                  setIsReportOpen(true);
-                }}
-                className="flex-1 border rounded-lg py-1"
-              >
-                Report
-              </button>
-
-              <button
-                onClick={() => {
-                  setShowChart(!showChart);
-                  fetchChartData(u.email);
-                }}
-                className="flex-1 bg-[#c3baf7] text-white rounded-lg"
-              >
-                Chart
-              </button>
-
-              <button
-                onClick={() => {
-                  setSelectedUser(u);
-                  setNewFullName(u.fullName);
-                  setNewDOB(u.DOB);
-                  setNewEmail(u.email);
-                  setNewMobileNo(u.mobileNo);
-                  setNewEducation(u.education);
-                  setNewAddress(u.address);
-                  setIsModalOpen(true);
-                }}
-                className="flex-1 bg-purple-500 text-white rounded-lg flex items-center justify-center gap-1"
-              >
-                <Edit size={14} /> Edit
-              </button>
-            </div>
-          </div>
-        );
-      })}
-
-      {showChart && <Chart chartData={chartData} closeChart={() => setShowChart(false)} />}
-
-      {selectedUser && (
-        <EditPopup
-          user={selectedUser}
-          isOpen={isModalOpen}
-          setIsOpen={setIsModalOpen}
-          updateUserProfile={updateUserProfile}
-          {...{
-            newFullName,
-            newDOB,
-            newEmail,
-            newEducation,
-            newMobileNo,
-            newAddress,
-            setNewFullName,
-            setNewDOB,
-            setNewEmail,
-            setNewEducation,
-            setNewMobileNo,
-            setNewAddress,
-          }}
-        />
-      )}
-
-      {isReportOpen && (
-        <ReportDetailPopup
-          user={selectedUser}
-          isOpen={isReportOpen}
-          setIsOpen={setIsReportOpen}
-        />
-      )}
+          );
+        })}
+      </div>
     </div>
-  );
+
+    {/* MODALS SECTION */}
+
+    {/* Analytics Chart Modal */}
+    {showChart && (
+      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
+        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 ring-1 ring-black/5">
+          <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 bg-white sticky top-0 z-10">
+              <div>
+                  <h3 className="text-xl font-bold text-gray-800">Performance Analytics</h3>
+                  <p className="text-gray-500 text-sm">Visualizing user progress over time</p>
+              </div>
+              <button 
+                  onClick={() => setShowChart(false)}
+                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+              >
+                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+          </div>
+          <div className="flex-1 overflow-auto p-6 bg-gray-50">
+              <Chart chartData={chartData} closeChart={() => setShowChart(false)} />
+          </div>
+        </div>
+      </div>
+    )}
+
+    {/* Edit Profile Modal */}
+    {selectedUser && (
+      <EditPopup
+        user={selectedUser}
+        isOpen={isModalOpen}
+        setIsOpen={setIsModalOpen}
+        updateUserProfile={updateUserProfile}
+        setNewFullName={setNewFullName}
+        setNewDOB={setNewDOB}
+        setNewEmail={setNewEmail}
+        setNewAddress={setNewAddress}
+        setNewMobileNo={setNewMobileNo}
+        setNewEducation={setNewEducation}
+        newFullName={newFullName}
+        newDOB={newDOB}
+        newEmail={newEmail}
+        newEducation={newEducation}
+        newMobileNo={newMobileNo}
+        newAddress={newAddress}
+      />
+    )}
+
+    {/* Report Detail Modal */}
+    {isReportOpen && (
+      <ReportDetailPopup
+        user={selectedUser}
+        isOpen={isReportOpen}
+        setIsOpen={setIsReportOpen}
+      />
+    )}
+  </div>
+);
 }
 
 export default EmployeeProfiles;

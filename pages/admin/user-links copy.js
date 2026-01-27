@@ -570,276 +570,213 @@ doc.text(user.name || "User Name", centerX, logoY + 30, { align: "center" });
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="p-6 md:p-10 max-w-7xl mx-auto">
-        <div className="bg-white shadow-2xl rounded-3xl p-8 border border-gray-100">
-          {/* Header Section */}
-          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center mb-8 gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                MockMingle Student Cards
-              </h1>
-              <p className="text-gray-600">
-                Generate professional student login cards with QR codes
-              </p>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-3">
-              <button
-                onClick={generateAllUsersPDF}
-                disabled={isGeneratingPDF || users.length === 0}
-                className={`px-6 py-3 text-white text-sm font-medium rounded-xl shadow-lg transition-all transform hover:scale-105 ${
-                  isGeneratingPDF || users.length === 0
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
-                }`}
-              >
-                {isGeneratingPDF ? (
-                  <span className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Generating Cards...
-                  </span>
-                ) : (
-                  `📱 Download All ${users.length} Login Cards`
-                )}
-              </button>
-              
-              <button
-                onClick={() => router.push("/admin")}
-                className="px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-medium rounded-xl shadow-lg hover:from-blue-600 hover:to-indigo-700 transition-all transform hover:scale-105"
-              >
-                Back to Dashboard
-              </button>
-            </div>
+  <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="px-4 sm:px-6 lg:px-10 py-6 max-w-7xl mx-auto">
+      <div className="bg-white shadow-2xl rounded-3xl p-5 sm:p-8 border border-gray-100">
+
+        {/* Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
+              MockMingle Student Cards
+            </h1>
+            <p className="text-gray-600 mt-1">
+              Generate professional student login cards with QR codes
+            </p>
           </div>
 
-          {/* Statistics */}
-          {users.length > 0 && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              <div className="bg-gradient-to-r from-cyan-50 to-blue-100 p-4 rounded-xl border border-cyan-200">
-                <h3 className="text-sm font-medium text-cyan-600 mb-1">Total Cards</h3>
-                <p className="text-2xl font-bold text-cyan-800">{users.length}</p>
-              </div>
-              <div className="bg-gradient-to-r from-green-50 to-green-100 p-4 rounded-xl border border-green-200">
-                <h3 className="text-sm font-medium text-green-600 mb-1">Active Students</h3>
-                <p className="text-2xl font-bold text-green-800">
-                  {users.filter(u => !u.email?.includes("@placeholder.local")).length}
-                </p>
-              </div>
-              <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-xl border border-orange-200">
-                <h3 className="text-sm font-medium text-orange-600 mb-1">Pending Registration</h3>
-                <p className="text-2xl font-bold text-orange-800">
-                  {users.filter(u => u.email?.includes("@placeholder.local")).length}
-                </p>
-              </div>
-            </div>
-          )}
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3">
+            <button
+              onClick={generateAllUsersPDF}
+              disabled={isGeneratingPDF || users.length === 0}
+              className={`px-5 py-3 text-white text-sm font-medium rounded-xl shadow-lg transition-all hover:scale-105 ${
+                isGeneratingPDF || users.length === 0
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700"
+              }`}
+            >
+              {isGeneratingPDF ? "Generating..." : `📱 Download ${users.length} Cards`}
+            </button>
 
-          {/* Preview Cards */}
-          <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">📋 Card Preview</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {users.slice(0, 3).map((user, idx) => (
-                <div key={user._id} className="relative">
-                  {/* Card Preview matching your design */}
-                  <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700 shadow-2xl transform scale-90 origin-top">
-                    <div className="text-center">
-                      {/* Logo and Title */}
-                      <div className="mb-4">
-                        <div className="flex items-center justify-center mb-2">
-                          <div className="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center mr-3">
-                            <span className="text-white font-bold">M</span>
-                          </div>
-                          <h2 className="text-xl font-bold text-cyan-400">MockMingle</h2>
-                        </div>
-                        <p className="text-cyan-300 text-sm">Student Login Card</p>
-                      </div>
-
-                      {/* QR Code with proper styling */}
-                      <div className="bg-white p-4 rounded-2xl mb-4 inline-block border-2 border-cyan-400 shadow-lg">
-                        <QRCodeCanvas
-                          value={user.loginLink}
-                          size={100}
-                          bgColor="#ffffff"
-                          fgColor="#000000"
-                          level="H"
-                          includeMargin={false}
-                          ref={(el) => {
-                            if (el) qrRefs.current[user._id] = el.parentElement;
-                          }}
-                          className="rounded"
-                        />
-                      </div>
-
-                      {/* Serial Number */}
-                      <p className="text-cyan-400 text-sm mb-4">
-                        Serial No: <span className="font-bold">SIMCA{String(idx + 1).padStart(2, '0')}</span>
-                      </p>
-
-                      {/* Instructions with icons */}
-                      <div className="text-left text-sm text-gray-300 space-y-2">
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 bg-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-xs">1</div>
-                          <div>
-                            <p>Scan the QR code or visit</p>
-                            <p className="text-cyan-400 font-bold">www.mockmingle.in</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 bg-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-xs">2</div>
-                          <p>Enter your Login ID & Password (see back)</p>
-                        </div>
-                        <div className="flex items-center gap-3">
-                          <div className="w-6 h-6 bg-cyan-500 rounded-full flex items-center justify-center text-white font-bold text-xs">3</div>
-                          <p>Begin your journey with Mock Interviews, Skill Maps & Learning Pathways</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-center mt-2">
-                    <p className="text-sm font-medium text-gray-700">{user.fullName || "N/A"}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Table */}
-          <div className="overflow-hidden rounded-2xl border border-gray-200 shadow-lg">
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gradient-to-r from-gray-50 to-gray-100">
-                  <tr>
-                    {[
-                      "Student",
-                      "Email",
-                      "Status",
-                      "Created At",
-                      "QR Code",
-                      "Actions",
-                    ].map((heading) => (
-                      <th
-                        key={heading}
-                        className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider"
-                      >
-                        {heading}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100 bg-white">
-                  {users.length > 0 ? (
-                    users.map((user, idx) => (
-                      <tr
-                        key={user._id}
-                        className={`hover:bg-gradient-to-r hover:from-cyan-25 hover:to-blue-25 transition-all duration-200 ${
-                          idx % 2 === 0 ? "bg-white" : "bg-gray-25"
-                        }`}
-                      >
-                        <td className="px-6 py-5">
-                          <div className="flex items-center">
-                            <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold text-sm mr-3">
-                              {(user.fullName || "U")[0].toUpperCase()}
-                            </div>
-                            <div>
-                              <div className="text-sm font-semibold text-gray-900">
-                                {user.fullName || "N/A"}
-                              </div>
-                              <div className="text-xs text-gray-500">
-                                SIMCA{String(idx + 1).padStart(2, '0')}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-5 text-sm text-gray-700">
-                          {user.email?.includes("@placeholder.local")
-                            ? "Not registered yet"
-                            : user.email || "N/A"}
-                        </td>
-                        <td className="px-6 py-5">
-                          <span
-                            className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
-                              user.email?.includes("@placeholder.local")
-                                ? "bg-orange-100 text-orange-800 border border-orange-200"
-                                : "bg-green-100 text-green-800 border border-green-200"
-                            }`}
-                          >
-                            {user.email?.includes("@placeholder.local")
-                              ? "Pending"
-                              : "Active"}
-                          </span>
-                        </td>
-                        <td className="px-6 py-5 text-sm text-gray-600">
-                          {formatDate(user.createdAt)}
-                        </td>
-                        <td className="px-6 py-5">
-                          {user.loginLink && (
-                            <div className="bg-white p-2 rounded-lg shadow-sm border border-gray-200">
-                              <QRCodeCanvas
-                                value={user.loginLink}
-                                size={60}
-                                bgColor="#ffffff"
-                                fgColor="#1f2937"
-                                level="H"
-                                includeMargin={true}
-                                ref={(el) => {
-                                  if (el) qrRefs.current[user._id] = el.parentElement;
-                                }}
-                                className="rounded"
-                              />
-                            </div>
-                          )}
-                        </td>
-                        <td className="px-6 py-5">
-                          <div className="flex flex-col gap-2">
-                            <CopyToClipboard
-                              text={user.loginLink}
-                              onCopy={handleCopy}
-                            >
-                              <button className="px-4 py-2 bg-gradient-to-r from-blue-100 to-blue-200 text-blue-700 rounded-lg text-sm font-medium hover:from-blue-200 hover:to-blue-300 transition-all transform hover:scale-105 border border-blue-300">
-                                📋 Copy Link
-                              </button>
-                            </CopyToClipboard>
-
-                            <button
-                              onClick={() => generateUserPDF(user, idx)}
-                              disabled={isGeneratingPDF}
-                              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all transform hover:scale-105 border ${
-                                isGeneratingPDF
-                                  ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-                                  : "bg-gradient-to-r from-cyan-100 to-blue-200 text-cyan-700 hover:from-cyan-200 hover:to-blue-300 border-cyan-300"
-                              }`}
-                            >
-                              {isGeneratingPDF ? "⏳ Processing..." : "📱 Download Card"}
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan="6"
-                        className="px-6 py-12 text-center text-gray-500"
-                      >
-                        <div className="flex flex-col items-center">
-                          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                            <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z" />
-                            </svg>
-                          </div>
-                          <h3 className="text-lg font-medium text-gray-900 mb-2">No students found</h3>
-                          <p className="text-gray-500">Get started by creating some student accounts.</p>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
+            <button
+              onClick={() => router.push("/admin")}
+              className="px-5 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white text-sm font-medium rounded-xl shadow-lg hover:scale-105 transition-all"
+            >
+              Back to Dashboard
+            </button>
           </div>
         </div>
+
+        {/* Stats */}
+        {users.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
+            <div className="bg-gradient-to-r from-cyan-50 to-blue-100 p-5 rounded-xl border border-cyan-200">
+              <p className="text-sm text-cyan-600">Total Cards</p>
+              <p className="text-2xl font-bold text-cyan-800">{users.length}</p>
+            </div>
+
+            <div className="bg-gradient-to-r from-green-50 to-green-100 p-5 rounded-xl border border-green-200">
+              <p className="text-sm text-green-600">Active Students</p>
+              <p className="text-2xl font-bold text-green-800">
+                {users.filter(u => !u.email?.includes("@placeholder.local")).length}
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-5 rounded-xl border border-orange-200">
+              <p className="text-sm text-orange-600">Pending</p>
+              <p className="text-2xl font-bold text-orange-800">
+                {users.filter(u => u.email?.includes("@placeholder.local")).length}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Preview */}
+        <div className="mb-12">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-4">
+            📋 Card Preview
+          </h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 place-items-center">
+            {users.slice(0, 3).map((user, idx) => (
+              <div key={user._id} className="w-full max-w-sm">
+                <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700 shadow-2xl scale-95">
+                  <div className="text-center">
+                    <div className="flex items-center justify-center gap-3 mb-3">
+                      <div className="w-8 h-8 bg-cyan-500 rounded-lg flex items-center justify-center">
+                        <span className="text-white font-bold">M</span>
+                      </div>
+                      <div>
+                        <h2 className="text-xl font-bold text-cyan-400">
+                          MockMingle
+                        </h2>
+                        <p className="text-cyan-300 text-sm">
+                          Student Login Card
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="bg-white p-3 rounded-xl mb-4 inline-block border-2 border-cyan-400 shadow-lg">
+                      <QRCodeCanvas
+                        value={user.loginLink}
+                        size={100}
+                        level="H"
+                        includeMargin={false}
+                        ref={(el) => {
+                          if (el) qrRefs.current[user._id] = el.parentElement;
+                        }}
+                      />
+                    </div>
+
+                    <p className="text-cyan-400 text-sm">
+                      Serial No:{" "}
+                      <span className="font-bold">
+                        SIMCA{String(idx + 1).padStart(2, "0")}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                <p className="text-center mt-2 font-medium text-gray-700">
+                  {user.fullName || "N/A"}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Table */}
+        <div className="rounded-2xl border border-gray-200 shadow-lg overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gradient-to-r from-gray-50 to-gray-100 sticky top-0 z-10">
+                <tr>
+                  {["Student", "Email", "Status", "Created", "QR", "Actions"].map((h) => (
+                    <th
+                      key={h}
+                      className="px-5 py-4 text-left text-xs font-bold text-gray-700 uppercase"
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-gray-100 bg-white">
+                {users.map((user, idx) => (
+                  <tr
+                    key={user._id}
+                    className="hover:bg-gray-50 transition"
+                  >
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                          {(user.fullName || "U")[0]}
+                        </div>
+                        <div>
+                          <p className="font-semibold">{user.fullName || "N/A"}</p>
+                          <p className="text-xs text-gray-500">
+                            SIMCA{String(idx + 1).padStart(2, "0")}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="px-5 py-4 text-sm text-gray-700">
+                      {user.email?.includes("@placeholder.local")
+                        ? "Not registered yet"
+                        : user.email}
+                    </td>
+
+                    <td className="px-5 py-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          user.email?.includes("@placeholder.local")
+                            ? "bg-orange-100 text-orange-800"
+                            : "bg-green-100 text-green-800"
+                        }`}
+                      >
+                        {user.email?.includes("@placeholder.local")
+                          ? "Pending"
+                          : "Active"}
+                      </span>
+                    </td>
+
+                    <td className="px-5 py-4 text-sm text-gray-600">
+                      {formatDate(user.createdAt)}
+                    </td>
+
+                    <td className="px-5 py-4">
+                      <QRCodeCanvas value={user.loginLink} size={60} />
+                    </td>
+
+                    <td className="px-5 py-4">
+                      <div className="flex flex-col gap-2">
+                        <CopyToClipboard text={user.loginLink} onCopy={handleCopy}>
+                          <button className="px-3 py-2 bg-blue-100 text-blue-700 rounded-lg text-sm">
+                            Copy
+                          </button>
+                        </CopyToClipboard>
+
+                        <button
+                          onClick={() => generateUserPDF(user, idx)}
+                          disabled={isGeneratingPDF}
+                          className="px-3 py-2 bg-cyan-100 text-cyan-700 rounded-lg text-sm"
+                        >
+                          Download
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </div>
-  );
+  </div>
+);
+
 }
