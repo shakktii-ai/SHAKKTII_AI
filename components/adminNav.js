@@ -47,6 +47,12 @@
 
 // export default AdminNav
 
+
+
+import { LogOut } from "lucide-react"
+import { useRouter } from "next/router"
+
+
 import React, { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
@@ -72,6 +78,16 @@ const navItems = [
 
 export default function AdminNav() {
   const [open, setOpen] = useState(false)
+
+  const router = useRouter()
+
+const handleLogout = () => {
+  localStorage.removeItem("Admintoken")
+  localStorage.removeItem("admin")
+
+  setOpen(false)
+  router.push("/admin/login")
+}
 
   return (
     <>
@@ -183,6 +199,23 @@ export default function AdminNav() {
               );
             })}
           </ul>
+          {/* ================= LOGOUT ================= */}
+<div className="p-4 border-t border-slate-200">
+  <button
+    onClick={handleLogout}
+    className="
+      w-full flex items-center gap-3 px-4 py-3 rounded-xl
+      text-sm font-semibold text-red-600
+      hover:bg-red-50 hover:shadow-sm
+      transition-all duration-200
+      active:scale-[0.98]
+    "
+  >
+    <LogOut size={20} />
+    Logout
+  </button>
+</div>
+
         </nav>
 
       </aside>

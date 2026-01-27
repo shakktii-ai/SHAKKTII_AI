@@ -864,7 +864,7 @@ return (
                       <p className="text-lg font-bold truncate text-white mb-2">{user.fullName || "Unknown User"}</p>
                       
                       <p className="text-xs text-slate-400 uppercase tracking-wider mb-0.5">ID Number</p>
-                      <p className="font-mono text-sm text-indigo-300">SIMCA{String(idx + 1).padStart(2, "0")}</p>
+                      <p className="font-mono text-sm text-indigo-300">{user.collageName?.split(" ").map(word => word.charAt(0)).join("")}{String(idx + 1).padStart(2, "0")}</p>
                     </div>
                   </div>
                 </div>
@@ -912,7 +912,7 @@ return (
                       </div>
                       <div className="flex flex-col">
                         <span className="text-sm font-bold text-slate-800">{user.fullName || "N/A"}</span>
-                        <span className="text-xs text-slate-400 font-mono">SIMCA{String(idx + 1).padStart(2, "0")}</span>
+                        <span className="text-xs text-slate-400 font-mono">{user.collageName?.split(" ").map(word => word.charAt(0)).join("")}{String(idx + 1).padStart(2, "0")}</span>
                       </div>
                     </div>
                   </td>
