@@ -20,6 +20,11 @@ export default function Language() {
             Marathi
           </button>
         </Link>
+           <Link href="https://marathi-mock.vercel.app/">
+          <button className="w-full py-4 px-6 rounded-2xl shadow-md bg-white text-black font-semibold text-lg transition-all duration-300 hover:bg-pink-600 hover:shadow-lg">
+            Y4D FOUNDATION
+          </button>
+        </Link>
       </div>
     </div>
   );
