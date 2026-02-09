@@ -20,39 +20,32 @@ function Practices() {
   }, []);
 
   const practiceCards = [
+   
     {
       id: 1,
-      title: "Personality Test",
-      description: "Assess your personality traits and discover your strengths and areas for improvement.",
-      image: "/personality.png",
-      bgColor: "from-purple-600 to-indigo-800",
-      link: "/personalityTest"
+      title: "Speaking Practice",
+      description: "Improve your speaking skills with interactive exercises at different difficulty levels.",
+      image: "/speaking.png",
+      bgColor: "from-pink-600 to-rose-800",
+      link: "/speakingPractice"
     },
-    
     {
       id: 2,
-      title: "Decision Making",
-      description: "Sharpen your decision-making skills with interactive scenarios across business, ethical, and personal contexts.",
-      image: "/decision.png",
-      bgColor: "from-amber-600 to-orange-800",
-      link: "/decisionScenario"
+      title: "Listening Practice",
+      description: "Enhance your listening comprehension with guided audio exercises and real-world scenarios.",
+      image: "/listening.png",
+      bgColor: "from-blue-600 to-cyan-800",
+      link: "/listeningPractice"
     },
     {
       id: 3,
-      title: "Excel Test",
-      description: "Test and improve your Excel knowledge across formulas, data processing, and analysis",
-      image: "/personality.png",
-      bgColor: "from-purple-600 to-indigo-800",
-      link: "/excelTest"
+      title: "Reading & Writing",
+      description: "Develop your reading comprehension and written expression through structured activities.",
+      image: "/reading.png",
+      bgColor: "from-emerald-600 to-teal-800",
+      link: "/readingWritingPractice"
     },
-    {
-      id: 3,
-      title: "Psychometric Test",
-      description: "Evaluate your personality, aptitude, and decision-making style through a structured psychometric assessment.",
-      image: "/personality.png",
-      bgColor: "from-purple-600 to-indigo-800",
-      link: "/excelTest"
-    },
+    
   ];
 
   return (
@@ -81,7 +74,7 @@ function Practices() {
                 <p className="text-sm text-gray-600">Welcome,</p>
                 <p className="font-semibold text-lg text-purple-900">{userName}</p>
               </div>
-              <div className="w-12 h-12 rounded-full bg-black flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
                 <img src="/logoo.png" alt="Logo" className="w-10 h-10" />
               </div>
             </div>
@@ -105,7 +98,7 @@ function Practices() {
           </div>
 
           {/* Practice Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
             
             {practiceCards.map((card) => (
 

@@ -371,10 +371,10 @@ const practiceZones = [
     icon: Brain,
     color: "teal",
     progress: 60,
-    link:"/practices"
+    link:"/skills"
   },
   {
-    title: "PSYCHOMETRIC TEST",
+    title: "Technical Training",
     description: "Take psychometric tests to understand your personality and cognitive abilities.",
     icon: Target,
     color: "gold",
