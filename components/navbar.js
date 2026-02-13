@@ -305,13 +305,13 @@ export default function Navbar({ Logout, user }) {
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center space-x-6 relative">
-          {/* <Link
-            href="/"
+           <Link
+            href="/enterprise"
             
           >
-            Home
+            Login as Enterprise
           </Link>
-          <Link
+         {/* <Link
             href="#feature"
              scroll={false}
           >
