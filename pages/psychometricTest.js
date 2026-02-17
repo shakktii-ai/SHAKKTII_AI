@@ -26,7 +26,7 @@ export default function PsychometricTest() {
     const storedToken = localStorage.getItem('token');
     if (storedToken) {
       setToken(storedToken);
-      
+
       // Try to get user email from localStorage
       try {
         const userJson = localStorage.getItem('user');
@@ -49,7 +49,7 @@ export default function PsychometricTest() {
     let userId = sessionStorage.getItem('userId');
     let emailToUse = userEmail || '';
     let testGenerated = false;
-    
+
     try {
       // Try to get user ID from localStorage if available
       const userData = JSON.parse(localStorage.getItem('user') || '{}');
@@ -59,11 +59,11 @@ export default function PsychometricTest() {
         userId = `guest_${Date.now()}`;
         sessionStorage.setItem('userId', userId);
       }
-      
+
       // Use the state userEmail or generate a temporary one
       emailToUse = userEmail || (userData && userData.email) || `guest_${Date.now()}@example.com`;
       console.log('Starting test generation for email:', emailToUse);
-      
+
       if (!emailToUse) {
         throw new Error('Could not determine user email');
       }
@@ -72,23 +72,23 @@ export default function PsychometricTest() {
       userId = userId || `guest_${Date.now()}`;
       emailToUse = emailToUse || `guest_${Date.now()}@example.com`;
     }
-    
+
     setGenerating(true);
     setLoading(true);
     setShowCardSelection(false);
-    
+
     // Clear any previous test state
     setResults(null);
     setTest(null);
     setCurrentQuestionIndex(0);
-    
+
     // Show initial loading message
     const loadingToast = toast.info('Generating 30 psychometric questions. This may take a moment...', {
       autoClose: false,
       closeOnClick: false,
       draggable: false
     });
-    
+
     try {
       // Make API request to generate questions with a 2.5 minute timeout
       const response = await axios.post('/api/psychometricTests/generatePsychometricTest', {
@@ -102,10 +102,10 @@ export default function PsychometricTest() {
           'Content-Type': 'application/json'
         }
       });
-      
+
       // If we get here, the request completed successfully
       testGenerated = true;
-      
+
       // Check if we have questions in the response
       if (response.data?.questions?.length > 0) {
         const testData = {
@@ -114,14 +114,14 @@ export default function PsychometricTest() {
           questions: response.data.questions,
           createdAt: new Date().toISOString()
         };
-        
+
         setTest(testData);
         console.log(`Received ${testData.questions.length} questions from OpenAI`);
-        
+
         // Initialize arrays for responses
         setSelectedOptions(new Array(testData.questions.length).fill(null));
         setReasonings(new Array(testData.questions.length).fill(''));
-        
+
         toast.update(loadingToast, {
           render: `Successfully loaded ${testData.questions.length} questions`,
           type: 'success',
@@ -132,11 +132,11 @@ export default function PsychometricTest() {
       }
     } catch (error) {
       console.error('Error generating test:', error);
-      
+
       // Check if it's a timeout error
       if (!testGenerated && (error.code === 'ECONNABORTED' || error.message.includes('timeout'))) {
         console.log('Request timed out. Checking if test was generated...');
-        
+
         try {
           // Update loading message
           toast.update(loadingToast, {
@@ -144,10 +144,10 @@ export default function PsychometricTest() {
             type: 'info',
             autoClose: false
           });
-          
+
           // Wait a moment before checking to give the server time to process
           await new Promise(resolve => setTimeout(resolve, 3000));
-          
+
           // Check if questions were generated despite the timeout
           const checkResponse = await axios.post('/api/psychometricTests/checkStatus', {
             profileType: type,
@@ -158,7 +158,7 @@ export default function PsychometricTest() {
               'Content-Type': 'application/json'
             }
           });
-          
+
           if (checkResponse.data?.questions?.length > 0) {
             const testData = {
               _id: checkResponse.data.testId || Date.now().toString(),
@@ -166,14 +166,14 @@ export default function PsychometricTest() {
               questions: checkResponse.data.questions,
               createdAt: new Date().toISOString()
             };
-            
+
             setTest(testData);
             console.log(`Retrieved ${testData.questions.length} questions that were generated`);
-            
+
             // Initialize arrays for responses
             setSelectedOptions(new Array(testData.questions.length).fill(null));
             setReasonings(new Array(testData.questions.length).fill(''));
-            
+
             toast.update(loadingToast, {
               render: `Successfully loaded ${testData.questions.length} questions`,
               type: 'success',
@@ -185,14 +185,14 @@ export default function PsychometricTest() {
           console.error('Error checking question status:', checkError);
         }
       }
-      
+
       // If we get here, we couldn't load the questions
       toast.update(loadingToast, {
         render: 'Failed to generate test. Please try again.',
         type: 'error',
         autoClose: 3000
       });
-      
+
       setShowCardSelection(true); // Show card selection again
     } finally {
       if (!test) {
@@ -205,7 +205,7 @@ export default function PsychometricTest() {
       }
     }
   };
-  
+
   const handleCardSelection = (type) => {
     setProfileType(type);
     generateTest(type);
@@ -228,7 +228,7 @@ export default function PsychometricTest() {
       toast.warning('Please select an option before continuing');
       return;
     }
-    
+
     if (currentQuestionIndex < test.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
@@ -242,17 +242,17 @@ export default function PsychometricTest() {
       setCurrentQuestionIndex(currentQuestionIndex - 1);
     }
   };
-  
+
   const goToQuestion = (index) => {
     setCurrentQuestionIndex(index);
   };
-  
+
   // Check if all questions are answered before submitting
   const confirmSubmitTest = () => {
-    const unansweredQuestions = selectedOptions.map((option, index) => 
+    const unansweredQuestions = selectedOptions.map((option, index) =>
       option === null ? index + 1 : null
     ).filter(Boolean);
-    
+
     if (unansweredQuestions.length > 0) {
       const questionList = unansweredQuestions.join(', ');
       const isPlural = unansweredQuestions.length > 1;
@@ -267,18 +267,18 @@ export default function PsychometricTest() {
   const submitTest = async () => {
     try {
       setEvaluating(true);
-      
+
       // Prepare responses data
       const responses = selectedOptions.map((optionIndex, questionIndex) => ({
         questionIndex,
         selectedOption: optionIndex,
         reasoning: reasonings[questionIndex]
       }));
-      
+
       // Get user info from localStorage
       let userId = null;
       let userEmail = null;
-      
+
       try {
         const userJson = localStorage.getItem('user');
         if (userJson) {
@@ -290,20 +290,20 @@ export default function PsychometricTest() {
       } catch (error) {
         console.error('Error getting user info:', error);
       }
-      
+
       // If no user ID from localStorage, use session or generate a temporary one
       if (!userId) {
         userId = sessionStorage.getItem('userId') || Date.now().toString();
         sessionStorage.setItem('userId', userId);
       }
-      
+
       // If no email was found, generate a temporary one based on timestamp
       // This ensures we always have an email to save in the database
       if (!userEmail) {
         userEmail = `guest_${Date.now()}@example.com`;
         console.log('Using temporary email for evaluation:', userEmail);
       }
-      
+
       // Instead of sending the test ID, send the complete questions array
       // This avoids the ObjectId casting error
       const response = await axios.post('/api/psychometricTests/evaluatePsychometricTest', {
@@ -314,11 +314,11 @@ export default function PsychometricTest() {
         email: userEmail,
         testId: test.testId // Include the testId if it exists
       });
-      
+
       // Store the complete response data including profileType
       setResults(response.data);
       console.log('Evaluation results:', response.data);
-      
+
       // Save results to database
       try {
         const saveResponse = await axios.post('/api/psychometricTests/saveTestResults', {
@@ -329,7 +329,7 @@ export default function PsychometricTest() {
           results: response.data,
           questions: test.questions
         });
-        
+
         if (saveResponse.data.success) {
           console.log('Test results saved to database:', saveResponse.data);
           toast.success('Test results saved successfully');
@@ -353,7 +353,7 @@ export default function PsychometricTest() {
     return (
       <div className="flex items-center">
         {[...Array(3)].map((_, i) => (
-          <svg 
+          <svg
             key={i}
             className={`w-6 h-6 ${i < score ? 'text-yellow-500' : 'text-gray-300'}`}
             fill="currentColor"
@@ -371,112 +371,112 @@ export default function PsychometricTest() {
   if (showCardSelection) {
     return (
       <>
-      <div className="bg-black min-h-screen px-4 py-10">
-      <button
-        onClick={() => router.back('/dashboard')}
-        className="absolute top-4 left-4 text-white bg-gray-800 px-4 py-2 rounded-full shadow hover:bg-gray-700 transition"
-      >
-        ← Back
-      </button>
-      <div className="absolute top-4 right-4">
-        <button
-          onClick={() => router.push('/psychometricTestHistory')}
-          className="text-white bg-gray-800 px-4 py-2 rounded-full shadow hover:bg-gray-700 transition"
-        >
-          History →
-        </button>
-      </div>
-  <h1 className="text-3xl font-bold text-white text-center mb-10">
-    Psychometric Test
-  </h1>
-  
-  <div className="flex flex-col lg:flex-row justify-center items-center gap-10 lg:gap-32">
-    
-    {/* Student Test Card */}
-    <div className="bg-white w-[300px] max-w-md rounded-2xl p-5">
-      <h2 className="text-2xl font-bold text-center mb-4">Student Test</h2>
-      
-      <div className="bg-[#D2E9FA] p-5 -ml-5 rounded-r-full shadow-[inset_0_5px_10px_0_rgba(0,0,0,0.2)]">
-        <div className="bg-[#69676720] mx-auto w-36 h-36 rounded-full shadow-[inset_10px_7px_7px_rgba(0,0,0,0.25),inset_6px_6px_10px_rgba(255,255,255,0.6)]">
-          <img src="/mock.png" alt="Student Test" className="w-full h-full object-contain" />
+        <div className="bg-black min-h-screen px-4 py-10">
+          <button
+            onClick={() => router.back('/dashboard')}
+            className="absolute top-4 left-4 text-white bg-gray-800 px-4 py-2 rounded-full shadow hover:bg-gray-700 transition"
+          >
+            ← Back
+          </button>
+          <div className="absolute top-4 right-4">
+            <button
+              onClick={() => router.push('/psychometricTestHistory')}
+              className="text-white bg-gray-800 px-4 py-2 rounded-full shadow hover:bg-gray-700 transition"
+            >
+              History →
+            </button>
+          </div>
+          <h1 className="text-3xl font-bold text-white text-center mb-10">
+            Psychometric Test
+          </h1>
+
+          <div className="flex flex-col lg:flex-row justify-center items-center gap-10 lg:gap-32">
+
+            {/* Student Test Card */}
+            <div className="bg-white w-[300px] max-w-md rounded-2xl p-5">
+              <h2 className="text-2xl font-bold text-center mb-4">Student Test</h2>
+
+              <div className="bg-[#D2E9FA] p-5 -ml-5 rounded-r-full shadow-[inset_0_5px_10px_0_rgba(0,0,0,0.2)]">
+                <div className="bg-[#69676720] mx-auto w-36 h-36 rounded-full shadow-[inset_10px_7px_7px_rgba(0,0,0,0.25),inset_6px_6px_10px_rgba(255,255,255,0.6)]">
+                  <img src="/mock.png" alt="Student Test" className="w-full h-full object-contain" />
+                </div>
+              </div>
+
+              <p className="text-left my-4 text-sm">
+                Designed for students and academic environments.
+                Evaluates academic potential, learning style,
+                teamwork, and leadership qualities in educational
+                contexts.
+              </p>
+
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />              </svg><p className="text-left">Workplace dynamics</p>
+              </div>
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />              </svg><p className="text-left">Professional ethics</p>
+              </div>
+              <div className="flex items-center">
+                <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />              </svg><p className="text-left">Management potential</p>
+              </div>
+
+              <button
+                onClick={() => handleCardSelection('student')}
+                className="bg-gradient-to-r from-black to-gray-400 text-white mt-5 w-full py-2 rounded-full"
+              >
+                Take Test
+              </button>
+            </div>
+
+            {/* Employee Test Card */}
+            <div className="bg-white w-[300px] max-w-md rounded-2xl p-5">
+              <h2 className="text-2xl font-bold text-center mb-4">Employee Test</h2>
+
+              <div className="bg-[#D2E9FA] p-5 -ml-5 rounded-r-full shadow-[inset_0_5px_10px_0_rgba(0,0,0,0.2)]">
+                <div className="bg-[#69676720] mx-auto w-36 h-36 rounded-full shadow-[inset_10px_7px_7px_rgba(0,0,0,0.25),inset_6px_6px_10px_rgba(255,255,255,0.6)]">
+                  <img src="/mock.png" alt="Employee Test" className="w-full h-full object-contain" />
+                </div>
+              </div>
+
+              <p className="text-left my-4 text-sm">
+                Tailored for working professionals. Evaluates
+                workplace competencies, conflict resolution,
+                leadership potential, and professional decision-
+                making.
+              </p>
+
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />              </svg><p className="text-left">Workplace dynamics</p>
+                </div>
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />              </svg><p className="text-left">Professional ethics</p>
+                </div>
+                <div className="flex items-center">
+                  <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />              </svg><p className="text-left">Management potential</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => handleCardSelection('employee')}
+                className="bg-gradient-to-r from-black to-gray-400 text-white mt-5 w-full py-2 rounded-full"
+              >
+                Take Test
+              </button>
+            </div>
+
+          </div>
         </div>
-      </div>
 
-      <p className="text-left my-4 text-sm">
-        Designed for students and academic environments.
-        Evaluates academic potential, learning style,
-        teamwork, and leadership qualities in educational
-        contexts.
-      </p>
-
-      <div className="flex items-center">
-    <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />              </svg><p className="text-left">Workplace dynamics</p>
-  </div>
-  <div className="flex items-center">
-    <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />              </svg><p className="text-left">Professional ethics</p>
-  </div>
-  <div className="flex items-center">
-    <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />              </svg><p className="text-left">Management potential</p>
-  </div>
-
-      <button 
-        onClick={() => handleCardSelection('student')}
-        className="bg-gradient-to-r from-black to-gray-400 text-white mt-5 w-full py-2 rounded-full"
-      >
-        Take Test
-      </button>
-    </div>
-
-    {/* Employee Test Card */}
-    <div className="bg-white w-[300px] max-w-md rounded-2xl p-5">
-      <h2 className="text-2xl font-bold text-center mb-4">Employee Test</h2>
-      
-      <div className="bg-[#D2E9FA] p-5 -ml-5 rounded-r-full shadow-[inset_0_5px_10px_0_rgba(0,0,0,0.2)]">
-        <div className="bg-[#69676720] mx-auto w-36 h-36 rounded-full shadow-[inset_10px_7px_7px_rgba(0,0,0,0.25),inset_6px_6px_10px_rgba(255,255,255,0.6)]">
-          <img src="/mock.png" alt="Employee Test" className="w-full h-full object-contain" />
-        </div>
-      </div>
-
-      <p className="text-left my-4 text-sm">
-        Tailored for working professionals. Evaluates
-        workplace competencies, conflict resolution,
-        leadership potential, and professional decision-
-        making.
-      </p>
-
-      <div className="space-y-2">
-  <div className="flex items-center">
-    <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />              </svg><p className="text-left">Workplace dynamics</p>
-  </div>
-  <div className="flex items-center">
-    <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />              </svg><p className="text-left">Professional ethics</p>
-  </div>
-  <div className="flex items-center">
-    <svg className="w-5 h-5 text-green-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
-      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />              </svg><p className="text-left">Management potential</p>
-  </div>
-</div>
-
-      <button 
-        onClick={() => handleCardSelection('employee')}
-        className="bg-gradient-to-r from-black to-gray-400 text-white mt-5 w-full py-2 rounded-full"
-      >
-        Take Test
-      </button>
-    </div>
-
-  </div>
-</div>
-
-     </>
+      </>
     );
   }
-  
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -513,34 +513,34 @@ export default function PsychometricTest() {
   if (results) {
     const competencyAreas = [];
     const recommendations = [];
-    
+
     // Extract evaluation data from the API response
     const evaluation = results.evaluation || {};
     const profileType = results.profileType || 'employee';
-    
+
     console.log('Rendering results with evaluation:', evaluation);
-    
+
     // Directly access the evaluation properties without nested paths
-    
+
     // Helper function to safely access nested properties
     const safeGet = (obj, path, defaultValue) => {
       try {
         const parts = path.split('.');
         let current = obj;
-        
+
         for (const part of parts) {
           if (current === undefined || current === null) {
             return defaultValue;
           }
           current = current[part];
         }
-        
+
         return current === undefined || current === null ? defaultValue : current;
       } catch (e) {
         return defaultValue;
       }
     };
-    
+
     if (profileType === 'student') {
       // Only add items if they exist
       if (evaluation.academicCollaboration) {
@@ -550,7 +550,7 @@ export default function PsychometricTest() {
           comments: evaluation.academicCollaboration.comments || 'No comments available'
         });
       }
-      
+
       if (evaluation.learningEthics) {
         competencyAreas.push({
           name: 'Learning Ethics',
@@ -558,7 +558,7 @@ export default function PsychometricTest() {
           comments: evaluation.learningEthics.comments || 'No comments available'
         });
       }
-      
+
       if (evaluation.educationalLeadership) {
         competencyAreas.push({
           name: 'Educational Leadership',
@@ -566,7 +566,7 @@ export default function PsychometricTest() {
           comments: evaluation.educationalLeadership.comments || 'No comments available'
         });
       }
-      
+
       if (evaluation.studyGroupDynamics) {
         competencyAreas.push({
           name: 'Study Group Dynamics',
@@ -574,7 +574,7 @@ export default function PsychometricTest() {
           comments: evaluation.studyGroupDynamics.comments || 'No comments available'
         });
       }
-      
+
       if (evaluation.academicConflictResolution) {
         competencyAreas.push({
           name: 'Academic Conflict Resolution',
@@ -582,7 +582,7 @@ export default function PsychometricTest() {
           comments: evaluation.academicConflictResolution.comments || 'No comments available'
         });
       }
-      
+
       if (evaluation.classroomParticipation) {
         competencyAreas.push({
           name: 'Classroom Participation',
@@ -590,15 +590,15 @@ export default function PsychometricTest() {
           comments: evaluation.classroomParticipation.comments || 'No comments available'
         });
       }
-      
+
       recommendations.push(
-        { 
-          title: 'Recommended Learning Styles', 
-          items: evaluation.recommendedLearningStyles || ['Visual learning', 'Practical application', 'Group study'] 
+        {
+          title: 'Recommended Learning Styles',
+          items: evaluation.recommendedLearningStyles || ['Visual learning', 'Practical application', 'Group study']
         },
-        { 
-          title: 'Academic Path Recommendations', 
-          items: evaluation.academicPathRecommendations || ['Consider peer tutoring', 'Join study groups', 'Seek hands-on learning opportunities'] 
+        {
+          title: 'Academic Path Recommendations',
+          items: evaluation.academicPathRecommendations || ['Consider peer tutoring', 'Join study groups', 'Seek hands-on learning opportunities']
         }
       );
     } else {
@@ -611,7 +611,7 @@ export default function PsychometricTest() {
           comments: evaluation.empathy.comments || 'No comments available'
         });
       }
-      
+
       // Assertiveness
       if (evaluation.assertiveness) {
         competencyAreas.push({
@@ -620,7 +620,7 @@ export default function PsychometricTest() {
           comments: evaluation.assertiveness.comments || 'No comments available'
         });
       }
-      
+
       // Ethical Reasoning
       if (evaluation.ethicalReasoning) {
         competencyAreas.push({
@@ -629,7 +629,7 @@ export default function PsychometricTest() {
           comments: evaluation.ethicalReasoning.comments || 'No comments available'
         });
       }
-      
+
       // Collaboration
       if (evaluation.collaboration) {
         competencyAreas.push({
@@ -638,7 +638,7 @@ export default function PsychometricTest() {
           comments: evaluation.collaboration.comments || 'No comments available'
         });
       }
-      
+
       // Conflict Resolution
       if (evaluation.conflictResolution) {
         competencyAreas.push({
@@ -647,7 +647,7 @@ export default function PsychometricTest() {
           comments: evaluation.conflictResolution.comments || 'No comments available'
         });
       }
-      
+
       // Leadership Potential
       if (evaluation.leadershipPotential) {
         competencyAreas.push({
@@ -656,19 +656,19 @@ export default function PsychometricTest() {
           comments: evaluation.leadershipPotential.comments || 'No comments available'
         });
       }
-      
+
       recommendations.push(
-        { 
-          title: 'Career Path Recommendations', 
+        {
+          title: 'Career Path Recommendations',
           items: evaluation.careerPathRecommendations || ['Project management', 'Team leadership', 'Specialized technical role']
         },
-        { 
-          title: 'Role Fit Recommendations', 
+        {
+          title: 'Role Fit Recommendations',
           items: evaluation.roleFitRecommendations || ['Team lead', 'Project coordinator', 'Technical specialist']
         }
       );
     }
-    
+
     // If no competency areas were added (due to missing data), add default ones
     if (competencyAreas.length === 0) {
       if (profileType === 'student') {
@@ -695,7 +695,7 @@ export default function PsychometricTest() {
           <div className="bg-gradient-to-r from-blue-600 to-indigo-700 px-6 py-4">
             <h1 className="text-2xl font-bold text-white">Your Psychometric Assessment Results</h1>
           </div>
-          
+
           <div className="p-6">
             <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4">Overall Assessment</h2>
@@ -705,19 +705,19 @@ export default function PsychometricTest() {
                   <div className="flex items-center">
                     <span className="text-lg font-bold mr-2">{evaluation.overallScore || 7}/10</span>
                     <div className="w-32 h-3 bg-gray-200 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-gradient-to-r from-blue-500 to-indigo-600" 
+                      <div
+                        className="h-full bg-gradient-to-r from-blue-500 to-indigo-600"
                         style={{ width: `${((evaluation.overallScore || 7) / 10) * 100}%` }}
                       ></div>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="mb-4">
                   <h3 className="font-medium mb-2">Analysis</h3>
                   <p className="text-gray-700">{evaluation.analysis || 'Your responses indicate a balanced approach to decision-making with a good understanding of ethical considerations in professional contexts.'}</p>
                 </div>
-                
+
                 <div className="mb-4">
                   <h3 className="font-medium mb-2">Decision-Making Profile</h3>
                   <div className="grid grid-cols-2 gap-3">
@@ -731,7 +731,7 @@ export default function PsychometricTest() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div>
                   <h3 className="font-medium mb-2">Key Personality Traits</h3>
                   <div className="flex flex-wrap gap-2">
@@ -742,7 +742,7 @@ export default function PsychometricTest() {
                 </div>
               </div>
             </div>
-            
+
             <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4">Competency Areas</h2>
               <div className="mb-6">
@@ -756,24 +756,24 @@ export default function PsychometricTest() {
                       <div className="absolute inset-[30%] rounded-full border border-gray-200 opacity-60"></div>
                       <div className="absolute inset-[45%] rounded-full border border-gray-200 opacity-80"></div>
                       <div className="absolute inset-[60%] rounded-full border border-gray-200"></div>
-                      
+
                       {/* Radar Lines */}
                       {competencyAreas.map((_, index) => {
                         const angle = (index / competencyAreas.length) * 2 * Math.PI;
                         const x2 = 32 + 32 * Math.cos(angle);
                         const y2 = 32 + 32 * Math.sin(angle);
                         return (
-                          <div 
+                          <div
                             key={index}
                             className="absolute left-1/2 top-1/2 h-px bg-gray-200 origin-left"
                             style={{
-                              width: '50%', 
-                              transform: `rotate(${angle * (180/Math.PI)}deg)`
+                              width: '50%',
+                              transform: `rotate(${angle * (180 / Math.PI)}deg)`
                             }}
                           ></div>
                         );
                       })}
-                      
+
                       {/* Radar Data Points */}
                       {competencyAreas.map((area, index) => {
                         const angle = (index / competencyAreas.length) * 2 * Math.PI;
@@ -781,7 +781,7 @@ export default function PsychometricTest() {
                         const x = 50 + (distance / 2) * Math.cos(angle);
                         const y = 50 + (distance / 2) * Math.sin(angle);
                         return (
-                          <div 
+                          <div
                             key={index}
                             className="absolute w-3 h-3 bg-blue-500 rounded-full transform -translate-x-1/2 -translate-y-1/2"
                             style={{ left: `${x}%`, top: `${y}%` }}
@@ -794,13 +794,13 @@ export default function PsychometricTest() {
                   <div className="text-center text-sm text-gray-500">Hover over points to see details</div>
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {competencyAreas.map((area, index) => {
                   // Calculate color based on score
                   const scoreColors = ['bg-red-500', 'bg-yellow-500', 'bg-green-500'];
                   const scoreColor = scoreColors[area.score - 1] || 'bg-gray-500';
-                  
+
                   return (
                     <div key={index} className="border rounded-lg overflow-hidden shadow-sm">
                       <div className="bg-gray-50 px-4 py-3 border-b flex justify-between items-center">
@@ -812,8 +812,8 @@ export default function PsychometricTest() {
                       <div className="p-4">
                         <div className="mb-3">
                           <div className="w-full bg-gray-200 rounded-full h-2.5">
-                            <div 
-                              className={`h-2.5 rounded-full ${scoreColor}`} 
+                            <div
+                              className={`h-2.5 rounded-full ${scoreColor}`}
                               style={{ width: `${(area.score / 3) * 100}%` }}
                             ></div>
                           </div>
@@ -834,7 +834,7 @@ export default function PsychometricTest() {
                 })}
               </div>
             </div>
-            
+
             <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4">Key Insights</h2>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -847,7 +847,7 @@ export default function PsychometricTest() {
                     </div>
                     <h3 className="font-semibold text-lg">Core Strengths</h3>
                   </div>
-                  
+
                   <div className="space-y-3">
                     {(evaluation.strengths || ['Good ethical reasoning', 'Balanced decision-making']).map((item, index) => (
                       <div key={index} className="flex items-start">
@@ -866,7 +866,7 @@ export default function PsychometricTest() {
                     ))}
                   </div>
                 </div>
-                
+
                 <div className="bg-white rounded-lg border shadow-sm p-5">
                   <div className="flex items-center mb-4">
                     <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center mr-3">
@@ -876,7 +876,7 @@ export default function PsychometricTest() {
                     </div>
                     <h3 className="font-semibold text-lg">Growth Opportunities</h3>
                   </div>
-                  
+
                   <div className="space-y-3">
                     {(evaluation.areasToImprove || ['Consider more stakeholder perspectives', 'Balance assertiveness with empathy']).map((item, index) => (
                       <div key={index} className="flex items-start">
@@ -897,7 +897,7 @@ export default function PsychometricTest() {
                 </div>
               </div>
             </div>
-            
+
             {recommendations.length > 0 && (
               <div className="mb-8">
                 <h2 className="text-xl font-semibold mb-4">Personalized Recommendations</h2>
@@ -905,7 +905,7 @@ export default function PsychometricTest() {
                   <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-5 py-4 border-b">
                     <h3 className="font-medium text-gray-800">Based on your unique profile, we recommend:</h3>
                   </div>
-                  
+
                   <div className="divide-y">
                     {recommendations.map((rec, index) => (
                       <div key={index} className="p-5">
@@ -915,7 +915,7 @@ export default function PsychometricTest() {
                           </div>
                           <h3 className="font-semibold text-lg text-gray-800">{rec.title}</h3>
                         </div>
-                        
+
                         <div className="ml-11 space-y-3">
                           {rec.items.map((item, idx) => (
                             <div key={idx} className="flex items-start">
@@ -933,7 +933,7 @@ export default function PsychometricTest() {
                             </div>
                           ))}
                         </div>
-                        
+
                         {rec.resources && (
                           <div className="mt-4 ml-11 pt-3 border-t">
                             <h4 className="text-sm font-medium text-gray-700 mb-2">Suggested Resources:</h4>
@@ -950,19 +950,19 @@ export default function PsychometricTest() {
                 </div>
               </div>
             )}
-            
+
             <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4">Benchmark Comparison</h2>
               <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
                 <div className="p-5">
                   <p className="text-gray-700 mb-4">See how your results compare to industry benchmarks for {profileType === 'student' ? 'students' : 'professionals'} in similar roles.</p>
-                  
+
                   <div className="space-y-4">
                     {competencyAreas.slice(0, 3).map((area, index) => {
                       // Generate random benchmark data for demonstration
                       const benchmarkScore = Math.min(3, Math.max(1, Math.round((area.score + (Math.random() * 0.6 - 0.3)) * 10) / 10));
                       const percentile = Math.round((area.score / benchmarkScore) * 100);
-                      
+
                       return (
                         <div key={index} className="border rounded-lg p-4">
                           <h3 className="font-medium mb-2">{area.name}</h3>
@@ -970,8 +970,8 @@ export default function PsychometricTest() {
                             <div className="w-32 text-sm">Your Score:</div>
                             <div className="flex-1">
                               <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div 
-                                  className="h-2 rounded-full bg-blue-500" 
+                                <div
+                                  className="h-2 rounded-full bg-blue-500"
                                   style={{ width: `${(area.score / 3) * 100}%` }}
                                 ></div>
                               </div>
@@ -982,8 +982,8 @@ export default function PsychometricTest() {
                             <div className="w-32 text-sm">Benchmark:</div>
                             <div className="flex-1">
                               <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div 
-                                  className="h-2 rounded-full bg-gray-500" 
+                                <div
+                                  className="h-2 rounded-full bg-gray-500"
                                   style={{ width: `${(benchmarkScore / 3) * 100}%` }}
                                 ></div>
                               </div>
@@ -997,17 +997,17 @@ export default function PsychometricTest() {
                       );
                     })}
                   </div>
-                  
+
                   <div className="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
                     <h3 className="font-medium text-blue-800 mb-2">Overall Comparison</h3>
                     <p className="text-sm text-blue-700 mb-3">
-                      Your overall score of <span className="font-medium">{evaluation.overallScore || 7}/10</span> places you in the 
-                      <span className="font-medium"> {Math.round(((evaluation.overallScore || 7) / 10) * 100)}th </span> 
+                      Your overall score of <span className="font-medium">{evaluation.overallScore || 7}/10</span> places you in the
+                      <span className="font-medium"> {Math.round(((evaluation.overallScore || 7) / 10) * 100)}th </span>
                       percentile among {profileType === 'student' ? 'students' : 'professionals'} who have taken this assessment.
                     </p>
                     <div className="w-full bg-blue-200 rounded-full h-2.5">
-                      <div 
-                        className="h-2.5 rounded-full bg-blue-600" 
+                      <div
+                        className="h-2.5 rounded-full bg-blue-600"
                         style={{ width: `${((evaluation.overallScore || 7) / 10) * 100}%` }}
                       ></div>
                     </div>
@@ -1015,7 +1015,7 @@ export default function PsychometricTest() {
                 </div>
               </div>
             </div>
-            
+
             {/* Career Suggestions Section */}
             <div className="mb-8">
               <h2 className="text-xl font-semibold mb-4">Career Path Recommendations</h2>
@@ -1023,7 +1023,7 @@ export default function PsychometricTest() {
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 px-6 py-4 border-b">
                   <h3 className="text-lg font-medium text-gray-800">Based on your assessment, here are career paths that align with your strengths and personality:</h3>
                 </div>
-                
+
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* Career Card 1 - Primary Recommendation */}
@@ -1107,11 +1107,11 @@ export default function PsychometricTest() {
                           <div className="w-1/4 font-medium text-gray-700">{item.skill}</div>
                           <div className="flex-1">
                             <div className="w-full bg-gray-200 rounded-full h-2.5">
-                              <div 
-                                className="h-2.5 rounded-full bg-blue-600" 
-                                style={{ 
-                                  width: item.level === 'Beginner' ? '33%' : 
-                                         item.level === 'Intermediate' ? '66%' : '100%' 
+                              <div
+                                className="h-2.5 rounded-full bg-blue-600"
+                                style={{
+                                  width: item.level === 'Beginner' ? '33%' :
+                                    item.level === 'Intermediate' ? '66%' : '100%'
                                 }}
                               ></div>
                             </div>
@@ -1140,7 +1140,7 @@ export default function PsychometricTest() {
                 </svg>
                 Download PDF Report
               </button>
-              
+
               <button
                 onClick={() => router.push('/psychometricTestHistory')}
                 className="px-6 py-3 mb-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors flex items-center"
@@ -1150,7 +1150,7 @@ export default function PsychometricTest() {
                 </svg>
                 View Test History
               </button>
-              
+
               <button
                 onClick={() => {
                   setCurrentQuestionIndex(0);
@@ -1190,12 +1190,12 @@ export default function PsychometricTest() {
 
   const currentQuestion = test.questions[currentQuestionIndex];
   const progress = ((currentQuestionIndex + 1) / test.questions.length) * 100;
-  
+
   // Helper function to check if a question is answered
   const isQuestionAnswered = (index) => {
     return selectedOptions[index] !== null;
   };
-  
+
   // Count answered questions
   const answeredCount = selectedOptions.filter(option => option !== null).length;
   const totalQuestions = test.questions.length;
@@ -1222,21 +1222,21 @@ export default function PsychometricTest() {
               </div>
             </div>
           </div>
-          
+
           <div className="w-full bg-gray-200 h-2">
-            <div 
+            <div
               className="bg-blue-600 h-2 transition-all duration-300"
               style={{ width: `${completionPercentage}%` }}
             ></div>
           </div>
-          
+
           {/* Question Navigation */}
           <div className="px-6 py-3 bg-gray-50 border-b">
             <div className="mb-2 flex justify-between items-center">
               <div className="text-sm font-medium text-gray-700">Question Navigation:</div>
               <div className="text-sm text-gray-500">{answeredCount}/{totalQuestions} answered</div>
             </div>
-            
+
             {/* Group questions into sets of 10 for better organization */}
             {Array.from({ length: Math.ceil(test.questions.length / 10) }).map((_, group) => (
               <div key={group} className="flex flex-wrap gap-2 mb-2 justify-center">
@@ -1249,10 +1249,10 @@ export default function PsychometricTest() {
                         key={questionIndex}
                         onClick={() => goToQuestion(questionIndex)}
                         className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors
-                          ${currentQuestionIndex === questionIndex 
-                            ? 'bg-blue-600 text-white' 
+                          ${currentQuestionIndex === questionIndex
+                            ? 'bg-blue-600 text-white'
                             : isQuestionAnswered(questionIndex)
-                              ? 'bg-green-100 text-green-800 border border-green-300' 
+                              ? 'bg-green-100 text-green-800 border border-green-300'
                               : 'bg-gray-200 text-gray-600 hover:bg-gray-300'}`}
                       >
                         {questionIndex + 1}
@@ -1262,51 +1262,48 @@ export default function PsychometricTest() {
               </div>
             ))}
           </div>
-          
+
           <div className="p-6">
             <div className="mb-6">
               <div className="inline-block px-3 py-1 text-sm font-medium rounded-full mb-2"
-                style={{ 
-                  backgroundColor: currentQuestion.difficulty === 'Easy' ? '#e0f2fe' : 
-                                  currentQuestion.difficulty === 'Moderate' ? '#fef3c7' : 
-                                  '#fee2e2',
-                  color: currentQuestion.difficulty === 'Easy' ? '#0369a1' : 
-                         currentQuestion.difficulty === 'Moderate' ? '#92400e' : 
-                         '#b91c1c'
+                style={{
+                  backgroundColor: currentQuestion.difficulty === 'Easy' ? '#e0f2fe' :
+                    currentQuestion.difficulty === 'Moderate' ? '#fef3c7' :
+                      '#fee2e2',
+                  color: currentQuestion.difficulty === 'Easy' ? '#0369a1' :
+                    currentQuestion.difficulty === 'Moderate' ? '#92400e' :
+                      '#b91c1c'
                 }}
               >
                 {currentQuestion.difficulty} Difficulty
               </div>
               <h2 className="text-xl font-medium text-gray-800">{currentQuestion.scenario}</h2>
             </div>
-            
+
             <div className="space-y-4 mb-6">
               {currentQuestion.options.map((option, index) => (
-                <div 
+                <div
                   key={index}
                   onClick={() => handleOptionSelect(index)}
-                  className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                    selectedOptions[currentQuestionIndex] === index 
-                      ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-300' 
+                  className={`p-4 border rounded-lg cursor-pointer transition-all ${selectedOptions[currentQuestionIndex] === index
+                      ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-300'
                       : 'border-gray-200 hover:border-blue-300 hover:bg-gray-50'
-                  }`}
+                    }`}
                 >
                   <div className="flex items-start">
-                    <div className={`flex-shrink-0 h-5 w-5 mt-0.5 border rounded-full flex items-center justify-center ${
-                      selectedOptions[currentQuestionIndex] === index 
-                        ? 'bg-blue-600 border-blue-600' 
+                    <div className={`flex-shrink-0 h-5 w-5 mt-0.5 border rounded-full flex items-center justify-center ${selectedOptions[currentQuestionIndex] === index
+                        ? 'bg-blue-600 border-blue-600'
                         : 'border-gray-300'
-                    }`}>
+                      }`}>
                       {selectedOptions[currentQuestionIndex] === index && (
                         <div className="h-2 w-2 rounded-full bg-white"></div>
                       )}
                     </div>
                     <div className="ml-3">
-                      <p className={`text-base ${
-                        selectedOptions[currentQuestionIndex] === index 
-                          ? 'text-gray-900 font-medium' 
+                      <p className={`text-base ${selectedOptions[currentQuestionIndex] === index
+                          ? 'text-gray-900 font-medium'
                           : 'text-gray-700'
-                      }`}>
+                        }`}>
                         {option.text}
                       </p>
                     </div>
@@ -1314,7 +1311,7 @@ export default function PsychometricTest() {
                 </div>
               ))}
             </div>
-            
+
             <div className="mb-6">
               <label htmlFor="reasoning" className="block text-sm font-medium text-gray-700 mb-1">
                 Optional: Why did you choose this response? (Your reasoning)
@@ -1328,20 +1325,19 @@ export default function PsychometricTest() {
                 onChange={handleReasoningChange}
               ></textarea>
             </div>
-            
+
             <div className="flex justify-between items-center">
               <button
                 onClick={goToPreviousQuestion}
                 disabled={currentQuestionIndex === 0}
-                className={`px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium ${
-                  currentQuestionIndex === 0
+                className={`px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium ${currentQuestionIndex === 0
                     ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     : 'bg-white text-gray-700 hover:bg-gray-50'
-                }`}
+                  }`}
               >
                 Previous
               </button>
-              
+
               <div className="flex space-x-3">
                 {currentQuestionIndex === test.questions.length - 1 && (
                   <button
@@ -1351,7 +1347,7 @@ export default function PsychometricTest() {
                     Submit Test ({answeredCount}/{totalQuestions})
                   </button>
                 )}
-                
+
                 <button
                   onClick={goToNextQuestion}
                   className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"

@@ -375,11 +375,11 @@ const practiceZones = [
   },
   {
     title: "Technical Training",
-    description: "Take psychometric tests to understand your personality and cognitive abilities.",
+    description: "Evaluate your technical knowledge and subject understanding through structured tests designed for skill improvement.",
     icon: Target,
     color: "gold",
     progress: 25,
-    link:'/psychometricTest'
+    link:'/techMock'
   },
 ];
 

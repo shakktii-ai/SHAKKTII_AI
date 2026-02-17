@@ -1625,7 +1625,8 @@ import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
 import { useRouter } from 'next/router'; // For programmatic navigation
-
+import TermsAndConditions from '../components/terms';
+import PrivacyPolicy from "@/components/Policy";
 export default function Home() {
   const [selected, setSelected] = useState(null);
   const plans = [
@@ -1647,6 +1648,8 @@ export default function Home() {
     "✅ Detailed Analysis",
     "✅ Test 20 (Personality & Academic Test)",
   ];
+  const [showTerms, setShowTerms] = useState(false);
+  const [showPolicy,setShowPolicy]=useState(false);
   return (
     <>
       <Head>
@@ -1657,30 +1660,30 @@ export default function Home() {
       </Head>
 
       <div className="min-h-screen  px-12  bg-cover  items-center justify-center overflow-x-hidden sm:overflow-x-hidden">
-       
 
 
-          {/* Text content section */}
-          <div className="col-span-1 lg:col-span-2 mt-4 pt-10  order-2 lg:order-1 flex flex-col items-center justify-center">
-            <h1 className="text-4xl m-6 md:m-10 font-bold text-shadow-lg " >Your Journey from Learning to Leading Starts Here</h1>
-            <p className="text-2xl m-6 md:m-10 font-semibold  " >Empower your learning journey through skill analysis, real-time chats, and gamified challenges to prepare for mock interviews — with&nbsp;MockMingle</p>
-            <div className="flex justify-center rounded-full  w-full">
-              <Link href={'/language'}><button className="shadow-[0px_0px_5px_5px_rgba(0,0,0,0.10)]  w-[42rem]  text-black py-3 px-6 rounded-full text-lg font-semibold bg-white hover:bg-blue-400 hover:text-white transition duration-300">
-                Get Started
-              </button></Link>
-            </div>
-           
+
+        {/* Text content section */}
+        <div className="col-span-1 lg:col-span-2 mt-4 pt-10  order-2 lg:order-1 flex flex-col items-center justify-center">
+          <h1 className="text-4xl m-6 md:m-10 font-bold text-shadow-lg " >Your Journey from Learning to Leading Starts Here</h1>
+          <p className="text-2xl m-6 md:m-10 font-semibold  " >Empower your learning journey through skill analysis, real-time chats, and gamified challenges to prepare for mock interviews — with&nbsp;MockMingle</p>
+          <div className="flex justify-center rounded-full  w-full">
+            <Link href={'/language'}><button className="shadow-[0px_0px_5px_5px_rgba(0,0,0,0.10)]  w-[42rem]  text-black py-3 px-6 rounded-full text-lg font-semibold bg-white hover:bg-blue-400 hover:text-white transition duration-300">
+              Get Started
+            </button></Link>
           </div>
-        
+
+        </div>
+
       </div>
 
 
       <div id="feature" className="overflow-x-hidden mt-[-6rem] w-full rounded-t-[6.188rem] shadow-[0px_-7px_15.1px_0px_#FFFFFF] bg-[linear-gradient(180.29deg,#D3E7F6_6.63%,#000000_150.86%)] px-4 sm:px-10 py-10">
         {/* Heading */}
-       
+
         {/* Cards */}
-        
-        
+
+
         <div className="relative mt-10 lg:m-40 grid grid-cols-1 lg:grid-cols-2 " style={{ perspective: "1000px" }}>
           <div
             className="transform rounded-lg gap-10"
@@ -1870,7 +1873,7 @@ export default function Home() {
 
 
 
-        
+
       </div>
       <footer id="contact" className=" h-[15rem] md:h-[24rem] overflow-y-hidden overflow-x-hidden">
 
@@ -1885,7 +1888,7 @@ export default function Home() {
               style={{
                 fontFamily: "Arial, sans-serif",
                 backgroundColor: "white",
-                
+
                 textShadow: "2px 2px 3px rgba(0, 0, 0, 0.7)",
                 WebkitBackgroundClip: "text",
                 backgroundClip: "text",
@@ -1895,9 +1898,17 @@ export default function Home() {
             </h2>
             <div className="flex justify-around mt-20">
 
-              <h2 className=" border-2 p-2 rounded-full">Terms & Conditions</h2>
-              <h2 className=" border-2 p-2 rounded-full">Privacy Policy</h2>
+              <button className=" border-2 p-2 rounded-full" onClick={() => setShowTerms(true)}>
+                View Terms
+              </button>
+
+              {showTerms && <TermsAndConditions />}
               
+   <button className=" border-2 p-2 rounded-full" onClick={() => setShowPolicy(true)}>
+               Privacy Policy
+              </button>
+
+              {showPolicy && <PrivacyPolicy />}
             </div>
 
           </div>
