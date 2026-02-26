@@ -324,16 +324,40 @@ const SignUp = () => {
   const [generatedLinks, setGeneratedLinks] = useState([]);
   const [count, setCount] = useState(""); // number of links input
 
+  // useEffect(() => {
+  //   if (!localStorage.getItem("Admintoken")) {
+  //     router.push("/admin/login");
+  //   } else {
+  //     const userFromStorage = JSON.parse(localStorage.getItem("admin"));
+  //     if (userFromStorage) {
+  //       setUser(userFromStorage);
+  //     }
+  //   }
+  // }, []);
   useEffect(() => {
-    if (!localStorage.getItem("Admintoken")) {
-      router.push("/admin/login");
-    } else {
-      const userFromStorage = JSON.parse(localStorage.getItem("admin"));
-      if (userFromStorage) {
-        setUser(userFromStorage);
-      }
-    }
-  }, []);
+  const token = localStorage.getItem("Admintoken");
+
+  if (!token) {
+    router.push("/admin/login");
+    return;
+  }
+
+  const userFromStorage = JSON.parse(localStorage.getItem("admin"));
+
+  if (!userFromStorage) {
+    router.push("/admin/login");
+    return;
+  }
+
+  // ✅ COLLEGE PERMISSION CHECK
+  if (userFromStorage.collageName !== "SPPU") {
+    toast.error("Unauthorized Access");
+    router.push("/admin");
+    return;
+  }
+
+  setUser(userFromStorage);
+}, []);
 
  const handleCreateMultipleUsers = async () => {
   const num = parseInt(count, 10);
