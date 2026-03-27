@@ -258,7 +258,7 @@ export default function ResumeRole() {
     <div className="min-h-screen p-6">
       <Toaster position="top-center" toastOptions={{ duration: 3000 }} />
 
-      <Link href="/" className="block mb-12">
+      <Link href="/dashboard" className="block mb-12">
         <div className="text-2xl w-8 h-8 flex items-center justify-center">
           <IoIosArrowBack />
         </div>

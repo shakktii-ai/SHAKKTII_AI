@@ -341,6 +341,7 @@ const getPerformanceOverview = (reports) => {
     { label: "Reports", href: "/report" },
     { label: "SoftSkills", href: "/practices" },
     {label:"Learn", href:"/suggestion"},
+    {label:"Resume Test", href:"/resumeRole"}
   ];
   
   const isActive = (path) => router.pathname === path;
