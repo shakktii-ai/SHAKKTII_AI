@@ -1,7 +1,7 @@
 
 import mongoose from 'mongoose';
 import Report from '../../models/Report';  // Assuming Report is a Mongoose model for storing reports
-
+  import OverallScore from '../../models/OverallScore';
 // API handler to store and retrieve reports
 export default async function handler(req, res) {
   // Ensure the connection to MongoDB is active
@@ -42,23 +42,55 @@ export default async function handler(req, res) {
     const { email, emails, collageName } = req.query;  // Get email or emails (batch) and collageName from query parameters
 
     // If an individual email is provided, fetch reports for that user
-    if (email) {
-      try {
-        const reports = await Report.find({ email });
+  
 
-        // If no reports are found for this email
-        if (reports.length === 0) {
-          return res.status(404).json({ error: 'No reports found for this email' });
-        }
+if (email) {
+  try {
+    const reports = await Report.find({ email }).lean();
+    const scores = await OverallScore.find({ email }).lean();
 
-        return res.status(200).json({ reports });
-      } catch (err) {
-        console.error(err);
-        return res.status(500).json({ error: 'Failed to retrieve reports for this email' });
-      }
+    if (!reports || reports.length === 0) {
+      return res.status(404).json({ error: 'No reports found' });
+    }
 
-    // If multiple emails are provided (batch request), fetch reports for all of them
-    } else if (emails) {
+  const normalize = (val) =>
+  String(val || "").trim().toLowerCase();
+
+const mergedReports = reports.map(report => {
+  // get all possible matches
+  const possibleScores = scores.filter(s =>
+    normalize(s.email) === normalize(report.email) &&
+    normalize(s.role) === normalize(report.role)
+  );
+
+  // find closest by time
+  let bestMatch = null;
+  let minDiff = Infinity;
+
+  for (const s of possibleScores) {
+    const diff = Math.abs(
+      new Date(s.createdAt) - new Date(report.createdAt)
+    );
+
+    if (diff < minDiff) {
+      minDiff = diff;
+      bestMatch = s;
+    }
+  }
+
+  return {
+    ...report,
+    overallScore: bestMatch ? Number(bestMatch.overallScore) : 0
+  };
+});
+
+    return res.status(200).json({ reports: mergedReports });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Failed to fetch reports' });
+  }
+} else if (emails) {
       try {
         const emailArray = JSON.parse(emails);  // Parse the emails from the query parameter
 

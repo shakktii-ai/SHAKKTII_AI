@@ -350,7 +350,9 @@ const SignUp = () => {
   }
 
   // ✅ COLLEGE PERMISSION CHECK
-  if (userFromStorage.collageName !== "SPPU") {
+ const allowedColleges = ["SPPU", "VIIT"];
+
+  if (!allowedColleges.includes(userFromStorage.collageName)) {
     toast.error("Unauthorized Access");
     router.push("/admin");
     return;

@@ -145,12 +145,12 @@ export default function PremiumReportsPage() {
         return true;
     });
 
-    const uniqueRoles = loading ? [] : Array.from(new Set(dateFilteredReports.map(r => (r.role || "Untitled Role").trim().toLowerCase())))
-        .map(roleLower => dateFilteredReports.find(r => (r.role || "Untitled Role").trim().toLowerCase() === roleLower).role || "Untitled Role");
+    const uniqueRoles = loading ? [] : Array.from(new Set(dateFilteredReports.map(r => String(r.role || "Untitled Role").trim().toLowerCase())))
+        .map(roleLower => dateFilteredReports.find(r => String(r.role || "Untitled Role").trim().toLowerCase() === roleLower).role || "Untitled Role");
 
     const filteredReports = loading ? [] : dateFilteredReports.filter(report => {
         if (filters.role) {
-            return (report.role || "Untitled Role").toLowerCase() === filters.role.toLowerCase();
+            return String(report.role || "Untitled Role").toLowerCase() === filters.role.toLowerCase();
         }
         return true;
     });
@@ -261,13 +261,13 @@ export default function PremiumReportsPage() {
                                     `Skill Analysis: ${currentViewReport.role || "Selected Session"}`
                                 )}
                             </h2>
-                            <p className="text-sm text-slate-400 mt-1">
+                            <div className="text-sm text-slate-400 mt-1">
                                 {loading ? (
                                     <div className="h-4 w-48 bg-slate-100 rounded-lg animate-pulse mt-2" />
                                 ) : (
                                     `Detailed breakdown of your performance on ${new Date(currentViewReport.createdAt).toLocaleDateString()}`
                                 )}
-                            </p>
+                            </div>
                         </div>
 
                         <div className="flex flex-col gap-4">
@@ -320,7 +320,7 @@ export default function PremiumReportsPage() {
                                 ) : (
                                     filteredReports.map((report) => (
                                         <div
-                                            key={report._id || Math.random()}
+                                            key={report._id }
                                             onClick={() => handleReportSelect(report)}
                                             className={`p-4 rounded-xl border transition-all cursor-pointer group relative overflow-hidden ${selectedReport && selectedReport._id === report._id
                                                 ? "bg-indigo-50 border-indigo-200 shadow-sm ring-1 ring-indigo-50"
