@@ -54,6 +54,7 @@ export default function dashboard({ Logout, user }) {
   const [dropdown, setDropdown] = useState(false);
   const [notification, setNotification] = useState(false); // State to track the notification
   const [firstName, setFirstName] = useState(null); // State to store the first name
+  const [userId, setUserId] = useState(null); // State to store userId for resume builder
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // State to control mobile menu
   const [performanceScores, setPerformanceScores] = useState([]);
 
@@ -113,6 +114,10 @@ export default function dashboard({ Logout, user }) {
       router.push("/login");
     } else {
       const userFromStorage = JSON.parse(localStorage.getItem('user'));
+      if (userFromStorage) {
+        setUserId(userFromStorage._id || userFromStorage.id || null);
+        setFirstName(userFromStorage.fullName?.split(' ')[0] || null);
+      }
       if (userFromStorage?.email) {
         fetchReports(userFromStorage.email);
       }
@@ -335,13 +340,19 @@ const getPerformanceOverview = (reports) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   
+  const resumeBuilderBaseUrl = "https://mockmingle-resume.vercel.app/";
+  const resumeBuilderUrl = userId
+    ? `${resumeBuilderBaseUrl}?userId=${encodeURIComponent(userId)}`
+    : resumeBuilderBaseUrl;
+
   const navItems = [
     { label: "Dashboard", href: "/dashboard" },
     { label: "Progress", href: "/progress" },
     { label: "Reports", href: "/report" },
     { label: "SoftSkills", href: "/practices" },
-    {label:"Learn", href:"/suggestion"},
-    {label:"Resume Test", href:"/resumeRole"}
+    { label: "Learn", href: "/suggestion" },
+    { label: "Resume Test", href: "/resumeRole" },
+    { label: "Resume Builder", href: resumeBuilderUrl },
   ];
   
   const isActive = (path) => router.pathname === path;
