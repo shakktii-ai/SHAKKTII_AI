@@ -352,7 +352,7 @@ const getPerformanceOverview = (reports) => {
     { label: "SoftSkills", href: "/practices" },
     { label: "Learn", href: "/suggestion" },
     { label: "Resume Test", href: "/resumeRole" },
-    { label: "Resume Builder", href: resumeBuilderUrl },
+    // { label: "Resume Builder", href: resumeBuilderUrl },
   ];
   
   const isActive = (path) => router.pathname === path;
