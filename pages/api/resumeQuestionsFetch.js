@@ -289,22 +289,57 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  const { resumeBase64, level } = req.body;
+  const { resumeBase64, level,resumeData } = req.body;
+if ((!resumeBase64 && !resumeData) || !level) {
+  return res.status(400).json({
+    error: "Resume and level are required.",
+  });
+}
 
-  if (!resumeBase64 || !level) {
-    return res.status(400).json({ error: 'Resume (base64) and level are required.' });
-  }
 
   try {
     // Convert base64 back to Buffer for pdf-parse
-    const pdfBuffer = Buffer.from(resumeBase64, 'base64');
+    // const pdfBuffer = Buffer.from(resumeBase64, 'base64');
 
-    // Extract text from PDF using pdf-parse
-    // Install: npm install pdf-parse
-    const pdfParse = require('pdf-parse');
-    const pdfData = await pdfParse(pdfBuffer);
-    const resumeText = pdfData.text;
+    // // Extract text from PDF using pdf-parse
+    // // Install: npm install pdf-parse
+    // const pdfParse = require('pdf-parse');
+    // const pdfData = await pdfParse(pdfBuffer);
+    // const resumeText = pdfData.text;
+let resumeText = '';
 
+if (resumeBase64) {
+  const pdfBuffer = Buffer.from(resumeBase64, 'base64');
+  const pdfParse = require('pdf-parse');
+  const pdfData = await pdfParse(pdfBuffer);
+  resumeText = pdfData.text;
+} else if (resumeData) {
+  resumeText = `
+Name: ${resumeData.contact?.fullName || ''}
+Email: ${resumeData.contact?.email || ''}
+Phone: ${resumeData.contact?.phone || ''}
+
+Summary:
+${resumeData.summary?.text || resumeData.summary || ''}
+
+Skills:
+${Array.isArray(resumeData.skills)
+  ? resumeData.skills.join(', ')
+  : JSON.stringify(resumeData.skills || {})}
+
+Experience:
+${JSON.stringify(resumeData.experience || [])}
+
+Education:
+${JSON.stringify(resumeData.education || [])}
+
+Projects:
+${JSON.stringify(resumeData.projects || [])}
+
+Certificates:
+${JSON.stringify(resumeData.certificates || [])}
+`;
+}
     if (!resumeText || resumeText.trim().length < 50) {
       return res.status(400).json({ error: 'Could not extract sufficient text from the resume PDF. Please ensure the PDF is not scanned/image-based.' });
     }

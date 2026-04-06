@@ -7,7 +7,7 @@ interface PracticeZoneCardProps {
   description: string;
    link: string;
   icon: LucideIcon;
-  color: "blue" | "teal" | "purple" | "gold";
+  color: "blue" | "teal" | "purple" | "gold" | "green";
   progress?: number;
   delay?: string;
 }
@@ -19,12 +19,12 @@ const colorStyles = {
     hover: "hover:border-primary/50",
     progressBg: "bg-primary",
   },
-  teal: {
-    bg: "bg-teal/10",
-    icon: "text-teal",
-    hover: "hover:border-teal/50",
-    progressBg: "bg-teal",
-  },
+ teal: {
+  bg: "bg-teal-500/10",
+  icon: "text-teal-600",
+  hover: "hover:border-teal-500/50",
+  progressBg: "bg-teal-500",
+},
   purple: {
     bg: "bg-purple/10",
     icon: "text-purple",
@@ -37,6 +37,12 @@ const colorStyles = {
     hover: "hover:border-gold/50",
     progressBg: "bg-gold",
   },
+ green: {
+  bg: "bg-green-500/10",
+  icon: "text-green-600",
+  hover: "hover:border-green-500/50",
+  progressBg: "bg-green-500",
+},
 };
 
 export function PracticeZoneCard({

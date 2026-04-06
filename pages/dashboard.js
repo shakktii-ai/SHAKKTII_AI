@@ -4,7 +4,7 @@
 
 
 import { useState, useEffect, useRef } from "react";
-import { Bell, Menu, X, User ,Mic,Users,Brain,Code,Target} from "lucide-react";
+import { Bell, Menu, X, User, Mic, Users, Brain, Code, Target, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StreakBadge } from "@/components/dashboard/StreakBadge";
 import { WelcomeHero } from "@/components/dashboard/WelcomeHero";
@@ -244,27 +244,27 @@ export default function dashboard({ Logout, user }) {
   };
 
 
-const getPerformanceOverview = (reports) => {
-  if (!reports || reports.length === 0) return [];
+  const getPerformanceOverview = (reports) => {
+    if (!reports || reports.length === 0) return [];
 
-  // Latest interview
-  const latestReport = [...reports].sort(
-    (a, b) => new Date(b.date) - new Date(a.date)
-  )[0];
+    // Latest interview
+    const latestReport = [...reports].sort(
+      (a, b) => new Date(b.date) - new Date(a.date)
+    )[0];
 
-  const categories = [
-    { key: "communication", label: "Communication" },
-    { key: "confidence", label: "Confidence" },
-    { key: "decision_making", label: "Decision Making" },
-    { key: "technical_proficiency", label: "Technical Depth" },
-  ];
+    const categories = [
+      { key: "communication", label: "Communication" },
+      { key: "confidence", label: "Confidence" },
+      { key: "decision_making", label: "Decision Making" },
+      { key: "technical_proficiency", label: "Technical Depth" },
+    ];
 
-  return categories.map(cat => ({
-    label: cat.label,
-    value: Math.round(getNormalizedScore(latestReport, cat.key)),
-    trend: "up", // can be dynamic later
-  }));
-};
+    return categories.map(cat => ({
+      label: cat.label,
+      value: Math.round(getNormalizedScore(latestReport, cat.key)),
+      trend: "up", // can be dynamic later
+    }));
+  };
 
 
   const fetchUserRank = async (email) => {
@@ -333,17 +333,26 @@ const getPerformanceOverview = (reports) => {
     }
   };
 
- 
+
 
 
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
-  
+
+  const token =
+    typeof window !== 'undefined'
+      ? localStorage.getItem('token')
+      : null;
+
+  // const resumeBuilderBaseUrl = "https://mockmingle-resume.vercel.app/";
   const resumeBuilderBaseUrl = "https://mockmingle-resume.vercel.app/";
-  const resumeBuilderUrl = userId
-    ? `${resumeBuilderBaseUrl}?userId=${encodeURIComponent(userId)}`
+  const resumeBuilderUrl = token
+    ? `${resumeBuilderBaseUrl}?token=${encodeURIComponent(token)}`
     : resumeBuilderBaseUrl;
+  // const resumeBuilderBaseUrl = "https://mockmingle-resume.vercel.app/";
+  // const resumeBuilderUrl = userId
+  //   ? `${resumeBuilderBaseUrl}?userId=${encodeURIComponent(userId)}`
+  //   : resumeBuilderBaseUrl;
 
   const navItems = [
     { label: "Dashboard", href: "/dashboard" },
@@ -351,49 +360,58 @@ const getPerformanceOverview = (reports) => {
     { label: "Reports", href: "/report" },
     { label: "SoftSkills", href: "/practices" },
     { label: "Learn", href: "/suggestion" },
-    { label: "Resume Test", href: "/resumeRole" },
+    // { label: "Resume Test", href: "/resumeRole" },
     // { label: "Resume Builder", href: resumeBuilderUrl },
+    // { label: "Logout", href: "#", onClick: () => { Logout(); router.push("/login"); }}
   ];
-  
+
   const isActive = (path) => router.pathname === path;
-  
 
 
 
-const practiceZones = [
-  {
-    title: "Interview Simulations",
-    description: "Practice full mock interviews with AI-powered feedback and real-time analysis.",
-    icon: Mic,
-    color: "blue",
-    progress: 45,
-    link:'/role',
-  },
-  {
-    title: "Behaviour",
-    description: "Master STAR method responses and situational questions for any role.",
-    icon: Users,
-    color: "purple",
-    progress: 30,
-    link:'/practices'
-  },
-  {
-    title: "Soft Skills",
-    description: "Improve communication, leadership, and interpersonal abilities.",
-    icon: Brain,
-    color: "teal",
-    progress: 60,
-    link:"/skills"
-  },
-  {
-    title: "Technical Training",
-    description: "Evaluate your technical knowledge and subject understanding through structured tests designed for skill improvement.",
-    icon: Target,
-    color: "gold",
-    progress: 25,
-    link:'/techMock'
-  },
-];
+
+  const practiceZones = [
+    {
+      title: "Interview Simulations",
+      description: "Practice full mock interviews with AI-powered feedback and real-time analysis.",
+      icon: Mic,
+      color: "blue",
+      progress: 45,
+      link: '/role',
+    },
+    {
+      title: "Resume-Based Interview",
+      description: "Practice a mock interview tailored to your uploaded resume with AI-powered feedback and real-time analysis.",
+      icon: FileText,
+      color: "green",
+      progress: 45,
+      link: '/resumeRole',
+    },
+    {
+      title: "Behaviour",
+      description: "Master STAR method responses and situational questions for any role.",
+      icon: Users,
+      color: "purple",
+      progress: 30,
+      link: '/practices'
+    },
+    {
+      title: "Soft Skills",
+      description: "Improve communication, leadership, and interpersonal abilities.",
+      icon: Brain,
+      color: "teal",
+      progress: 60,
+      link: "/skills"
+    },
+    {
+      title: "Technical Training",
+      description: "Evaluate your technical knowledge and subject understanding through structured tests designed for skill improvement.",
+      icon: Target,
+      color: "gold",
+      progress: 25,
+      link: '/techMock'
+    },
+  ];
 
 
 
@@ -408,186 +426,218 @@ const practiceZones = [
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
- 
 
 
 
 
-<div className="min-h-screen mt-20 bg-background">
-       <header className="fixed top-0 z-50 w-full bg-card/80 backdrop-blur-md border-b border-border-light">
-      <div className="container mx-auto px-4">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center gap-8">
-            <Link href="/" className="flex items-center gap-2">
-              <div className="h-9 w-9 rounded-lg gradient-blue-teal flex items-center justify-center">
-                <span className="text-lg font-bold text-primary-foreground"><img src="MM_LOGO1.png" alt="" className="w-6 h-6" /></span>
+
+      <div className="min-h-screen mt-20 bg-background">
+        <header className="fixed top-0 z-50 w-full bg-card/80 backdrop-blur-md border-b border-border-light">
+          <div className="container mx-auto px-4">
+            <div className="flex h-16 items-center justify-between">
+              {/* Logo */}
+              <div className="flex items-center gap-8">
+                <Link href="/" className="flex items-center gap-2">
+                  <div className="h-9 w-9 rounded-lg gradient-blue-teal flex items-center justify-center">
+                    <span className="text-lg font-bold text-primary-foreground"><img src="MM_LOGO1.png" alt="" className="w-6 h-6" /></span>
+                  </div>
+                  <span className="text-xl font-bold text-gradient-blue-teal hidden sm:inline">MockMingle</span>
+                </Link>
+
+                {/* Desktop Nav */}
+                <nav className="hidden md:flex items-center gap-1">
+                  {navItems.map((item) => {
+                    const active = isActive(item.href);
+                    return (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${active ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground'
+                          }`}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </nav>
               </div>
-              <span className="text-xl font-bold text-gradient-blue-teal hidden sm:inline">MockMingle</span>
-            </Link>
-            
-            {/* Desktop Nav */}
-            <nav className="hidden md:flex items-center gap-1">
-              {navItems.map((item) => {
-                const active = isActive(item.href);
-                return (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                      active ? 'bg-accent text-accent-foreground' : 'text-muted-foreground hover:text-foreground'
-                    }`}
-                  >
-                    {item.label}
+
+              {/* Right side */}
+              <div className="flex items-center gap-3">
+                <div className="hidden sm:block">
+                  <StreakBadge days={3} />
+                </div>
+
+                <Button variant="ghost" size="icon" className="relative">
+                  <Bell className="h-5 w-5 text-muted-foreground" />
+                  <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground flex items-center justify-center">
+                    2
+                  </span>
+                </Button>
+                {user?.value ? (
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <div className="h-8 w-8 rounded-full gradient-purple-indigo flex items-center justify-center">
+                      <User className="h-4 w-4 text-primary-foreground" />
+                    </div>
+                  </Button>
+
+                ) : (
+                  <Link href="/login">
+                    <button className="px-4 py-2 bg-gradient-to-r  text-white rounded-full  transition duration-300 shadow-lg hover:shadow-xl font-medium">
+                      Login
+                    </button>
                   </Link>
-                );
-              })}
-            </nav>
-          </div>
-          
-          {/* Right side */}
-          <div className="flex items-center gap-3">
-            <div className="hidden sm:block">
-              <StreakBadge days={3} />
-            </div>
-            
-            <Button variant="ghost" size="icon" className="relative">
-              <Bell className="h-5 w-5 text-muted-foreground" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground flex items-center justify-center">
-                2
-              </span>
-            </Button>
-            {user?.value ? (
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <div className="h-8 w-8 rounded-full gradient-purple-indigo flex items-center justify-center">
-                <User className="h-4 w-4 text-primary-foreground" />
+                )}
+                {/* Mobile menu button */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="md:hidden"
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                >
+                  {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                </Button>
               </div>
-            </Button>
-          
-             ) : (
-              <Link href="/login">
-                <button className="px-4 py-2 bg-gradient-to-r  text-white rounded-full  transition duration-300 shadow-lg hover:shadow-xl font-medium">
-                  Login
-                </button>
-              </Link>
+            </div>
+
+            {/* Mobile Nav */}
+            {isMenuOpen && (
+              <nav className="md:hidden py-4 border-t border-border-light animate-fade-in">
+                <div className="flex flex-col gap-1">
+                  {navItems.map((item) => {
+                    const active = isActive(item.href);
+                    return (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${active
+                          ? "text-primary bg-lavender"
+                          : "text-muted-foreground hover:text-purple hover:bg-lavender/50"
+                          }`}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })}
+                </div>
+                <div className="mt-4 px-4">
+                  <StreakBadge days={3} />
+                </div>
+              </nav>
             )}
-            {/* Mobile menu button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
           </div>
-        </div>
-        
-        {/* Mobile Nav */}
-        {isMenuOpen && (
-          <nav className="md:hidden py-4 border-t border-border-light animate-fade-in">
-            <div className="flex flex-col gap-1">
-              {navItems.map((item) => {
-                const active = isActive(item.href);
-                return (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                      active
-                        ? "text-primary bg-lavender"
-                        : "text-muted-foreground hover:text-purple hover:bg-lavender/50"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
+        </header>
+
+        <main className="container mx-auto px-4 py-8">
+          {/* Top Section */}
+          <div className="grid gap-6 lg:grid-cols-3 mb-8">
+            <div className="lg:col-span-2">
+              <WelcomeHero userName={user?.fullName?.split(" ")[0]} />
             </div>
-            <div className="mt-4 px-4">
-              <StreakBadge days={3} />
-            </div>
-          </nav>
-        )}
-      </div>
-    </header>
-      
-      <main className="container mx-auto px-4 py-8">
-        {/* Top Section */}
-        <div className="grid gap-6 lg:grid-cols-3 mb-8">
-          <div className="lg:col-span-2">
-           <WelcomeHero userName={user?.fullName?.split(" ")[0]} />
-          </div>
-          <div className="space-y-6">
-            <RankingCard
-              percentile={userRank.rank}
-              pointsToNext={12}
-              currentPoints={88}
-              maxPoints={100}
-            />
-          </div>
-        </div>
-        
-        {/* Middle Section */}
-        <div className="grid gap-6 lg:grid-cols-3 mb-8">
-          <div className="lg:col-span-2">
-            <DailyNudge />
-          </div>
-          <div>
-            <CreditsCard credits={interviewStats.loading ? '...' : interviewStats.remainingInterviews} />
-          </div>
-        </div>
-        
-        {/* CTA */}
-        <div className="flex justify-center mb-12">
-          <StartSimulationButton />
-        </div>
-        
-        {/* Practice Zones */}
-        <section className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <div>
-              <h2 className="text-2xl font-bold text-foreground">Practice Zones</h2>
-              <p className="text-muted-foreground">Choose an area to improve your skills</p>
-            </div>
-          </div>
-          
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {practiceZones.map((zone, index) => (
-              <PracticeZoneCard
-                key={zone.title}
-                {...zone}
-                delay={`${0.3 + index * 0.1}s`}
+            <div className="space-y-6">
+              <RankingCard
+                percentile={userRank.rank}
+                pointsToNext={12}
+                currentPoints={88}
+                maxPoints={100}
               />
-            ))}
-          </div>
-        </section>
-        
-        {/* Score Overview */}
-        <section className="mb-8">
-          <div className="max-w-2xl">
-            <ScoreChart scores={performanceScores} />
-          </div>
-        </section>
-      </main>
-      
-      {/* Footer */}
-      <footer className="border-t border-border-light bg-card/50 py-6">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-lg gradient-blue-teal flex items-center justify-center">
-                <span className="text-sm font-bold text-primary-foreground">M</span>
-              </div>
-              <span className="text-sm font-semibold text-foreground">MockMingle 2.0</span>
             </div>
-            <p className="text-sm text-muted-foreground">
-              Your AI Career Coach • Build confidence, one interview at a time.
-            </p>
           </div>
-        </div>
-      </footer>
-    </div>
+
+          {/* Middle Section */}
+          <div className="grid gap-6 lg:grid-cols-3 mb-8">
+            <div className="lg:col-span-2">
+              <DailyNudge />
+            </div>
+            <div>
+              <CreditsCard credits={interviewStats.loading ? '...' : interviewStats.remainingInterviews} />
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="flex justify-center mb-12">
+            <StartSimulationButton />
+          </div>
+
+          {/* Practice Zones */}
+          <section className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-foreground">Practice Zones</h2>
+                <p className="text-muted-foreground">Choose an area to improve your skills</p>
+              </div>
+            </div>
+
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+              {practiceZones.map((zone, index) => (
+                <PracticeZoneCard
+                  key={zone.title}
+                  {...zone}
+                  delay={`${0.3 + index * 0.1}s`}
+                />
+              ))}
+            </div>
+          </section>
+          <section className="mb-12">
+            <div className="relative overflow-hidden rounded-3xl border border-violet-100 bg-white p-6 sm:p-8 shadow-sm">
+              {/* Background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-violet-50 via-white to-cyan-50" />
+              <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-violet-100/60 blur-3xl" />
+              <div className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-cyan-100/60 blur-3xl" />
+
+              <div className="relative flex flex-col gap-6 lg:flex-row lg:items-center">
+                {/* Left Content */}
+                <div className="max-w-full">
+                  <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-violet-100 px-4 py-1.5 text-sm font-medium text-violet-700">
+                    <span className="flex h-2 w-2 rounded-full bg-violet-500" />
+                    AI-Powered Resume Builder
+                  </div>
+
+                  <h1 className="text-xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-3xl">
+                    Build a Professional Resume in Minutes
+                  </h1>
+
+                  <p className="mt-4 max-w-full text-base leading-7 text-slate-600 sm:text-lg">
+                    Create ATS-friendly resumes with smart suggestions, beautiful templates,
+                    and instant improvements tailored to your dream role.
+                  </p>
+
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <Link href={resumeBuilderUrl} className="rounded-2xl bg-violet-600 px-6 py-3 text-sm font-semibold text-white shadow-md transition hover:bg-violet-700">
+                      Create New Resume
+                    </Link>
+
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          {/* Score Overview */}
+          <section className="mb-8">
+            <div className="max-w-2xl">
+              <ScoreChart scores={performanceScores} />
+            </div>
+          </section>
+        </main>
+
+        {/* Footer */}
+        <footer className="border-t border-border-light bg-card/50 py-6">
+          <div className="container mx-auto px-4">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <div className="h-7 w-7 rounded-lg gradient-blue-teal flex items-center justify-center">
+                  <span className="text-sm font-bold text-primary-foreground">M</span>
+                </div>
+                <span className="text-sm font-semibold text-foreground">MockMingle 2.0</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Your AI Career Coach • Build confidence, one interview at a time.
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
 
     </>
   );

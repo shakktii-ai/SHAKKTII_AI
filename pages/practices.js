@@ -51,7 +51,7 @@ function Practices() {
       description: "Evaluate your personality, aptitude, and decision-making style through a structured psychometric assessment.",
       image: "/personality.png",
       bgColor: "from-purple-600 to-indigo-800",
-      link: "/excelTest"
+      link: "/psychometricTest"
     },
   ];
 

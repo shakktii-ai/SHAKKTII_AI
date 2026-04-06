@@ -42,7 +42,7 @@ const handler = async (req, res) => {
                     education: user.education,
                 },
                 process.env.JWT_SECRET || "jwtsecret",
-                { expiresIn: "1h" }
+                { expiresIn: "7d" }
             );
 
             // Send user data and token in response
