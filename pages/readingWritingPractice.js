@@ -453,6 +453,7 @@ function ReadingWritingPractice() {
       // Get userId from localStorage
       const userObj = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
       const userId = userObj?._id || userObj?.id || '6462d8fbf6c3e30000000001';
+      const email = userObj?.email || null;
       
       // Get or generate a valid cardId
       let cardId = currentQuestion?.cardId;
@@ -479,6 +480,7 @@ function ReadingWritingPractice() {
           score: 0, // To be determined by AI
           timeSpent: (currentQuestion?.timeLimit || 60) - (timeLeft || 0), // Add safety check
           userId,
+          email: email, // Include email for points awarding
           level: selectedLevel, // Include the level number
           difficulty: difficulty, // Include the difficulty
           skillArea: mode === 'reading' ? 'Reading' : 'Writing' // Explicitly specify skill area based on mode
@@ -584,6 +586,7 @@ function ReadingWritingPractice() {
       // Get userId from localStorage
       const userObj = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
       const userId = userObj?._id || userObj?.id || '6462d8fbf6c3e30000000001'; // Use default ID if not found
+      const email = userObj?.email || null;
       
       // Ensure we have a valid level value (use 1 as default if none is selected)
       const levelToEvaluate = selectedLevel || 1;
@@ -617,6 +620,7 @@ function ReadingWritingPractice() {
         },
         body: JSON.stringify({
           userId,
+          email: email, // Add email for points awarding
           skillArea: mode === 'reading' ? 'Reading' : 'Writing',
           difficulty,
           level: levelToEvaluate, // Use the validated level value

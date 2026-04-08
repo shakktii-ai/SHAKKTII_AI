@@ -3,6 +3,7 @@ import PracticeResponse from "../../models/PracticeResponse";
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import connectDb from '../../middleware/dbConnect';
+import { awardSkillPracticePoints } from '../../lib/pointsEngine';
 
 export const config = {
   runtime: 'nodejs',
@@ -188,7 +189,7 @@ async function handler(req, res) {
   // Get token from request header (but don't fail if no token)
   const token = req.headers.authorization?.split(' ')[1];
   
-  const { userId, skillArea, difficulty, level, responses } = req.body;
+  const { userId, skillArea, difficulty, level, responses, email } = req.body;
   
   if (!responses || !Array.isArray(responses) || responses.length === 0) {
     return res.status(400).json({ success: false, error: 'No responses provided' });
@@ -340,6 +341,20 @@ async function handler(req, res) {
       
       // Save progress record after updating
       await progressRecord.save();
+      
+      // Award points for completing the skill level
+      if (email) {
+        try {
+          const pointsResult = await awardSkillPracticePoints(email, {
+            skillArea: skillArea,
+            moduleId: `${skillArea}_${difficulty}_level${levelNum}`,
+            difficulty: difficulty
+          });
+          console.log('[Points] Level completion points awarded:', pointsResult.pointsAwarded);
+        } catch (pointsError) {
+          console.error('[Points] Error awarding level completion points:', pointsError);
+        }
+      }
       
       // Get the calculated stars from the level progress for consistent UI display
       const levelObj = progressRecord.levelProgress.find(lp => lp.level === levelNum);

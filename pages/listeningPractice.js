@@ -388,8 +388,9 @@ function ListeningPractice() {
       
       // Get user ID
       const userObj = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
-      const userId = userObj?._id || userObj?.id || '6462d8fbf6c3e30000000001';
-      
+      const userId = userObj?._id || userObj?.id ;
+      const email = userObj?.email || null;
+     console.log("email",email)
       // Check if the question has a valid MongoDB ObjectId
       // Always ensure we have a valid cardId to use for database referencing
       const cardId = questions[currentIndex].cardId || `L-${difficulty.charAt(0)}-${selectedLevel.toString().padStart(2, '0')}-${(currentIndex + 1).toString().padStart(2, '0')}`;
@@ -412,6 +413,7 @@ function ListeningPractice() {
           score: 0, // To be determined by AI
           timeSpent: questions[currentIndex].timeLimit - timeLeft,
           userId,
+          email: email, // Include email for points awarding
           level: selectedLevel, // Include the level number
           difficulty: difficulty // Include the difficulty
         })
@@ -487,6 +489,7 @@ function ListeningPractice() {
       // Get userId from localStorage
       const userObj = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
       const userId = userObj?._id || userObj?.id || '6462d8fbf6c3e30000000001'; // Use default ID if not found
+      const email = userObj?.email || null;
       
       // Ensure we have a valid level value (use 1 as default if none is selected)
       const levelToEvaluate = selectedLevel || 1;
@@ -520,6 +523,7 @@ function ListeningPractice() {
         },
         body: JSON.stringify({
           userId,
+          email: email, // Add email for points awarding
           skillArea: 'Listening',
           difficulty,
           level: levelToEvaluate, // Use the validated level value

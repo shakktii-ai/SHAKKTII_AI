@@ -314,6 +314,7 @@ function SpeakingPractice() {
       // Get user ID from localStorage to avoid token-in-header issues
       const userObj = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
       const userId = userObj?._id || userObj?.id || '6462d8fbf6c3e30000000001';
+      const email = userObj?.email || null;
       
       const currentQuestion = questions[currentIndex];
       // Check if the question has a valid MongoDB ObjectId
@@ -346,6 +347,7 @@ function SpeakingPractice() {
           score: 0, // Will be assessed by AI
           timeSpent: currentQuestion.timeLimit - timeLeft,
           userId: userId, // Include userId in the body instead
+          email: email, // Include email for points awarding
           level: selectedLevel, // Include the level number
           difficulty: difficulty, // Include the difficulty
           skillArea: 'Speaking' // Explicitly set skill area to Speaking
@@ -444,6 +446,7 @@ function SpeakingPractice() {
       // Get userId from localStorage
       const userObj = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
       const userId = userObj?._id || userObj?.id || '6462d8fbf6c3e30000000001'; // Use default ID if not found
+      const email = userObj?.email || null;
       
       // Ensure we have a valid level value (use 1 as default if none is selected)
       const levelToEvaluate = selectedLevel || 1;
@@ -456,6 +459,7 @@ function SpeakingPractice() {
         },
         body: JSON.stringify({
           userId,
+          email: email, // Add email for points awarding
           skillArea: 'Speaking',
           difficulty,
           level: levelToEvaluate, // Use the validated level value
