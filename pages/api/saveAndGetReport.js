@@ -2,6 +2,7 @@
 import mongoose from 'mongoose';
 import Report from '../../models/Report';  // Assuming Report is a Mongoose model for storing reports
   import OverallScore from '../../models/OverallScore';
+import { awardMockInterviewPoints, awardImprovementBonus, updateStreak } from '../../lib/pointsEngine';
 // API handler to store and retrieve reports
 export default async function handler(req, res) {
   // Ensure the connection to MongoDB is active
@@ -29,6 +30,26 @@ export default async function handler(req, res) {
 
       // Save the report in the database
       await newReport.save();
+
+      // ─── Points Integration ───────────────────────────────────
+      try {
+        const { level = 'Beginner', overallScore } = req.body;
+        const isReattempt = req.body.isReattempt || false;
+        const newScore = typeof overallScore === 'number' ? overallScore : 0;
+
+        // Award mock interview points (fire-and-forget, don't block response)
+        const [interviewResult, improvementResult] = await Promise.all([
+          awardMockInterviewPoints(email, { level, jobRole: role, isReattempt }),
+          awardImprovementBonus(email, { jobRole: role, newScore, level }),
+        ]);
+
+        console.log('[Points] Interview points awarded:', interviewResult.pointsAwarded);
+        console.log('[Points] Improvement bonus:', improvementResult.bonusPoints);
+      } catch (pointsError) {
+        // Never block the report save because of points errors
+        console.error('[Points] Error awarding interview points:', pointsError);
+      }
+      // ─────────────────────────────────────────────────────────
 
       // Respond with success message
       return res.status(201).json({ message: 'Report stored successfully', report: newReport });

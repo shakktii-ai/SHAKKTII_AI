@@ -3,6 +3,7 @@ import PracticeResponse from "../../models/PracticeResponse";
 import PracticeProgress from "../../models/PracticeProgress";
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import { awardSkillPracticePoints } from '../../lib/pointsEngine';
 
 async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -127,6 +128,18 @@ async function handler(req, res) {
       feedback,
       score: calculatedScore // Send the calculated score in the response
     });
+
+    // ─── Points Integration (fire-and-forget after response sent) ───
+    // Note: We award points async without blocking the user response
+    const emailForPoints = req.body.email || req.body.userEmail || null;
+    if (emailForPoints) {
+      const detectedSkillAreaFinal = skillArea || getSkillAreaFromCardId(cardId) || 'Listening';
+      awardSkillPracticePoints(emailForPoints, {
+        skillArea: detectedSkillAreaFinal,
+        moduleId: `${detectedSkillAreaFinal}_${difficulty || getDifficultyFromCardId(cardId) || 'Beginner'}`,
+      }).catch((err) => console.error('[Points] Skill practice award error:', err));
+    }
+    // ────────────────────────────────────────────────────────────────
   } catch (error) {
     console.error('Error submitting practice response:', error);
     return res.status(500).json({ error: 'Server error processing response' });

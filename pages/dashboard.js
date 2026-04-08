@@ -14,6 +14,8 @@ import { PracticeZoneCard } from "@/components/dashboard/PracticeZoneCard";
 import { StartSimulationButton } from "@/components/dashboard/StartSimulationButton";
 import { ScoreChart } from "@/components/dashboard/ScoreChart";
 import { DailyNudge } from "@/components/dashboard/DailyNudge";
+import { PointsOverview } from "@/components/dashboard/PointsOverview";
+import { PointsHistory } from "@/components/dashboard/PointsHistory";
 
 
 
@@ -76,6 +78,21 @@ export default function dashboard({ Logout, user }) {
     percentile: '--'
   });
 
+  // Points system state
+  const [pointsData, setPointsData] = useState({
+    totalPoints: 0,
+    level: 1,
+    levelName: 'Starter',
+    currentStreak: 0,
+    percentile: 0,
+    pointsToNextLevel: 0,
+    nextLevelName: null,
+    recentLog: [],
+    loading: true,
+  });
+  const [userEmail, setUserEmail] = useState('');
+
+
   // Add leaderboard link to the dashboard navigation
   useEffect(() => {
     const navLinks = document.querySelector('.dashboard-links');
@@ -117,12 +134,15 @@ export default function dashboard({ Logout, user }) {
       if (userFromStorage) {
         setUserId(userFromStorage._id || userFromStorage.id || null);
         setFirstName(userFromStorage.fullName?.split(' ')[0] || null);
+        setUserEmail(userFromStorage.email || '');
       }
       if (userFromStorage?.email) {
         fetchReports(userFromStorage.email);
+        fetchPointsData(userFromStorage.email);
       }
     }
   }, []);
+
 
 
 
@@ -284,6 +304,29 @@ export default function dashboard({ Logout, user }) {
       console.error('Error fetching user rank:', error);
     }
   };
+
+  // Fetch points summary data
+  const fetchPointsData = async (email) => {
+    if (!email) return;
+    try {
+      const res = await fetch(`/api/points/summary?email=${encodeURIComponent(email)}`);
+      const d = await res.json();
+      if (d.success !== false) {
+        setPointsData({ ...d, loading: false });
+        // Also sync streak and rank from points data
+        setUserRank({
+          rank: d.rank || '--',
+          totalUsers: d.totalUsers || '--',
+          percentile: d.percentile || '--',
+        });
+      }
+    } catch (e) {
+      console.error('Error fetching points data:', e);
+    } finally {
+      setPointsData(prev => ({ ...prev, loading: false }));
+    }
+  };
+
 
   const fetchInterviewStats = async (email) => {
     if (!email) return;
@@ -521,7 +564,7 @@ export default function dashboard({ Logout, user }) {
                   })}
                 </div>
                 <div className="mt-4 px-4">
-                  <StreakBadge days={3} />
+                  <StreakBadge days={pointsData.currentStreak} />
                 </div>
               </nav>
             )}
@@ -536,13 +579,35 @@ export default function dashboard({ Logout, user }) {
             </div>
             <div className="space-y-6">
               <RankingCard
-                percentile={userRank.rank}
-                pointsToNext={12}
-                currentPoints={88}
-                maxPoints={100}
+                percentile={typeof userRank.percentile === 'number' ? userRank.percentile : 0}
+                pointsToNext={pointsData.pointsToNextLevel || 0}
+                currentPoints={pointsData.totalPoints || 0}
+                maxPoints={(() => {
+                  const lvlMaxes = [200, 500, 1000, 2000, 3500, Infinity];
+                  const lvlMins = [0, 200, 500, 1000, 2000, 3500];
+                  const lvl = (pointsData.level || 1) - 1;
+                  const max = lvlMaxes[Math.min(lvl, 5)];
+                  const min = lvlMins[Math.min(lvl, 5)];
+                  return max === Infinity ? (pointsData.totalPoints || 3500) + 500 : max - min;
+                })()}
+                level={pointsData.level || 1}
+                levelName={pointsData.levelName || 'Starter'}
+                totalPoints={pointsData.totalPoints || 0}
               />
             </div>
           </div>
+
+          {/* Points Overview Section */}
+          {userEmail && (
+            <div className="grid gap-6 lg:grid-cols-3 mb-8">
+              <div className="lg:col-span-2">
+                <PointsOverview email={userEmail} />
+              </div>
+              <div>
+                <PointsHistory log={pointsData.recentLog || []} />
+              </div>
+            </div>
+          )}
 
           {/* Middle Section */}
           <div className="grid gap-6 lg:grid-cols-3 mb-8">

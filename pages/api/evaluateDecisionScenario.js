@@ -1,4 +1,5 @@
 import { OpenAI } from 'openai';
+import { awardSkillPracticePoints } from '../../lib/pointsEngine';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
@@ -321,6 +322,16 @@ const handler = async (req, res) => {
       evaluation,
       message: 'Decision responses evaluated successfully'
     });
+
+    // ─── Points Integration (fire-and-forget after response) ───
+    const emailForPoints = req.body.email || req.body.userEmail || null;
+    if (emailForPoints) {
+      awardSkillPracticePoints(emailForPoints, {
+        skillArea: 'DecisionMaking',
+        moduleId: `decision_${difficulty}_level${level}`,
+      }).catch((err) => console.error('[Points] Simulation points award error:', err));
+    }
+    // ─────────────────────────────────────────────────────────
   } catch (error) {
     console.error('Error in evaluateDecisionScenario API:', error);
     return res.status(500).json({ success: false, error: 'Internal Server Error' });

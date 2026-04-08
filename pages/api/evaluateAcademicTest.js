@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
 import dbConnect from '../../lib/dbConnect';
 import AcademicTestResult from '../../models/AcademicTestResult';
+import { awardGamePoints } from '../../lib/pointsEngine';
 
 // Shared in-memory storage for test data
 let testStoreInitialized = false;
@@ -600,6 +601,17 @@ async function handler(req, res) {
       success: true,
       ...responseData
     });
+
+    // ─── Points Integration (fire-and-forget after response) ───
+    const emailForPoints = req.body.email || req.body.userEmail || testData?.userEmail || null;
+    if (emailForPoints && evaluation?.overallScore !== undefined) {
+      awardGamePoints(emailForPoints, {
+        gameType: `${testData?.subject || 'academic'}_${testData?.stream || 'general'}`.toLowerCase().replace(/\s+/g, '_'),
+        score: evaluation.overallScore,
+        maxScore: 100,
+      }).catch((err) => console.error('[Points] Game points award error:', err));
+    }
+    // ─────────────────────────────────────────────────────────
 
   } catch (error) {
     console.error('Error in evaluation handler:', error);

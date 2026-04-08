@@ -63,24 +63,23 @@ import AdminNav from "@/components/adminNav";
 import Navbar from "@/components/navbar";
 
 export default function App({ Component, pageProps }) {
-  const [user, setUser] = useState({ value: null });
+  const [user, setUser] = useState(undefined); // 👈 important
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const userData = localStorage.getItem("user");
+  const token = localStorage.getItem("token");
+  const userData = localStorage.getItem("user");
 
-    if (token && userData) {
-      try {
-        setUser({ value: token, ...JSON.parse(userData) });
-      } catch (err) {
-        console.error("Failed to parse user data", err);
-        setUser({ value: null });
-      }
-    } else {
-      setUser({ value: null });
+  if (token && userData) {
+    try {
+      setUser({ value: token, ...JSON.parse(userData) });
+    } catch (err) {
+      setUser(null); // 👈 invalid data
     }
-  }, [router.pathname]);
+  } else {
+    setUser(null); // 👈 not logged in
+  }
+}, [router.pathname]);
 
   const logout = () => {
     localStorage.removeItem("token");
