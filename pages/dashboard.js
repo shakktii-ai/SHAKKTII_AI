@@ -508,7 +508,7 @@ export default function dashboard({ Logout, user }) {
               {/* Right side */}
               <div className="flex items-center gap-3">
                 <div className="hidden sm:block">
-                  <StreakBadge days={3} />
+                  <StreakBadge days={pointsData.currentStreak} />
                 </div>
 
                 <Button variant="ghost" size="icon" className="relative">
@@ -581,7 +581,12 @@ export default function dashboard({ Logout, user }) {
               <RankingCard
                 percentile={typeof userRank.percentile === 'number' ? userRank.percentile : 0}
                 pointsToNext={pointsData.pointsToNextLevel || 0}
-                currentPoints={pointsData.totalPoints || 0}
+                currentPoints={(() => {
+                  const lvlMins = [0, 200, 500, 1000, 2000, 3500];
+                  const lvl = (pointsData.level || 1) - 1;
+                  const min = lvlMins[Math.min(lvl, 5)];
+                  return (pointsData.totalPoints || 0) - min;
+                })()}
                 maxPoints={(() => {
                   const lvlMaxes = [200, 500, 1000, 2000, 3500, Infinity];
                   const lvlMins = [0, 200, 500, 1000, 2000, 3500];
