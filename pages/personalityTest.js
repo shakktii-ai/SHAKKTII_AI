@@ -165,6 +165,10 @@ function PersonalityTest() {
       
       console.log('Submitting test responses');
       
+      // Get user email from localStorage for points
+      const userObj = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+      const userEmail = userObj?.email || null;
+      
       // Prepare minimal request body
       const requestBody = {
         responses: formattedResponses,
@@ -172,7 +176,8 @@ function PersonalityTest() {
           id: q.id,
           text: q.text
           // Don't include options here as they're not needed for evaluation
-        }))
+        })),
+        email: userEmail // Add email for points awarding
       };
       
       // Use minimal headers - no authentication

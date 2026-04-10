@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import PracticeProgress from '../../../models/PracticeProgress';
+import { awardSkillPracticePoints } from '../../../lib/pointsEngine';
 
 // Connect to MongoDB
 const MONGODB_URI = process.env.MONGODB_URI;
@@ -128,7 +129,7 @@ export default async function handler(req, res) {
       body += chunk;
     }
     
-    const { questions, responses } = JSON.parse(body);
+   const { questions, responses, email, userEmail } = JSON.parse(body);
     
     // Validate request data
     const { questions: validatedQuestions, responses: validatedResponses } = 
@@ -272,6 +273,21 @@ export default async function handler(req, res) {
         // Continue with the response even if saving progress fails
       }
 
+      // Award points for completing Personality Test
+      const emailForPoints = email || userEmail || null;
+      if (emailForPoints) {
+        try {
+          const pointsResult = await awardSkillPracticePoints(emailForPoints, {
+            skillArea: 'Personality',
+            moduleId: `personality_test_${Date.now()}`,
+            difficulty: 'Beginner'
+          });
+          console.log('[Points] Personality Test points awarded:', pointsResult.pointsAwarded);
+        } catch (pointsError) {
+          console.error('[Points] Error awarding Personality Test points:', pointsError);
+        }
+      }
+
       // Return the analysis in the format expected by the frontend
       return res.status(200).json({
         success: true,
@@ -288,15 +304,7 @@ export default async function handler(req, res) {
             personalityType: analysis.personalityType || 'Your Personality Profile',
             executiveSummary: analysis.executiveSummary || analysis.summary || 'No summary available',
             careerMatches: formatArray(analysis.careerMatches || [])
-          },
-          meta: {
-            generatedAt: new Date().toISOString(),
-            isAuthenticated: true,
-            message: 'Your test results have been saved!',
-            reportId: `report-${Date.now()}`
-          }
         },
-        // Include progress information in the response
         progress: {
           userId,
           skillArea: 'Personality',
@@ -306,8 +314,11 @@ export default async function handler(req, res) {
           questionsAttempted: validatedQuestions.length,
           totalStarsEarned: 1
         }
+      }
       });
-    
+
+      
+
     } catch (error) {
       // Clear timeout if it was set
       if (timeoutId) clearTimeout(timeoutId);

@@ -397,6 +397,7 @@ const userEmail = loggedInUser.email;
     return (
         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-purple-500/30 overflow-x-hidden relative">
             <Head><title>Assessment | Shakkti AI</title></Head>
+             
 
             <div className="fixed inset-0 z-0 pointer-events-none">
                 <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-purple-900/20 rounded-full blur-[120px]"></div>
@@ -428,8 +429,14 @@ const userEmail = loggedInUser.email;
             <div className="hidden sm:block text-sm text-slate-400 bg-white/5 px-4 py-2 rounded-full">
                 Hi, {loggedInUser.fullName}
             </div>
+            
         )}
-       
+       <button
+            onClick={() => router.push('/technicalTestHistory')}
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+          >
+            Technical History
+          </button>
     </div>
 
 </nav>
@@ -471,3 +478,5 @@ const userEmail = loggedInUser.email;
         </div>
     );
 }
+
+

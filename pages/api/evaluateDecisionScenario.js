@@ -288,7 +288,7 @@ const handler = async (req, res) => {
   // No token/auth required
 
   try {
-    const { skillArea, difficulty, level, responses, scenarios = [] } = req.body;
+    const { skillArea, difficulty, level, responses, scenarios = [], userEmail } = req.body;
 
     if (!skillArea || skillArea !== 'DecisionMaking') {
       return res.status(400).json({ success: false, error: 'Invalid skill area' });
@@ -317,14 +317,8 @@ const handler = async (req, res) => {
     const stars = evaluation?.stars || 2;
     await updateUserProgress(userId, difficulty, level, stars);
     
-    return res.status(200).json({
-      success: true,
-      evaluation,
-      message: 'Decision responses evaluated successfully'
-    });
-
     // ─── Points Integration (fire-and-forget after response) ───
-    const emailForPoints = req.body.email || req.body.userEmail || null;
+    const emailForPoints = userEmail || null;
     if (emailForPoints) {
       awardSkillPracticePoints(emailForPoints, {
         skillArea: 'DecisionMaking',
@@ -332,6 +326,12 @@ const handler = async (req, res) => {
       }).catch((err) => console.error('[Points] Simulation points award error:', err));
     }
     // ─────────────────────────────────────────────────────────
+
+    return res.status(200).json({
+      success: true,
+      evaluation,
+      message: 'Decision responses evaluated successfully'
+    });
   } catch (error) {
     console.error('Error in evaluateDecisionScenario API:', error);
     return res.status(500).json({ success: false, error: 'Internal Server Error' });

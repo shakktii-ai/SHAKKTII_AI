@@ -2,6 +2,7 @@ import connectDb from "../../../middleware/dbConnectt";
 import PsychometricTestNew from "../../../models/PsychometricTestNew";
 import PsychometricResponseNew from "../../../models/PsychometricResponseNew";
 import User from "../../../models/User";
+import { awardSkillPracticePoints } from "../../../lib/pointsEngine";
 
 // Increase maxDuration to 300 seconds (5 minutes) to allow for longer processing
 // This is the maximum allowed by Vercel/Next.js API routes
@@ -985,11 +986,27 @@ async function handler(req, res) {
       responseId: newResponse ? newResponse._id : null,
       evaluation // Send the complete evaluation object
     };
-    
+     // Award points for completing Psychometric Test
+    // const emailForPoints = req.body.email || req.body.userEmail || emailToUse || null;
+     const emailForPoints = email || userEmail || null;
+    if (emailForPoints) {
+      try {
+        const pointsResult = await awardSkillPracticePoints(emailForPoints, {
+          skillArea: 'Psychometric',
+          moduleId: `psychometric_test_${testRecord?._id || 'unknown'}_${Date.now()}`,
+          difficulty: 'Beginner'
+        });
+        console.log('[Points] Psychometric Test points awarded:', pointsResult.pointsAwarded);
+      } catch (pointsError) {
+        console.error('[Points] Error awarding Psychometric Test points:', pointsError);
+      }
+    }
     // Log the evaluation data being sent to the frontend
     console.log('Sending evaluation data to frontend:', JSON.stringify(evaluation).substring(0, 200) + '...');
 
     return res.status(200).json(apiResponseData);
+
+   
     
   } catch (error) {
     console.error('Critical error in psychometric test evaluation:', {

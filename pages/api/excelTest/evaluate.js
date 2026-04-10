@@ -1,6 +1,7 @@
 // pages/api/excelTest/evaluate.js
 import mongoose from 'mongoose';
 import PracticeProgress from '../../../models/PracticeProgress';
+import { awardSkillPracticePoints } from '../../../lib/pointsEngine';
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -67,7 +68,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid JSON body' });
     }
 
-    const { questions, answers } = body;
+    const { questions, answers, email, userEmail } = body;
     if (!Array.isArray(questions) || !answers) {
       return res.status(400).json({ error: 'Missing questions or answers' });
     }
@@ -154,12 +155,27 @@ export default async function handler(req, res) {
     } catch (dbErr) {
       console.error('DB Save Error:', dbErr);
     }
-
+ // Award points for completing Excel Test
+    const emailForPoints = email || userEmail || null;
+    if (emailForPoints) {
+      try {
+        const pointsResult = await awardSkillPracticePoints(emailForPoints, {
+          skillArea: 'Excel',
+          moduleId: `excel_test_${Date.now()}`,
+          difficulty: 'Moderate'
+        });
+        console.log('[Points] Excel Test points awarded:', pointsResult.pointsAwarded);
+      } catch (pointsError) {
+        console.error('[Points] Error awarding Excel Test points:', pointsError);
+      }
+    }
     return res.status(200).json({
       success: true,
       data: evaluation,
       meta: { generatedAt: new Date().toISOString(), reportId: `report-${Date.now()}` },
     });
+
+   
   } catch (err) {
     if (timeoutId) clearTimeout(timeoutId);
     console.error('Evaluation Error:', err);

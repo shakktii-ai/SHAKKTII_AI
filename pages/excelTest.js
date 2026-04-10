@@ -81,6 +81,10 @@ useEffect(() => {
       setSubmitting(true);
       if (timerId) clearInterval(timerId);
 
+      // Get user email for points
+      const userObj = localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null;
+      const userEmail = userObj?.email || null;
+
       const formattedAnswers = questions.map((q) => ({
         id: q.id,
         question: q.question,
@@ -93,7 +97,7 @@ useEffect(() => {
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ questions, answers: formattedAnswers }),
+          body: JSON.stringify({ questions, answers: formattedAnswers, email: userEmail }),
         }
       );
 

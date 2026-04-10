@@ -5,6 +5,7 @@
 import mongoose from "mongoose";
 import TechnicalReport from "../../models/TechnicalReport";
 import jwt from "jsonwebtoken";
+import { awardSkillPracticePoints } from "../../lib/pointsEngine";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -201,6 +202,20 @@ percentage: percentage,
 
       reportAnalysis: aiReport,
     });
+
+    // Award points for completing Technical Test
+    if (authEmail) {
+      try {
+        const pointsResult = await awardSkillPracticePoints(authEmail, {
+          skillArea: 'Technical',
+          moduleId: `technical_test_${Date.now()}`,
+          difficulty: 'Moderate'
+        });
+        console.log('[Points] Technical Test points awarded:', pointsResult.pointsAwarded);
+      } catch (pointsError) {
+        console.error('[Points] Error awarding Technical Test points:', pointsError);
+      }
+    }
 
     return res.json({
       success: true,
