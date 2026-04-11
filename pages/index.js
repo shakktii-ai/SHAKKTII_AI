@@ -1624,32 +1624,32 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
-import { useRouter } from 'next/router'; // For programmatic navigation
-import TermsAndConditions from '../components/terms';
-import PrivacyPolicy from "@/components/Policy";
+   import { motion } from 'framer-motion';
+
+import WhyMock from "../components/landingPage/whyMock";
+import ScoreSection from "../components/landingPage/scoreSection";
+import Footer from "@/components/landingPage/Footer";
+import ProductValue from "@/components/landingPage/productValue";
+import RealCost from "@/components/landingPage/RealCost";
+import PerformanceTrade from "@/components/landingPage/PerformanceTrade";
+import DemoVideo from "@/components/landingPage/DemoVideo";
+import WhyFail from "@/components/landingPage/WhyFail";
+import Testimonials from "@/components/landingPage/Testimonials";
 export default function Home() {
-  const [selected, setSelected] = useState(null);
-  const plans = [
-    { title: '8th to 12th', price: 99 },
-    { title: 'Graduate', price: 99 },
-    { title: 'Post Graduate', price: 99 },
-    { title: 'Competitive', price: 99 },
-    { title: 'Professional', price: 99 },
-  ];
-  const features = [
-    "5 Mock Interviews",
-    "✅ Interview Reports",
-    "✅ Chat Support (+Rs 99)",
-    "✅ YouTube Video Suggestions",
-    "✅ Detailed Score Progress",
-    "✅ Performance Analysis",
-    "✅ Score by Job Role",
-    "✅ Comparison Interviews",
-    "✅ Detailed Analysis",
-    "✅ Test 20 (Personality & Academic Test)",
-  ];
-  const [showTerms, setShowTerms] = useState(false);
-  const [showPolicy,setShowPolicy]=useState(false);
+  // Animation Variants
+  const fadeInUp = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  };
+
+  const staggerContainer = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.2 }
+    }
+  };
+
   return (
     <>
       <Head>
@@ -1659,263 +1659,115 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-h-screen  px-12  bg-cover  items-center justify-center overflow-x-hidden sm:overflow-x-hidden">
+  
 
+    <section className="relative flex items-center pt-[30px] md:pt-[40px] pb-[20px] md:pb-[30px] overflow-visible min-h-auto md:min-h-[90vh]">
+      <motion.div 
+        initial="hidden"
+        animate="visible"
+        variants={staggerContainer}
+        className="w-full max-w-[1440px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-[10px] md:gap-[40px] items-center overflow-visible"
+      >
+        {/* ─── LEFT COLUMN ─── */}
+        <div className="max-w-[750px] overflow-visible px-4 sm:px-6 md:pl-[73px] md:px-0 text-center md:text-left">
+          
+          <motion.h1 variants={fadeInUp} className="m-0 mb-[20px] md:mb-[28px] p-0 overflow-visible">
+            <span className="block font-manrope font-extrabold text-[30px] sm:text-[42px] md:text-[min(57px,3.8vw)] leading-[1.15] md:leading-[1.37] tracking-[0.01em] whitespace-normal md:whitespace-nowrap overflow-visible bg-[linear-gradient(180deg,#666666_0%,#6F24E8_100%)] bg-clip-text text-transparent max-w-full md:max-w-[617px]">
+              Crack Every Interview
+            </span>
+            <span className="block font-manrope font-extrabold text-[30px] sm:text-[42px] md:text-[min(57px,3.8vw)] leading-[1.1] md:leading-[1.2] tracking-[0.01em] whitespace-normal md:whitespace-nowrap overflow-visible">
+              <span className="bg-[linear-gradient(180deg,#666666_0%,#6F24E8_100%)] bg-clip-text text-transparent">With</span>{" "}
+              <span className="text-[#FF7046]">Ai Coaching</span>
+            </span>
+          </motion.h1>
 
+          <motion.p variants={fadeInUp} className="font-manrope font-medium text-[16px] sm:text-[18px] md:text-[20px] leading-[24px] md:leading-[27px] tracking-[0.04em] text-[#1E0A40] mb-[30px] md:mb-[40px] max-w-[598px] mx-auto md:mx-0">
+            Practice real interview scenarios, get instant AI-powered feedback, and land your dream job with confidence.
+          </motion.p>
 
-        {/* Text content section */}
-        <div className="col-span-1 lg:col-span-2 mt-4 pt-10  order-2 lg:order-1 flex flex-col items-center justify-center">
-          <h1 className="text-4xl m-6 md:m-10 font-bold text-shadow-lg " >Your Journey from Learning to Leading Starts Here</h1>
-          <p className="text-2xl m-6 md:m-10 font-semibold  " >Empower your learning journey through skill analysis, real-time chats, and gamified challenges to prepare for mock interviews — with&nbsp;MockMingle</p>
-          <div className="flex justify-center rounded-full  w-full">
-            <Link href={'/language'}><button className="shadow-[0px_0px_5px_5px_rgba(0,0,0,0.10)]  w-[42rem]  text-black py-3 px-6 rounded-full text-lg font-semibold bg-white hover:bg-blue-400 hover:text-white transition duration-300">
-              Get Started
-            </button></Link>
-          </div>
+          <motion.div variants={fadeInUp} className="flex gap-[16px] md:gap-[24px] flex-wrap justify-center md:justify-start">
+            <Link href="/language">
+              <motion.button 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full sm:w-[299px] h-[49px] rounded-[24.5px] border border-white bg-[linear-gradient(90.01deg,#FF7046_0.01%,#B3B3EA_172.54%)] shadow-[4px_11px_10.4px_rgba(0,0,0,0.12)] font-manrope font-semibold text-[16px] md:text-[18px] leading-[25px] tracking-[0.04em] text-[#1E0A40] cursor-pointer px-4"
+              >
+                Start Free Mock Interview
+              </motion.button>
+            </Link>
 
+            <Link href="#demo-section">
+              <motion.button 
+                whileHover={{ scale: 1.05, backgroundColor: "#f9f9f9" }}
+                whileTap={{ scale: 0.95 }}
+                className="w-full sm:w-[257px] h-[49px] rounded-[24.5px] border border-white bg-white shadow-[4px_11px_10.4px_rgba(0,0,0,0.12)] font-manrope font-semibold text-[16px] md:text-[18px] leading-[25px] tracking-[0.04em] text-[#1E0A40] cursor-pointer px-4"
+              >
+                Watch Demo
+              </motion.button>
+            </Link>
+          </motion.div>
         </div>
 
-      </div>
+        {/* ─── RIGHT COLUMN (Visuals) ─── */}
+        <div className="relative flex justify-center items-center w-full overflow-x-hidden px-0 sm:px-2 md:px-4 mt-[20px] md:mt-0">
+          <div className="relative shrink-0 w-[648px] h-[540px] scale-[0.34] xs:scale-[0.42] sm:scale-[0.55] md:scale-[0.75] lg:scale-100 origin-top -mb-[320px] sm:-mb-[220px] md:-mb-[80px] lg:mb-0">
+            
+            {/* Animated SVG Border Drawing Effect */}
+            <svg style={{ position: 'absolute', top: 0, left: 0, width: '648px', height: '540px', overflow: 'visible', zIndex: 1, pointerEvents: 'none' }}>
+              <motion.path 
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 2, ease: "easeInOut" }}
+                d="M 97.99 68 L 542.24 68 Q 571.24 68 571.24 97 M 571.24 210 L 571.24 449.83 Q 571.24 478.83 542.24 478.83 L 97.99 478.83 Q 68.99 478.83 68.99 449.83 M 68.99 97 Q 68.99 68 97.99 68"
+                fill="none" 
+                stroke="#7024EB" 
+                strokeWidth="2" 
+              />
+            </svg>
 
-
-      <div id="feature" className="overflow-x-hidden mt-[-6rem] w-full rounded-t-[6.188rem] shadow-[0px_-7px_15.1px_0px_#FFFFFF] bg-[linear-gradient(180.29deg,#D3E7F6_6.63%,#000000_150.86%)] px-4 sm:px-10 py-10">
-        {/* Heading */}
-
-        {/* Cards */}
-
-
-        <div className="relative mt-10 lg:m-40 grid grid-cols-1 lg:grid-cols-2 " style={{ perspective: "1000px" }}>
-          <div
-            className="transform rounded-lg gap-10"
-            style={{
-              transform: "rotateY(50deg)",
-              transformStyle: "preserve-3d",
-            }}
-          >
-            <img
-              src="/p1.jpeg"
-              width={300}
-
-              alt="Preparation is the key"
-              className="rounded-lg h-40 shadow-2xl border border-white border-4 shadow-gray-300"
-            />
-          </div>
-
-          <div className="mt-4">
-            <div className="flex items-center gap-2">
-              <span className="bg-white text-black border border-black px-3 py-1 rounded-full text-sm">1</span>
-              <h2 className="text-xl font-semibold text-black">Try Your Practice</h2>
-            </div>
-            <p className="text-black font-semibold mt-2 text-sm leading-relaxed">
-              Test your interview skills, identify weaknesses, and refine your responses in a risk-free environment. Boost your confidence and reduce interview anxiety before the real challenge!
-            </p>
-          </div>
-        </div>
-
-
-        <div
-          className="relative lg:m-40 mt-10 grid grid-cols-1 lg:grid-cols-2"
-          style={{ perspective: "1000px" }}
-        >
-          {/* Image Section */}
-          <div
-            className="transform rounded-lg mr-10  sm:order-first lg:order-last"
-            style={{
-              transform: "rotateY(330deg)",
-              transformStyle: "preserve-3d",
-            }}
-          >
-            <img
-              src="/p2.jpeg"
-              width={300}
-              alt="Preparation is the key"
-              className="rounded-lg h-40 lg:ml-32 border border-white border-4 shadow-2xl order-1 shadow-gray-300"
-            />
-          </div>
-
-          {/* Text Section */}
-          <div className="mt-4">
-            <div className="flex items-center gap-2">
-              <span className="bg-white border border-black text-black px-3 py-1 rounded-full text-sm">2</span>
-              <h2 className="text-xl font-semibold text-black">Real-time Interview Practice Conducted by AI</h2>
-            </div>
-            <p className="text-black font-semibold mt-2 text-sm leading-relaxed">
-              Get live, AI-driven mock interviews with instant feedback on tone, confidence, and accuracy, saving time with data-driven insights.
-            </p>
-          </div>
-        </div>
-
-
-
-
-        <div className="relative mt-10 lg:m-40 grid grid-cols-1 lg:grid-cols-2 " style={{ perspective: "1000px" }}>
-          <div
-            className="transform rounded-lg"
-            style={{
-              transform: "rotateY(50deg)",
-              transformStyle: "preserve-3d",
-            }}
-          >
-            <img
-              src="/p3.jpg"
-              width={300}
-
-              alt="Preparation is the key"
-              className="rounded-lg h-40 shadow-2xl border border-white border-4 shadow-gray-700"
-            />
-          </div>
-
-          <div className="mt-4">
-            <div className="flex items-center gap-2">
-              <span className="bg-white border border-black text-black px-3 py-1 rounded-full text-sm">3</span>
-              <h2 className="text-xl font-semibold text-black">Flexible Interview Timing</h2>
-            </div>
-            <p className="text-black font-semibold mt-2 text-sm leading-relaxed">
-              Practice Anytime, Anywhere – No fixed schedules, instant access for busy students and professionals, ensuring stress-free, flexible preparation.
-            </p>
-          </div>
-        </div>
-
-
-        <div
-          className="relative lg:m-40 mt-10 grid grid-cols-1 lg:grid-cols-2"
-          style={{ perspective: "1000px" }}
-        >
-          {/* Image Section */}
-          <div
-            className="transform rounded-lg lg:ml-32 mr-10 sm:order-first lg:order-last"
-            style={{
-              transform: "rotateY(330deg)",
-              transformStyle: "preserve-3d",
-            }}
-          >
-            <img
-              src="/p4.png"
-              width={300}
-              alt="Preparation is the key"
-              className="rounded-lg h-40 shadow-2xl order-1 border border-white border-4 shadow-gray-800"
-            />
-          </div>
-
-          {/* Text Section */}
-          <div className="mt-4">
-            <div className="flex items-center gap-2">
-              <span className="bg-white border border-black text-black px-3 py-1 rounded-full text-sm">4</span>
-              <h2 className="text-xl font-semibold text-black">Gamified Experience</h2>
-            </div>
-            <p className="text-black font-semibold mt-2 text-sm leading-relaxed">
-              MockMingle uses gamification with scores, badges, and leaderboards to make learning fun, motivating, and rewarding while tracking your progress.
-            </p>
-          </div>
-        </div>
-
-        <div className="relative mt-10 lg:m-40 grid grid-cols-1 lg:grid-cols-2 " style={{ perspective: "1000px" }}>
-          <div
-            className="transform rounded-lg"
-            style={{
-              transform: "rotateY(50deg)",
-              transformStyle: "preserve-3d",
-            }}
-          >
-            <img
-              src="/p5.png"
-              width={300}
-
-              alt="Preparation is the key"
-              className="rounded-lg h-40 shadow-2xl border border-white border-4 shadow-gray-700"
-            />
-          </div>
-
-          <div className="mt-4">
-            <div className="flex items-center gap-2">
-              <span className="bg-white border border-black text-black px-3 py-1 rounded-full text-sm">5</span>
-              <h2 className="text-xl font-semibold text-black"> Get Expert Feedback</h2>
-            </div>
-            <p className="text-black font-semibold mt-2 text-sm leading-relaxed">
-              Get detailed insights from AI and industry experts on communication, technical skills, and performance, with personalized improvement suggestions for better interview success.
-            </p>
-          </div>
-        </div>
-
-
-        <div
-          className="relative lg:m-40 mt-10 grid grid-cols-1 lg:grid-cols-2"
-          style={{ perspective: "1000px" }}
-        >
-          {/* Image Section */}
-          <div
-            className="transform rounded-lg mr-10 lg:ml-32 sm:order-first lg:order-last"
-            style={{
-              transform: "rotateY(330deg)",
-              transformStyle: "preserve-3d",
-            }}
-          >
-            <img
-              src="/p6.jpg"
-              width={300}
-              alt="Preparation is the key"
-              className="rounded-lg h-40 shadow-2xl border border-white border-4 order-1 shadow-gray-800"
-            />
-          </div>
-
-          {/* Text Section */}
-          <div className="mt-4">
-            <div className="flex items-center gap-2">
-              <span className="bg-white text-black border border-black px-3 py-1 rounded-full text-sm">6</span>
-              <h2 className="text-xl font-bold text-black">Get Suggestions in Video Format
-              </h2>
-            </div>
-            <p className="text-black font-semibold mt-2 text-sm leading-relaxed">
-              Get AI-driven or expert video suggestions with step-by-step guidance on answers, posture, and tone for easier, more engaging improvement.
-            </p>
-          </div>
-        </div>
-
-
-
-
-      </div>
-      <footer id="contact" className=" h-[15rem] md:h-[24rem] overflow-y-hidden overflow-x-hidden">
-
-        <div className="">
-          {/* <div>
-            <img src="/blue_mascot_down.png" alt="" className="h-[16rem] md:h-[25rem] -mt-[1rem] -mb-[15rem] -pb-[10rem] w-[auto]" />
-          </div> */}
-          <div className="    ">
-            <h1 className=" rounded-full text-center w-32 mt-5 m-auto">Contact Us</h1>
-            <h2
-              className="text-2xl lg:text-2xl text-center font-bold  py-4 "
-              style={{
-                fontFamily: "Arial, sans-serif",
-                backgroundColor: "white",
-
-                textShadow: "2px 2px 3px rgba(0, 0, 0, 0.7)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-              }}
+            {/* Hero Image with Floating Effect */}
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              style={{ position: 'absolute', left: '138px', top: '0px', width: '380px', height: '521px', borderRadius: '21px', overflow: 'hidden', zIndex: 20 }}
             >
-              connect@mockmingle.in
-            </h2>
-            <div className="flex justify-around mt-20">
+              <img src="/student_logo.png" alt="AI Interview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </motion.div>
 
-              <button className=" border-2 p-2 rounded-full" onClick={() => setShowTerms(true)}>
-                View Terms
-              </button>
-
-              {showTerms && <TermsAndConditions />}
-              
-   <button className=" border-2 p-2 rounded-full" onClick={() => setShowPolicy(true)}>
-               Privacy Policy
-              </button>
-
-              {showPolicy && <PrivacyPolicy />}
-            </div>
+            {/* Animated Stats - Pop in effect */}
+            {[
+              { label: "95%", sub: "Success Rate", top: "130px", left: "0px" },
+              { label: "2K+", sub: "Active Users", top: "308px", left: "10px" },
+              { label: "1M+", sub: "Practice Sessions", top: "104px", left: "500px" }
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.8 + (i * 0.2), type: "spring", stiffness: 100 }}
+                style={{ position: 'absolute', left: stat.left, top: stat.top, width: '145px', zIndex: 30 }}
+              >
+                <div style={{ fontFamily: 'Manrope', fontWeight: 700, fontSize: '48px', color: '#FF7046', textAlign: 'center' }}>{stat.label}</div>
+                <div style={{ fontFamily: 'Manrope', fontSize: '13px', color: '#333', textAlign: 'center' }}>{stat.sub}</div>
+              </motion.div>
+            ))}
 
           </div>
         </div>
-        <p className=" flex justify-center mt-24 ">powered by&nbsp;<span className="text-blue-300 font-bold"> Shakktii.in</span></p>
-      </footer>
+      </motion.div>
+    </section>
+      <ScoreSection />
+      <PerformanceTrade />
+      <WhyMock />
+      <section id="demo-section">
+        <DemoVideo />
+      </section>
 
+      <WhyFail />
+      <RealCost />
+      <ProductValue />
+      <Testimonials/>
+      <Footer />
     </>
   );
 }

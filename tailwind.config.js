@@ -20,6 +20,7 @@ module.exports = {
       fontFamily: {
         itim: ['"Itim"', 'cursive'],
         sans: ["Plus Jakarta Sans", "Inter", "sans-serif"],
+         manrope: ["Manrope", "sans-serif"],
       },    
       colors: {
         border: "hsl(var(--border))",
