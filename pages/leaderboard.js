@@ -367,9 +367,8 @@ import { LevelBadge } from '@/components/dashboard/LevelBadge';
 const TRACKS = [
   { key: 'overall', label: 'Overall', icon: Trophy },
   { key: 'weekly', label: 'Weekly', icon: Flame },
-  { key: 'finance', label: 'Finance', icon: TrendingUp },
-  { key: 'consulting', label: 'Consulting', icon: Users },
-  { key: 'technical', label: 'Technical', icon: Zap },
+  { key: 'technical', label: 'Interview', icon: Zap },
+ 
 ];
 
 const getMedal = (rank) => {
