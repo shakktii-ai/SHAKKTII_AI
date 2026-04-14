@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import { motion } from 'framer-motion';
 
@@ -13,7 +15,7 @@ const WhyFail = () => {
       ),
       percentage: '2-5%',
       title: 'You Only Get One Real Chance',
-      subtext: 'get shortlisted'
+      subtext: 'Get shortlisted'
     },
     {
       icon: (
@@ -26,7 +28,7 @@ const WhyFail = () => {
       ),
       percentage: '70-80%',
       title: 'Misjudged Performance',
-      subtext: 'think they did well'
+      subtext: 'Think they did well'
     },
     {
       icon: (
@@ -47,7 +49,7 @@ const WhyFail = () => {
       ),
       percentage: '75%',
       title: 'No Feedback Loop',
-      subtext: 'never receive feedback'
+      subtext: 'Never receive feedback'
     }
   ];
 
@@ -78,7 +80,7 @@ const WhyFail = () => {
       <div className="max-w-[1440px] mx-auto px-[6px] md:px-[73px]">
 
         {/* Headline Section */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -101,7 +103,7 @@ const WhyFail = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-[40px] items-stretch justify-center max-w-[1200px] mx-auto">
 
           {/* Left Column: Stat Cards */}
-          <motion.div 
+          <motion.div
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
@@ -143,85 +145,85 @@ const WhyFail = () => {
 
           {/* Right Column: Chart Box */}
           <motion.div
-  initial={{ opacity: 0, x: 20 }}
-  whileInView={{ opacity: 1, x: 0 }}
-  viewport={{ once: true }}
-  transition={{ duration: 0.6 }}
-  className="w-full max-w-[666px] bg-white border border-[#6F24E8] rounded-[17px] pt-[20px] px-[16px] sm:px-[24px] md:pt-[35px] md:px-[50px] pb-[40px] md:pb-[60px] flex flex-col"
-  style={{ boxSizing: "border-box" }}
->
-  <h3
-    className="text-[22px] sm:text-[26px] md:text-[32px] font-bold text-[#1E0A40] mb-[35px] md:mb-[55px]"
-    style={{ fontFamily: "Manrope" }}
-  >
-    Interview Success Reality
-  </h3>
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="w-full max-w-[666px] bg-white border border-[#6F24E8] rounded-[17px] pt-[20px] px-[16px] sm:px-[24px] md:pt-[35px] md:px-[50px] pb-[40px] md:pb-[60px] flex flex-col"
+            style={{ boxSizing: "border-box" }}
+          >
+            <h3
+              className="text-[22px] sm:text-[26px] md:text-[32px] font-bold text-[#1E0A40] mb-[35px] md:mb-[55px]"
+              style={{ fontFamily: "Manrope" }}
+            >
+              Interview Success Reality
+            </h3>
 
-  {/* Horizontal Bar Chart */}
-  <div className="flex flex-col gap-[28px] md:gap-[65px] flex-grow relative pb-[50px] md:pb-[70px]">
-  {/* Y-Axis Line - Desktop only */}
-  <div className="hidden md:block absolute left-[180px] top-0 bottom-[106px] w-[1.5px] bg-black"></div>
-    <GraphBar
-      label="Got Shortlisted"
-      width="8%"
-      color="#B3B3EA"
-      index={0}
-      labelClassName="w-[90px] sm:w-[120px] md:w-[170px] text-[12px] sm:text-[14px] md:text-[16px]"
-    />
+            {/* Horizontal Bar Chart */}
+            <div className="flex flex-col gap-[28px] md:gap-[65px] flex-grow relative pb-[50px] md:pb-[70px]">
+              {/* Y-Axis Line - Desktop only */}
+              <div className="hidden md:block absolute left-[180px] top-0 bottom-[106px] w-[1.5px] bg-black"></div>
+              <GraphBar
+                label="Got Shortlisted"
+                width="8%"
+                color="#B3B3EA"
+                index={0}
+                labelClassName="w-[90px] sm:w-[120px] md:w-[170px] text-[12px] sm:text-[14px] md:text-[16px]"
+              />
 
-    <GraphBar
-      label="Thought They Did Well"
-      width="74%"
-      color="#6F24E8"
-      index={1}
-      labelClassName="w-[90px] sm:w-[120px] md:w-[170px] text-[12px] sm:text-[14px] md:text-[16px]"
-    />
+              <GraphBar
+                label="Thought They Did Well"
+                width="74%"
+                color="#6F24E8"
+                index={1}
+                labelClassName="w-[90px] sm:w-[120px] md:w-[170px] text-[12px] sm:text-[14px] md:text-[16px]"
+              />
 
-    <GraphBar
-      label="Actually Got Offers"
-      width="22%"
-      color="#FF7046"
-      index={2}
-      labelClassName="w-[90px] sm:w-[120px] md:w-[170px] text-[12px] sm:text-[14px] md:text-[16px]"
-    />
+              <GraphBar
+                label="Actually Got Offers"
+                width="22%"
+                color="#FF7046"
+                index={2}
+                labelClassName="w-[90px] sm:w-[120px] md:w-[170px] text-[12px] sm:text-[14px] md:text-[16px]"
+              />
 
-    <GraphBar
-      label="Received Feedback"
-      width="22%"
-      color="#1E0A40"
-      index={3}
-      labelClassName="w-[90px] sm:w-[120px] md:w-[170px] text-[12px] sm:text-[14px] md:text-[16px]"
-    />
+              <GraphBar
+                label="Received Feedback"
+                width="22%"
+                color="#1E0A40"
+                index={3}
+                labelClassName="w-[90px] sm:w-[120px] md:w-[170px] text-[12px] sm:text-[14px] md:text-[16px]"
+              />
 
-    {/* X-Axis and Labels */}
-   <div className="hidden md:block absolute left-[180px] right-0 bottom-[70px]">
-  <div className="w-full border-t-[1.5px] border-black flex justify-between pt-[10px]">
-    {[0, 25, 50, 75, 100].map((val) => (
-      <span
-        key={val}
-        className="text-[18px] font-bold text-black opacity-80"
-      >
-        {val}
-      </span>
-    ))}
-  </div>
-</div>
-  </div>
+              {/* X-Axis and Labels */}
+              <div className="hidden md:block absolute left-[180px] right-0 bottom-[70px]">
+                <div className="w-full border-t-[1.5px] border-black flex justify-between pt-[10px]">
+                  {[0, 25, 50, 75, 100].map((val) => (
+                    <span
+                      key={val}
+                      className="text-[18px] font-bold text-black opacity-80"
+                    >
+                      {val}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
 
-  {/* Bottom Warning */}
-  <motion.div
-    initial={{ opacity: 0 }}
-    whileInView={{ opacity: 1 }}
-    transition={{ delay: 1 }}
-    viewport={{once:true}}
-    className="flex items-start gap-[10px] mt-[16px] md:mt-[20px] relative z-20"
-  >
-    <span className="text-[18px] md:text-[20px] shrink-0">⚠️</span>
-    <p className="text-[14px] sm:text-[15px] md:text-[16px] text-[#1E0A40] leading-relaxed font-medium">
-      The gap between perception and reality is costing you opportunities.
-    </p>
-  </motion.div>
-</motion.div>
+            {/* Bottom Warning */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              viewport={{ once: true }}
+              className="flex items-start gap-[10px] mt-[16px] md:mt-[20px] relative z-20"
+            >
+              <span className="text-[18px] md:text-[20px] shrink-0">⚠️</span>
+              <p className="text-[14px] sm:text-[15px] md:text-[16px] text-[#1E0A40] leading-relaxed font-medium">
+                The gap between perception and reality is costing you opportunities.
+              </p>
+            </motion.div>
+          </motion.div>
         </div>
 
       </div>
