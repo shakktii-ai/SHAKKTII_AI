@@ -1,8 +1,3 @@
-
-
-
-
-
 import { useState, useEffect, useRef } from "react";
 import { Bell, Menu, X, User, Mic, Users, Brain, Code, Target, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -16,11 +11,8 @@ import { ScoreChart } from "@/components/dashboard/ScoreChart";
 import { DailyNudge } from "@/components/dashboard/DailyNudge";
 import { PointsOverview } from "@/components/dashboard/PointsOverview";
 import { PointsHistory } from "@/components/dashboard/PointsHistory";
-
-
-
-
 import Link from "next/link";
+import JobFinder from "../components/jobFinder";
 import Head from "next/head";
 import { IoIosArrowBack } from "react-icons/io";
 import { MdAccountCircle, MdOutlineAssignment, MdAssignmentTurnedIn, MdOutlinePending } from 'react-icons/md';
@@ -66,12 +58,6 @@ export default function dashboard({ Logout, user }) {
     remainingInterviews: 0,
     loading: true
   });
-
-
-
-
-
-
   const [userRank, setUserRank] = useState({
     rank: '--',
     totalUsers: '--',
@@ -91,8 +77,6 @@ export default function dashboard({ Logout, user }) {
     loading: true,
   });
   const [userEmail, setUserEmail] = useState('');
-
-
   // Add leaderboard link to the dashboard navigation
   useEffect(() => {
     const navLinks = document.querySelector('.dashboard-links');
@@ -124,8 +108,6 @@ export default function dashboard({ Logout, user }) {
   });
   const router = useRouter(); // Next.js router to navigate to /role
 
-
-
   useEffect(() => {
     if (!localStorage.getItem("token")) {
       router.push("/login");
@@ -142,13 +124,6 @@ export default function dashboard({ Logout, user }) {
       }
     }
   }, []);
-
-
-
-
-
-
-
   const getNormalizedScore = (report, categoryKey) => {
     if (!report) return 0;
 
@@ -403,7 +378,7 @@ export default function dashboard({ Logout, user }) {
     { label: "Reports", href: "/report" },
     { label: "SoftSkills", href: "/practices" },
     { label: "Learn", href: "/suggestion" },
-    // { label: "Resume Test", href: "/resumeRole" },
+    { label: "Job History", href: "/jobHistory" },
     // { label: "Resume Builder", href: resumeBuilderUrl },
     // { label: "Logout", href: "#", onClick: () => { Logout(); router.push("/login"); }}
   ];
@@ -623,14 +598,13 @@ export default function dashboard({ Logout, user }) {
               <CreditsCard credits={interviewStats.loading ? '...' : interviewStats.remainingInterviews} />
             </div>
           </div>
-
           {/* CTA */}
           <div className="flex justify-center mb-12">
             <StartSimulationButton />
           </div>
 
           {/* Practice Zones */}
-          <section className="mb-12">
+          <section className="mb-4">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-2xl font-bold text-foreground">Practice Zones</h2>
@@ -648,6 +622,9 @@ export default function dashboard({ Logout, user }) {
               ))}
             </div>
           </section>
+          <section className="mb-4">
+            <JobFinder />
+          </section>
           <section className="mb-12">
             <div className="relative overflow-hidden rounded-3xl border border-violet-100 bg-white p-6 sm:p-8 shadow-sm">
               {/* Background */}
@@ -663,11 +640,11 @@ export default function dashboard({ Logout, user }) {
                     AI-Powered Resume Builder
                   </div>
 
-                  <h1 className="text-xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-3xl">
+                  <h1 className="text-xl font-bold leading-tight text-slate-900 sm:text-4xl lg:text-2xl">
                     Build a Professional Resume in Minutes
                   </h1>
 
-                  <p className="mt-4 max-w-full text-base leading-7 text-slate-600 sm:text-lg">
+                  <p className="text-muted-foreground ">
                     Create ATS-friendly resumes with smart suggestions, beautiful templates,
                     and instant improvements tailored to your dream role.
                   </p>
