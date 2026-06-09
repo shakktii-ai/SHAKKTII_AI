@@ -42,20 +42,9 @@ export default function HistoryPage() {
                 localStorage.setItem("jobfind_local_history", JSON.stringify(dbJobs));
             }
         } catch (e) {
-            console.warn("Falling back to localStorage due to database error:", e);
-            try {
-                const localStr = localStorage.getItem("jobfind_local_history");
-                const localJobs = localStr ? JSON.parse(localStr) : [];
-                if (Array.isArray(localJobs)) {
-                    setSavedJobs(localJobs);
-                    setIsOfflineHistory(true);
-                } else {
-                    setSavedJobs([]);
-                }
-            } catch (err) {
-                console.error("Failed to read local history:", err);
-                setHistoryError("Could not retrieve saved jobs history.");
-            }
+            console.error("Failed to fetch jobs from database:", e);
+            setHistoryError("Unable to fetch job history from database. Please try again later.");
+            setSavedJobs([]);
         } finally {
             setHistoryLoading(false);
         }
@@ -137,8 +126,7 @@ export default function HistoryPage() {
                 ) : filteredHistoryJobs.length === 0 ? (
                     <div className="text-center py-16 text-slate-400 bg-slate-50 border border-dashed border-slate-200 rounded-2xl">
                         <p className="text-sm font-medium">No matching history items found.</p>
-                        <p className="text-xs text-slate-400 mt-1">Try modifying your query text parameters.</p>
-                    </div>
+                            </div>
                 ) : (
                     <div className="flex flex-col gap-4">
                         {filteredHistoryJobs.map(job => (

@@ -147,9 +147,32 @@ export default function Home() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Load previous jobs as recent searches
-  useEffect(() => {
+  // Load recent jobs from database
+  async function fetchRecentJobs() {
     try {
+      const userStr = localStorage.getItem("user");
+      let userId = "";
+      if (userStr) {
+        try {
+          const userObj = JSON.parse(userStr);
+          userId = userObj.id || userObj._id || "";
+        } catch (e) {}
+      }
+      
+      // Try to fetch from DB first
+      if (userId) {
+        const res = await fetch(`/api/jobs?all=true&userId=${userId}`);
+        if (res.ok) {
+          const data = await res.json();
+          const jobs = data.jobs || [];
+          if (jobs.length > 0) {
+            setRecentJobs(jobs.slice(0, 5));
+            return;
+          }
+        }
+      }
+      
+      // Fallback to localStorage if DB fetch fails or no userId
       const historyStr = localStorage.getItem("jobfind_local_history");
       if (historyStr) {
         const historyJobs = JSON.parse(historyStr);
@@ -158,8 +181,35 @@ export default function Home() {
         }
       }
     } catch (e) {
-      console.error("Failed to load recent jobs from history:", e);
+      console.error("Failed to load recent jobs:", e);
+      // Last resort: try localStorage
+      try {
+        const historyStr = localStorage.getItem("jobfind_local_history");
+        if (historyStr) {
+          const historyJobs = JSON.parse(historyStr);
+          if (Array.isArray(historyJobs)) {
+            setRecentJobs(historyJobs.slice(0, 5));
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load from localStorage:", err);
+      }
     }
+  }
+
+  // Load recent jobs on mount and when page becomes visible
+  useEffect(() => {
+    fetchRecentJobs();
+    
+    // Refresh when page becomes visible (user returns from another page)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchRecentJobs();
+      }
+    };
+    
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   function closeModal() {
@@ -171,17 +221,26 @@ export default function Home() {
   function syncJobsToLocalHistory(newJobs) {
     if (!newJobs || newJobs.length === 0) return;
     try {
-      const existingStr = localStorage.getItem("jobfind_local_history");
-      let existingJobs = existingStr ? JSON.parse(existingStr) : [];
-      if (!Array.isArray(existingJobs)) {
-        existingJobs = [];
+      const userStr = localStorage.getItem("user");
+      let userId = "";
+      if (userStr) {
+        try {
+          const userObj = JSON.parse(userStr);
+          userId = userObj.id || userObj._id || "";
+        } catch (e) {}
       }
-      const jobMap = new Map();
-      existingJobs.forEach(job => jobMap.set(job.job_id, job));
-      newJobs.forEach(job => jobMap.set(job.job_id, job));
-      const mergedJobs = Array.from(jobMap.values());
-      mergedJobs.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
-      localStorage.setItem("jobfind_local_history", JSON.stringify(mergedJobs));
+      
+      // Add userId to each job before saving
+      const jobsWithUserId = newJobs.map(job => ({
+        ...job,
+        userId: userId
+      }));
+      
+      // Store in localStorage for reference
+      localStorage.setItem("jobfind_local_history", JSON.stringify(jobsWithUserId));
+      
+      // Update recent jobs immediately after search
+      setRecentJobs(jobsWithUserId.slice(0, 5));
     } catch (err) {
       console.error("Failed to sync to localStorage:", err);
     }

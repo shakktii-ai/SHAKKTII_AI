@@ -235,8 +235,8 @@
 
 import User from "../../models/User";
 import connectDb from "../../middleware/db";
- import CryptoJS from "crypto-js";
-async function handler (req, res) {
+import CryptoJS from "crypto-js";
+async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ success: false, message: "Method not allowed" });
   }
@@ -270,7 +270,7 @@ async function handler (req, res) {
       user.fullName = fullName || user.fullName;
       user.email = email || user.email; // overwrite placeholder
       user.DOB = DOB || user.DOB;
-       if (password) {
+      if (password) {
         user.password = CryptoJS.AES.encrypt(password, "secret123").toString();
       }
       user.mobileNo = mobileNo || user.mobileNo;
@@ -291,8 +291,8 @@ async function handler (req, res) {
         address,
         education,
         collageName,
-           no_of_interviews: 0,
-         no_of_interviews_completed: 0,
+        no_of_interviews: 0,
+        no_of_interviews_completed: 0,
       });
 
       await user.save();
@@ -301,14 +301,14 @@ async function handler (req, res) {
     return res.status(200).json({ success: true, message: "Signup successful", user });
   } catch (error) {
     console.error("Error in signup:", error);
-     if (error.code === 11000) {
-    // Handle duplicate field
-    const field = Object.keys(error.keyPattern)[0]; 
-    return res.status(400).json({
-      success: false,
-      message: `${field} already exists. Please use another one.`
-    });
-  }
+    if (error.code === 11000) {
+      // Handle duplicate field
+      const field = Object.keys(error.keyPattern)[0];
+      return res.status(400).json({
+        success: false,
+        message: `${field} already exists. Please use another one.`
+      });
+    }
     return res.status(500).json({ success: false, message: "Server error" });
   }
 };
