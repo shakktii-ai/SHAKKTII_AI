@@ -1,17 +1,13 @@
 "use client";
-import { MapPin, ExternalLink } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
-import JobCard from "@/components/jobCard"; // Adjust this import path as needed
+import { MapPin, Briefcase, Search, Globe, IndianRupee } from "lucide-react";
+import { useState, useEffect } from "react";
+import JobCard from "@/components/jobCard"; 
+
+// RecentJobCard component remains intact
 function RecentJobCard({ job, expanded, onToggle }) {
   useEffect(() => {
-    if (expanded) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
+    document.body.style.overflow = expanded ? "hidden" : "unset";
+    return () => { document.body.style.overflow = "unset"; };
   }, [expanded]);
 
   return (
@@ -33,133 +29,51 @@ function RecentJobCard({ job, expanded, onToggle }) {
           <h3 className="text-[1rem] text-slate-900 truncate leading-tight" title={job.title}>{job.title}</h3>
           <p className="text-[0.875rem] text-slate-500 truncate mt-1" title={job.company}>{job.company}</p>
         </div>
-
-        <div className="flex flex-wrap gap-2 mt-auto ">
+        <div className="flex flex-wrap gap-2 mt-auto">
           {job.location && (
             <div className="flex items-center gap-1.5 min-w-0">
               <MapPin className="h-4 w-4 text-slate-400 flex-shrink-0" />
-              <span className="text-sm text-slate-500">{job.location}</span>
+              <span className="text-sm text-slate-500 truncate">{job.location}</span>
             </div>
           )}
-
         </div>
       </div>
-      {expanded && (
-        <div
-          className="fixed inset-0 z-[99999] flex items-center justify-center bg-slate-900/20 backdrop-blur-sm p-4 animate-[fadeIn_0.2s_ease-out] cursor-default"
-          onClick={(e) => { e.stopPropagation(); onToggle(); }}
-        >
-          <div
-            className="bg-white rounded-2xl w-full max-w-[800px] max-h-[85vh] overflow-y-auto shadow-2xl relative [&::-webkit-scrollbar]:hidden"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header / Basic Info */}
-            <div className="p-6 border-b border-slate-100 flex items-start gap-4">
-              <div className="w-14 h-14 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-sm">
-                {job.thumbnail ? (
-                  <img src={job.thumbnail} alt={`${job.company} logo`} className="w-full h-full object-contain p-1" />
-                ) : (
-                  <span className="font-bold text-xl text-slate-500">
-                    {job.company?.[0]?.toUpperCase() || "🏢"}
-                  </span>
-                )}
-              </div>
-              <div className="flex-1 min-w-0 pr-8">
-                <h3 className="text-xl font-bold text-slate-900 leading-tight mb-1">{job.title}</h3>
-                <p className="text-base text-slate-500">{job.company}</p>
-              </div>
-              <button
-                onClick={onToggle}
-                className="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-100 text-slate-400 transition-colors"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"></line>
-                  <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-              </button>
-            </div>
-
-            {/* Expanded Section Details */}
-            <div className="p-6 bg-slate-50/50">
-              <div className="mb-6">
-                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">
-                  Job Description
-                </h4>
-                <p className="whitespace-pre-line text-sm text-slate-600 leading-relaxed max-w-none">
-                  {job.description || "No description provided."}
-                </p>
-              </div>
-
-              {job.skills && job.skills.length > 0 && (
-                <div className="mb-6 flex flex-wrap gap-2">
-                  {job.skills.map((skill, index) => (
-                    <span key={index} className="text-xs bg-white text-slate-600 px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {job.link && (
-                <div className="flex justify-between items-center pt-4 border-t border-slate-200/60 mt-2">
-                  <span className="text-xs text-slate-500 font-medium">
-                    {job.via ? `via ${job.via}` : "Posted recently"}
-                  </span>
-                  <a
-                    href={job.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 bg-[#834DFA] hover:bg-[#703ee3] text-white py-2.5 px-6 rounded-xl font-semibold text-sm shadow-sm transition-colors duration-150"
-                  >
-                    Apply Now
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
 
-
 export default function Home() {
   const [recentJobs, setRecentJobs] = useState([]);
+  
+  // Form Input States
   const [query, setQuery] = useState("");
+  const [experience, setExperience] = useState("");
+  const [location, setLocation] = useState("");
+  const [mode, setMode] = useState("");
+  const [packageMin, setPackageMin] = useState(""); // New Package Filter state
+
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const [total, setTotal] = useState(0);
   const [expandedId, setExpandedId] = useState(null);
   const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // Controls the popup
-  const inputRef = useRef(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Close modal when user presses the Escape key
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") closeModal();
-    };
+    const handleKeyDown = (e) => { if (e.key === "Escape") closeModal(); };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Load recent jobs from database
   async function fetchRecentJobs() {
     try {
       const userStr = localStorage.getItem("user");
       let userId = "";
       if (userStr) {
-        try {
-          const userObj = JSON.parse(userStr);
-          userId = userObj.id || userObj._id || "";
-        } catch (e) {}
+        const userObj = JSON.parse(userStr);
+        userId = userObj.id || userObj._id || "";
       }
-      
-      // Try to fetch from DB first
       if (userId) {
         const res = await fetch(`/api/jobs?all=true&userId=${userId}`);
         if (res.ok) {
@@ -171,51 +85,30 @@ export default function Home() {
           }
         }
       }
-      
-      // Fallback to localStorage if DB fetch fails or no userId
       const historyStr = localStorage.getItem("jobfind_local_history");
       if (historyStr) {
         const historyJobs = JSON.parse(historyStr);
-        if (Array.isArray(historyJobs)) {
-          setRecentJobs(historyJobs.slice(0, 5));
-        }
+        if (Array.isArray(historyJobs)) setRecentJobs(historyJobs.slice(0, 5));
       }
     } catch (e) {
       console.error("Failed to load recent jobs:", e);
-      // Last resort: try localStorage
-      try {
-        const historyStr = localStorage.getItem("jobfind_local_history");
-        if (historyStr) {
-          const historyJobs = JSON.parse(historyStr);
-          if (Array.isArray(historyJobs)) {
-            setRecentJobs(historyJobs.slice(0, 5));
-          }
-        }
-      } catch (err) {
-        console.error("Failed to load from localStorage:", err);
-      }
     }
   }
 
-  // Load recent jobs on mount and when page becomes visible
   useEffect(() => {
     fetchRecentJobs();
-    
-    // Refresh when page becomes visible (user returns from another page)
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        fetchRecentJobs();
-      }
-    };
-    
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   function closeModal() {
     setIsModalOpen(false);
     setSearched(false);
     setJobs([]);
+    // Clear all filters upon closing results panel
+    setQuery("");
+    setLocation("");
+    setExperience("");
+    setMode("");
+    setPackageMin("");
   }
 
   function syncJobsToLocalHistory(newJobs) {
@@ -224,59 +117,41 @@ export default function Home() {
       const userStr = localStorage.getItem("user");
       let userId = "";
       if (userStr) {
-        try {
-          const userObj = JSON.parse(userStr);
-          userId = userObj.id || userObj._id || "";
-        } catch (e) {}
+        const userObj = JSON.parse(userStr);
+        userId = userObj.id || userObj._id || "";
       }
-      
-      // Add userId to each job before saving
-      const jobsWithUserId = newJobs.map(job => ({
-        ...job,
-        userId: userId
-      }));
-      
-      // Store in localStorage for reference
+      const jobsWithUserId = newJobs.map(job => ({ ...job, userId }));
       localStorage.setItem("jobfind_local_history", JSON.stringify(jobsWithUserId));
-      
-      // Update recent jobs immediately after search
       setRecentJobs(jobsWithUserId.slice(0, 5));
     } catch (err) {
-      console.error("Failed to sync to localStorage:", err);
+      console.error(err);
     }
   }
 
-  async function search(q) {
-    const finalQuery = q || query;
-    if (!finalQuery.trim()) return;
+  async function search() {
+    if (!query.trim()) return;
 
     setLoading(true);
     setSearched(true);
-    setIsModalOpen(true); // Open the popup immediately when searching starts
+    setIsModalOpen(true); 
     setError(null);
     setJobs([]);
-    if (q) setQuery(q);
 
     try {
       const userStr = localStorage.getItem("user");
       let userId = "";
       if (userStr) {
-        try {
-          const userObj = JSON.parse(userStr);
-          userId = userObj.id || userObj._id || "";
-        } catch (e) { }
+        const userObj = JSON.parse(userStr);
+        userId = userObj.id || userObj._id || "";
       }
-      const res = await fetch(`/api/jobs?q=${encodeURIComponent(finalQuery)}${userId ? `&userId=${userId}` : ""}`);
-      if (!res.ok) {
-        let errMsg = "Failed to fetch jobs";
-        try {
-          const errData = await res.json();
-          errMsg = errData.error || errMsg;
-        } catch {
-          errMsg = `${res.status} ${res.statusText}`;
-        }
-        throw new Error(errMsg);
-      }
+
+      // Appending all inputs cleanly to backend API call
+      let fetchUrl = `/api/jobs?q=${encodeURIComponent(query)}&location=${encodeURIComponent(location)}&experience=${encodeURIComponent(experience)}&mode=${encodeURIComponent(mode)}&package=${encodeURIComponent(packageMin)}`;
+      if (userId) fetchUrl += `&userId=${userId}`;
+
+      const res = await fetch(fetchUrl);
+      if (!res.ok) throw new Error("Failed to fetch accurate job records");
+      
       const data = await res.json();
       const foundJobs = data.jobs || [];
       setJobs(foundJobs);
@@ -284,8 +159,14 @@ export default function Home() {
       if (foundJobs.length > 0) {
         syncJobsToLocalHistory(foundJobs);
       }
+
+      // Complete reset sequence after processing results
+      // setQuery("");
+      // setLocation("");
+      // setExperience("");
+      // setMode("");
+      // setPackageMin("");
     } catch (e) {
-      console.error(e);
       setError(e.message || "An unexpected error occurred");
     } finally {
       setLoading(false);
@@ -297,52 +178,110 @@ export default function Home() {
   }
 
   return (
-    <div className="font-sans">
-
-      {/* Main Container Search Box */}
-      <div className="w-full bg-white rounded-[24px] border border-[#EFEFFA] pt-11 px-5 pb-10 shadow-[0px_4px_20px_rgba(0,0,0,0.01)]">
+    <div className="font-sans max-w-7xl ">
+      <div className="w-full bg-white rounded-[24px] border border-[#EFEFFA] pt-11 px-6 pb-10 shadow-[0px_4px_20px_rgba(0,0,0,0.01)]">
         <div className="mb-7">
           <h1 className="text-2xl font-bold text-[#0F172A] tracking-[-0.03em] m-0 leading-[1.2]">
-            Find your next opportunity
+            Find your dream job now
           </h1>
-          <p className="text-muted-foreground">
-            Search millions of jobs - results saved to your personal database.
+          <p className="text-sm text-slate-500 mt-1">
+            Search across multi-tiered parameters. Defaulting search priorities to Pune if location preferences are empty.
           </p>
         </div>
 
-        {/* Search Input Container */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-white rounded-[16px] p-3 sm:py-1.5 sm:pr-1.5 sm:pl-4 shadow-[0px_2px_8px_rgba(0,0,0,0.04)] border border-[#E2E8F0]">
-
-          {/* Input Container Wrapper for Icon + Input */}
-          <div className="flex items-center flex-1 gap-3 px-1 sm:px-0">
-            <div className="flex items-center text-[#94A3B8] shrink-0">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-            </div>
+        {/* 2-Row Stack Configuration Input System */}
+        <div className="flex flex-col gap-4 w-full bg-white rounded-[24px] p-4 shadow-[0px_8px_24px_rgba(149,157,165,0.12)] border border-[#E2E8F0]">
+          
+          {/* FIRST ROW: Searchbar Input field */}
+          <div className="flex items-center w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-[16px] px-4 py-3">
+            <Search className="h-5 w-5 text-slate-400 shrink-0 mr-3" />
             <input
-              ref={inputRef}
               value={query}
               onChange={e => setQuery(e.target.value)}
               onKeyDown={handleKey}
-              placeholder="Job title, skill, or keyword ..."
-              className="w-full bg-transparent border-none outline-none text-[#1E293B] text-[1rem] py-2 sm:py-2.5 font-normal"
+              placeholder="Enter skills / designations / companies (e.g. Frontend Developer)"
+              className="w-full bg-transparent border-none outline-none text-[#1E293B] text-[0.95rem] font-normal placeholder-slate-400"
             />
           </div>
 
-          {/* Button - Spans full width on mobile, auto width on desktop */}
-          <button
-            onClick={() => search()}
-            disabled={loading}
-            className={`text-white border-none rounded-[12px] py-3 px-6 font-semibold text-[0.95rem] transition-[background] duration-200 ease-in-out text-center whitespace-nowrap w-full sm:w-auto ${loading ? "bg-[#CBD5E1] cursor-not-allowed" : "bg-[#834DFA] cursor-pointer"
+          {/* SECOND ROW: Multi-Filters and Action Button */}
+          <div className="flex flex-col lg:flex-row items-stretch lg:items-center gap-3 w-full">
+            
+            {/* Filter 1: Experience Dropdown */}
+            <div className="flex items-center flex-1 min-w-0 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[16px] px-4 py-2.5">
+              <Briefcase className="h-5 w-5 text-slate-400 shrink-0 mr-2" />
+              <select
+                value={experience}
+                onChange={e => setExperience(e.target.value)}
+                className="w-full bg-transparent border-none outline-none text-[#1E293B] text-[0.9rem] font-normal text-slate-600 cursor-pointer"
+              >
+                <option value="">Select experience</option>
+                <option value="fresher">Fresher (0 Yrs)</option>
+                <option value="1 year">1 Year</option>
+                <option value="2 years">2 Years</option>
+                <option value="3 years">3 Years</option>
+                <option value="5+ years">5+ Years</option>
+              </select>
+            </div>
+
+            {/* Filter 2: Mode Dropdown */}
+            <div className="flex items-center flex-1 min-w-0 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[16px] px-4 py-2.5">
+              <Globe className="h-5 w-5 text-slate-400 shrink-0 mr-2" />
+              <select
+                value={mode}
+                onChange={e => setMode(e.target.value)}
+                className="w-full bg-transparent border-none outline-none text-[#1E293B] text-[0.9rem] font-normal text-slate-600 cursor-pointer"
+              >
+                <option value="">Select mode</option>
+                <option value="Remote">Remote</option>
+                <option value="Onsite">On-site</option>
+                <option value="Hybrid">Hybrid</option>
+              </select>
+            </div>
+
+            {/* Filter 3: Package/Salary Dropdown */}
+            <div className="flex items-center flex-1 min-w-0 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[16px] px-4 py-2.5">
+              <IndianRupee className="h-5 w-5 text-slate-400 shrink-0 mr-2" />
+              <select
+                value={packageMin}
+                onChange={e => setPackageMin(e.target.value)}
+                className="w-full bg-transparent border-none outline-none text-[#1E293B] text-[0.9rem] font-normal text-slate-600 cursor-pointer"
+              >
+                <option value="">Select salary package</option>
+                <option value="3 Lakhs">3+ LPA</option>
+                <option value="6 Lakhs">6+ LPA</option>
+                <option value="10 Lakhs">10+ LPA</option>
+                <option value="15 Lakhs">15+ LPA</option>
+                <option value="25 Lakhs">25+ LPA</option>
+              </select>
+            </div>
+
+            {/* Filter 4: Location Input */}
+            <div className="flex items-center flex-1 min-w-0 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[16px] px-4 py-2.5">
+              <MapPin className="h-5 w-5 text-slate-400 shrink-0 mr-2" />
+              <input
+                value={location}
+                onChange={e => setLocation(e.target.value)}
+                onKeyDown={handleKey}
+                placeholder="Enter location (e.g. Pune)"
+                className="w-full bg-transparent border-none outline-none text-[#1E293B] text-[0.9rem] font-normal placeholder-slate-400"
+              />
+            </div>
+
+            {/* Main Action Trigger Search Button */}
+            <button
+              onClick={search}
+              disabled={loading}
+              className={`text-white border-none rounded-[16px] py-3 px-8 font-semibold text-[0.95rem] transition-all duration-200 text-center whitespace-nowrap lg:w-auto ${
+                loading ? "bg-[#CBD5E1] cursor-not-allowed" : "bg-[#1f7ae0] hover:bg-[#1665c1] cursor-pointer"
               }`}
-          >
-            Search Jobs
-          </button>
+            >
+              Search
+            </button>
+          </div>
         </div>
 
-        {/* Recent Jobs */}
+        {/* Recent Jobs Horizontal Scroll View */}
         {recentJobs.length > 0 && (
           <div className="mt-8">
             <h3 className="text-lg font-semibold text-[#1E293B] mb-4">Recent Searches</h3>
@@ -367,14 +306,12 @@ export default function Home() {
       {isModalOpen && (
         <div
           className="fixed top-0 left-0 w-screen h-screen bg-[rgba(15,23,42,0.4)] backdrop-blur-[4px] z-[9999] flex justify-center items-center p-2"
-          onClick={closeModal} // Closes modal if clicking outside the white card area
+          onClick={closeModal}
         >
-          {/* Modal Main Content Box */}
           <div
             className="bg-white w-full max-w-[750px] max-h-[85vh] rounded-[20px] shadow-[0px_20px_25px_-5px_rgba(0,0,0,0.1),_0px_10px_10px_-5px_rgba(0,0,0,0.04)] flex flex-col overflow-hidden relative"
-            onClick={(e) => e.stopPropagation()} // Prevents closing modal when clicking inside the window
+            onClick={(e) => e.stopPropagation()}
           >
-
             {/* Modal Header */}
             <div className="py-6 px-8 border-b border-[#F1F5F9] flex justify-between items-center">
               <div>
@@ -383,7 +320,7 @@ export default function Home() {
                 </h2>
                 {!loading && !error && jobs.length > 0 && (
                   <p className="mt-1 mr-0 mb-0 ml-0 text-[0.85rem] text-[#64748B]">
-                    Showing {jobs.length} matching matches for "{query}"
+                    Showing {jobs.length} matches for your query
                   </p>
                 )}
               </div>
@@ -412,7 +349,7 @@ export default function Home() {
               ) : jobs.length === 0 ? (
                 <div className="text-center py-12 px-0 text-[#64748B]">
                   <h3 className="font-semibold mt-0 mr-0 mb-1 ml-0">No jobs found</h3>
-                  <p className="text-[0.9rem] m-0">Try adjusting your keywords.</p>
+                  <p className="text-[0.9rem] m-0">Try adjusting your keywords or filters.</p>
                 </div>
               ) : (
                 <div className="flex flex-col gap-4">

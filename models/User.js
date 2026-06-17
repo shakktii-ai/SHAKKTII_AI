@@ -31,6 +31,7 @@ const UserSchema = new mongoose.Schema(
     mobileNo: { type: String, default: "" ,unique:true},
     education: { type: String, default: "" },
     collageName: { type: String, default: "" },
+    desiredJobTitle: { type: String, default: "" },
     password: { type: String, default: "" },
     profileImg: { type: String, default: "" },
     no_of_interviews: { type: Number, default: 0 },

@@ -253,6 +253,7 @@ async function handler(req, res) {
       address,
       education,
       collageName,
+      jobTitle,
     } = req.body;
 
     let user;
@@ -277,6 +278,7 @@ async function handler(req, res) {
       user.address = address || user.address;
       user.education = education || user.education;
       user.collageName = collageName || user.collageName;
+      user.desiredJobTitle = jobTitle || user.desiredJobTitle || "";
 
       await user.save();
     } else {
@@ -291,6 +293,7 @@ async function handler(req, res) {
         address,
         education,
         collageName,
+        desiredJobTitle: jobTitle || "",
         no_of_interviews: 0,
         no_of_interviews_completed: 0,
       });

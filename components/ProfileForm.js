@@ -368,6 +368,7 @@ export default function ProfileForm({ mode }) {
     DOB: "",
     education: "",
     collageName: "",
+    jobTitle: "",
     profileImg: "",
   });
   const router = useRouter();
@@ -389,8 +390,35 @@ export default function ProfileForm({ mode }) {
   };
 
  // In components/ProfileForm.js - Update the handleSubmit function
-const handleSubmit = async (e) => {
-  e.preventDefault();
+const seedJobsForNewUser = async (userId, jobTitle) => {
+    if (!userId || !jobTitle?.trim()) return;
+
+    try {
+      const res = await fetch(
+        `/api/jobs?q=${encodeURIComponent(jobTitle.trim())}&userId=${encodeURIComponent(userId)}`
+      );
+
+      if (!res.ok) {
+        console.warn("Signup seed jobs request failed", res.status);
+        return;
+      }
+
+      const data = await res.json();
+      if (Array.isArray(data.jobs) && data.jobs.length > 0) {
+        localStorage.setItem("jobfind_local_history", JSON.stringify(data.jobs.slice(0, 10)));
+      }
+    } catch (error) {
+      console.error("Failed to seed signup jobs:", error);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (mode === "signup" && !formData.jobTitle?.trim()) {
+      toast.error("Please enter the job title or role you are looking for.");
+      return;
+    }
 
   if (formData.password !== formData.confirmPassword) {
     toast.error("Passwords do not match");
@@ -402,7 +430,6 @@ const handleSubmit = async (e) => {
 
   try {
     const token = localStorage.getItem("token");
-    console.log('Token from localStorage:', token); // Debug log
     
     if (!token && mode === "fill") {
       toast.error("Please log in to update your profile");
@@ -418,9 +445,6 @@ const handleSubmit = async (e) => {
     if (mode === "fill") {
       headers["Authorization"] = `Bearer ${token}`;
     }
-
-    console.log('Sending request to:', endpoint); // Debug log
-    console.log('Request headers:', headers); // Debug log
 
     const response = await fetch(endpoint, {
       method: "POST",
@@ -441,6 +465,11 @@ const handleSubmit = async (e) => {
       }
       if (data.user) {
         localStorage.setItem("user", JSON.stringify(data.user));
+      }
+
+      if (mode === "signup" && data.user) {
+        const userId = data.user._id || data.user.id;
+        await seedJobsForNewUser(userId, formData.jobTitle);
       }
 
       toast.success(
@@ -494,6 +523,7 @@ const handleSubmit = async (e) => {
           className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
         />
       </div>
+    
       {/* Mobile + Address */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input
@@ -571,10 +601,19 @@ const handleSubmit = async (e) => {
           className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
         />
       </div>
-
-      {/* College + Profile Image */}
-      
-        
+ 
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {(mode === "signup") && (
+          <input
+            type="text"
+            name="jobTitle"
+            value={formData.jobTitle}
+            onChange={handleChange}
+            placeholder="Desired Job Title"
+            required
+            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+          )}
          <input
           type="text"
           name="address"
@@ -582,6 +621,11 @@ const handleSubmit = async (e) => {
           onChange={handleChange}
           className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
         />
+        </div>
+    
+      {/* College + Profile Image */}
+      
+        
         <input
           type="file"
           accept="image/*"
