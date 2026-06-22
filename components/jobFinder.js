@@ -103,12 +103,7 @@ export default function Home() {
     setIsModalOpen(false);
     setSearched(false);
     setJobs([]);
-    // Clear all filters upon closing results panel
-    setQuery("");
-    setLocation("");
-    setExperience("");
-    setMode("");
-    setPackageMin("");
+
   }
 
   function syncJobsToLocalHistory(newJobs) {
@@ -158,14 +153,14 @@ export default function Home() {
       setTotal(data.total || 0);
       if (foundJobs.length > 0) {
         syncJobsToLocalHistory(foundJobs);
+        setQuery("");
+      setLocation("");
+      setExperience("");
+      setMode("");
+      setPackageMin("");
       }
 
-      // Complete reset sequence after processing results
-      // setQuery("");
-      // setLocation("");
-      // setExperience("");
-      // setMode("");
-      // setPackageMin("");
+      
     } catch (e) {
       setError(e.message || "An unexpected error occurred");
     } finally {
