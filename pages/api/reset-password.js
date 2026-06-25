@@ -6,8 +6,10 @@ const handler = async (req, res) => {
   if (req.method === "PUT") {
     const { token, password } = req.body;
 
+console.log("Received Token:", token);
     // Find the user by reset token
     const user = await User.findOne({ resetToken: token });
+    console.log("Found User:", user);
     if (!user) {
       return res.status(400).json({ error: "User not found or invalid token" });
     }

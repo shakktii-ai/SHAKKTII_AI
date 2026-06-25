@@ -37,6 +37,20 @@ const UserSchema = new mongoose.Schema(
     no_of_interviews: { type: Number, default: 0 },
     no_of_interviews_completed: { type: Number, default: 0 },
     permanentLoginToken: { type: String, unique: true, sparse: true },
+    resetToken: {
+      type: String,
+      default: null,
+    },
+    resetTokenExpiry: {
+      type: Date,
+      default: null,
+    },
+
+    permanentLoginToken: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
   },
   { timestamps: true }
 );

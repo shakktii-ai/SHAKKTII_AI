@@ -79,6 +79,9 @@ const ResetPasswordPage = () => {
     if (data.success) {
       setMessage("✅ Password reset successfully. You can now log in.");
       setSubmitted(true);
+       setTimeout(() => {
+    router.push("/login"); // Replace with your login page route
+  }, 2000);
     } else {
       setMessage(`❌ ${data.error || "Something went wrong."}`);
     }

@@ -23,11 +23,20 @@ const handler = async (req, res) => {
       const resetTokenExpiry = addMinutes(new Date(), 15); // Token expiry 15 minutes from now
 
       // Save the token and expiry in the database
-      await User.findByIdAndUpdate(user._id, { resetToken, resetTokenExpiry });
+ const updatedUser = await User.findByIdAndUpdate(
+  user._id,
+  {
+    resetToken,
+    resetTokenExpiry,
+  },
+  { new: true }
+);
 
-      // Create the reset link
-      const resetLink = `${process.env.NEXT_PUBLIC_HOST}/reset-password/${resetToken}`;
+console.log("Generated Token:", resetToken);
+console.log("Saved Token:", updatedUser.resetToken);
 
+const resetLink = `${process.env.NEXT_PUBLIC_HOST}/reset-password/${resetToken}`;
+console.log("Reset Link:", resetLink);
       // Email content
       const subject = "Reset Your Password";
       const htmlContent = `
