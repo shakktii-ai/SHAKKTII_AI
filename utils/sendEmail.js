@@ -9,8 +9,8 @@ const sendEmail = async (recipientEmail, subject, htmlContent) => {
     secure: false, // TLS/SSL will be used instead
     auth: {
       // user: "8ad4ee001@smtp-brevo.com", // Your SMTP login
-      user:"a72d36001@smtp-brevo.com",
-      pass:'xsmtpsib-d08e1f8956ff9d2d737b7f85a3a506b53525735e7325d9d417aa857326e341c2-ervtk4vkBDoO7Xno'
+      user:"process.env.SMTP_USER",
+      pass:'process.env.SMTP_PASS'
       // pass: "69DnZvSONQasMPUg",         // Your SMTP password (Master Password)
     },
   });
