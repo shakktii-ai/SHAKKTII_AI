@@ -61,7 +61,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import AdminNav from "@/components/adminNav";
 import Navbar from "@/components/navbar";
-
+import Script from "next/script";
 export default function App({ Component, pageProps }) {
   const [user, setUser] = useState(undefined); // 👈 important
   const router = useRouter();
@@ -93,6 +93,19 @@ export default function App({ Component, pageProps }) {
 
   return (
     <>
+        <Script
+      src="https://www.googletagmanager.com/gtag/js?id=G-NW60GQ9NYE"
+      strategy="afterInteractive"
+    />
+
+    <Script id="google-analytics" strategy="afterInteractive">
+      {`
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-NW60GQ9NYE');
+      `}
+    </Script>
       {isAdminRoute ? (
         <div className="flex min-h-screen bg-cover" style={{ backgroundImage: "url('/bg.jpg')" }}>
             <AdminNav />
