@@ -338,7 +338,7 @@ function PersonalityTest() {
           {/* top-left border */}
           <div className="absolute -top-2 -left-2 w-8 h-8 border-t-4 border-l-4 border-[#D2E9FA] rounded-tl-xl"></div>
           {/* bottom-right border */}
-          <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-[#D2E9FA] rounded-br-xl"></div>
+          {/* <div className="absolute -bottom-2 -right-2 w-8 h-8 border-b-4 border-r-4 border-[#D2E9FA] rounded-br-xl"></div> */}
           <div className="p-8">
             <h1 className="text-3xl font-bold  text-center mb-6">Instructions</h1>
             <div className="prose max-w-none text-gray-700 mb-8">

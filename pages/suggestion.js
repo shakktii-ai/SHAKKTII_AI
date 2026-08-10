@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FaYoutube, FaArrowLeft } from "react-icons/fa";
 import { useRouter } from "next/router";
 import YouTube from "react-youtube";
+import Footer from "@/components/dashboard/Footer";
 
 const Suggestion = () => {
   const [loadingVideos, setLoadingVideos] = useState(true);
@@ -138,7 +139,7 @@ const Suggestion = () => {
       return (
         <div className="text-center py-8">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-          <p className="mt-2 text-gray-300">
+          <p className="mt-2 text-gray-600">
             Finding helpful video recommendations...
           </p>
         </div>
@@ -151,25 +152,26 @@ const Suggestion = () => {
         //   <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
         // </div>
           <div className="text-center py-8">
-          <p className="text-gray-400">No video recommendations available at the moment.</p>
+          <p className="text-gray-600">No video recommendations available at the moment.</p>
         </div>
       );
     }
 
     return (
-      <div className="mt-8 p-6 bg-gray-800 rounded-lg">
-        <h2 className="flex items-center text-2xl font-bold mb-6 text-red-500">
-          <FaYoutube className="mr-2" /> Recommended Videos by Skill
+      <div className="mt-8 p-6 bg-white rounded-lg">
+        <h2 className="flex items-center text-2xl font-semibold mb-4 text-[#FF0000]">
+          {/* <FaYoutube className="mr-2" />  */}
+          Recommended Videos by Skill
         </h2>
 
         {Object.entries(videosByDate).map(([date, groups]) => (
           <div key={date} className="mb-10">
-            <h2 className="text-2xl font-bold text-white mb-6 border-b border-gray-700 pb-2">
+            <h2 className="text-2xl font-semibold text-[#1F4CBD] mb-6 border-b border-gray-700 pb-2">
               {date}
             </h2>
             {groups.map((group, groupIndex) => (
               <div key={groupIndex} className="mb-8">
-                <h3 className="text-xl text-white font-semibold mb-4">
+                <h3 className="text-xl text-black font-semibold mb-4">
                   {group.skill}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -178,7 +180,7 @@ const Suggestion = () => {
                     return (
                       <div
                         key={videoIndex}
-                        className="bg-gray-700 rounded-lg overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl"
+                        className="bg-[#EFEFFB] rounded-lg overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-xl"
                       >
                         <div className="aspect-w-16 aspect-h-9">
                           <YouTube
@@ -211,13 +213,13 @@ const Suggestion = () => {
 
                         </div>
                         <div className="p-4">
-                          <h4 className="font-semibold text-white line-clamp-2 mb-1">
+                          <h4 className="font-normal text-black line-clamp-2 mb-1">
                             {video.title}
                           </h4>
-                          <p className="text-gray-400 text-sm">
+                          <p className="text-black text-sm">
                             {group.skill} Video
                           </p>
-                          <p className="text-gray-500 text-xs mt-2">
+                          <p className="text-black text-xs mt-2">
                             Added:{" "}
                             {new Date(video.createdAt || Date.now()).toLocaleString()}
                           </p>
@@ -235,20 +237,21 @@ const Suggestion = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white px-4 py-6">
+    <div className="min-h-screen bg-radial from-[#B3B3EA] via-[#E8E8F8] to-white text-white px-4 py-6">
       <div className="container mx-auto max-w-7xl">
         <button
           onClick={() => router.push("/dashboard")}
-          className="flex items-center text-blue-400 hover:text-blue-300 mb-6 transition-colors"
+          className="flex items-center text-black mb-2 transition-colors"
         >
           <FaArrowLeft className="mr-2" />
           Back to Dashboard
         </button>
-        <h1 className="text-3xl font-bold mb-8 text-center">
+        <h1 className="text-3xl font-bold mb-8 text-center text-[#1F4CBD]">
           Skill-Based Video Suggestions
         </h1>
         {renderYoutubeRecommendations()}
       </div>
+      <Footer/>
     </div>
   );
 };

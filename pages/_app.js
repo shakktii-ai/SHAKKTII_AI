@@ -45,9 +45,9 @@
 //         </div>
 //       ) : (
 //         <>
-        
+
 //         {isHomeRoute && <Navbar user={user} Logout={logout} />}
-      
+
 //           <Component {...pageProps} user={user} Logout={logout} />
 //         </>
 //       )}
@@ -67,19 +67,19 @@ export default function App({ Component, pageProps }) {
   const router = useRouter();
 
   useEffect(() => {
-  const token = localStorage.getItem("token");
-  const userData = localStorage.getItem("user");
+    const token = localStorage.getItem("token");
+    const userData = localStorage.getItem("user");
 
-  if (token && userData) {
-    try {
-      setUser({ value: token, ...JSON.parse(userData) });
-    } catch (err) {
-      setUser(null); // 👈 invalid data
+    if (token && userData) {
+      try {
+        setUser({ value: token, ...JSON.parse(userData) });
+      } catch (err) {
+        setUser(null); // 👈 invalid data
+      }
+    } else {
+      setUser(null); // 👈 not logged in
     }
-  } else {
-    setUser(null); // 👈 not logged in
-  }
-}, [router.pathname]);
+  }, [router.pathname]);
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -93,29 +93,29 @@ export default function App({ Component, pageProps }) {
 
   return (
     <>
-        <Script
-      src="https://www.googletagmanager.com/gtag/js?id=G-NW60GQ9NYE"
-      strategy="afterInteractive"
-    />
+      <Script
+        src="https://www.googletagmanager.com/gtag/js?id=G-NW60GQ9NYE"
+        strategy="afterInteractive"
+      />
 
-    <Script id="google-analytics" strategy="afterInteractive">
-      {`
+      <Script id="google-analytics" strategy="afterInteractive">
+        {`
         window.dataLayer = window.dataLayer || [];
         function gtag(){dataLayer.push(arguments);}
         gtag('js', new Date());
         gtag('config', 'G-NW60GQ9NYE');
       `}
-    </Script>
+      </Script>
       {isAdminRoute ? (
         <div className="flex min-h-screen bg-cover" style={{ backgroundImage: "url('/bg.jpg')" }}>
-            <AdminNav />
+          <AdminNav />
           <Component {...pageProps} user={user} Logout={logout} />
         </div>
       ) : (
         <>
-        
-        {isHomeRoute && <Navbar user={user} Logout={logout} />}
-      
+
+          {isHomeRoute && <Navbar user={user} Logout={logout} />}
+
           <Component {...pageProps} user={user} Logout={logout} />
         </>
       )}

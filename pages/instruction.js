@@ -25,61 +25,61 @@ function Instruction() {
             id: 1,
             title: "Understand the job role",
             img: '/Shawn.png',
-            content: "1. Understanding the job role means researching its key responsibilities, required skills, and expectations. This helps you tailor your resume, answer interview questions confidently, and demonstrate how your abilities align with the position.",
+            content: "Understanding the job role means researching its key responsibilities, required skills, and expectations. This helps you tailor your resume, answer interview questions confidently, and demonstrate how your abilities align with the position.",
         },
         {
             id: 2,
             img: '/Job_Discrioption.png',
             title: "Understand the Job Description",
-            content: "2. Carefully read and analyze the job description to grasp the key qualifications, duties, and expectations. Prepare examples of how your skills and experiences match the job requirements",
+            content: "Carefully read and analyze the job description to grasp the key qualifications, duties, and expectations. Prepare examples of how your skills and experiences match the job requirements",
         },
         {
             id: 3,
             img: '/companys_background..png',
             title: "Understand the collage's background",
-            content: "3. Understanding the collage's background means learning about its history, mission, values, products, services, and industry position. This helps you align your answers in interviews and show genuine interest in the organization",
+            content: "Understanding the collage's background means learning about its history, mission, values, products, services, and industry position. This helps you align your answers in interviews and show genuine interest in the organization",
         },
         {
             id: 4,
             img: '/Self_Introduction.png',
             title: "Practice Your Self Introduction",
-            content: "4. Introduce yourself briefly, highlight key skills, experience, and achievements, and connect them to the job role",
+            content: "Introduce yourself briefly, highlight key skills, experience, and achievements, and connect them to the job role",
         },
         {
             id: 5,
             img: '/Resume.png',
             title: "Update Your Resume and Carry 1/2 copies",
-            content: "5. Ensure your resume and other application materials are updated, tailored to the job, and neatly organized. Bring multiple copies of your resume and any other requested documents",
+            content: "Ensure your resume and other application materials are updated, tailored to the job, and neatly organized. Bring multiple copies of your resume and any other requested documents",
         },
         {
             id: 6,
             img: '/Yourself_Professionally.png',
             title: "Present Yourself Professionally",
-            content: "6. Dress appropriately for the industry and collage culture. Pay attention to grooming and personal hygiene to make a positive impression",
+            content: "Dress appropriately for the industry and collage culture. Pay attention to grooming and personal hygiene to make a positive impression",
         },
         {
             id: 7,
             img: '/Essential_Documents.png',
             title: "Gather and Organize Essential Documents",
-            content: "7. Collect and neatly organize all necessary documents, such as certificates, references, and identification. Use a folder or portfolio to keep everything tidy and easily accessible",
+            content: "Collect and neatly organize all necessary documents, such as certificates, references, and identification. Use a folder or portfolio to keep everything tidy and easily accessible",
         },
         {
             id: 8,
             img: '/company_News.png',
             title: "Stay Up-to-Date on collage News",
-            content: "8. Research the collage's recent news, achievements, and initiatives. This demonstrates your interest in the collage and can provide valuable conversation topics",
+            content: "Research the collage's recent news, achievements, and initiatives. This demonstrates your interest in the collage and can provide valuable conversation topics",
         },
         {
             id: 9,
             img: '/Thoughtful_Questions.png',
             title: " Prepare Thoughtful Questions",
-            content: '9. Develop a list of insightful questions to ask the interviewer, such as "What are the biggest challenges facing the team?" or "Can you tell me more about the collage culture?',
+            content: 'Develop a list of insightful questions to ask the interviewer, such as "What are the biggest challenges facing the team?" or "Can you tell me more about the collage culture?',
         },
         {
             id: 10,
             img: '/Rest_Preparation.png',
             title: " Get Adequate Rest and Preparation",
-            content: '10. Ensure you get sufficient sleep and time to prepare before the interview. This will help you feel confident, focused, and ready to make a positive impression',
+            content: 'Ensure you get sufficient sleep and time to prepare before the interview. This will help you feel confident, focused, and ready to make a positive impression',
         },
     ];
 
@@ -255,69 +255,108 @@ function Instruction() {
     }, []);
 
     return (
-        <div className="min-h-screen  p-6">
+        <div className="min-h-screen bg-[#E8E8FB] p-6">
             {/* Back Button */}
             <button
                 onClick={() => router.back()}
-                className=" text-2xl w-8 h-8 flex items-center justify-center mb-12"
+                className=" text-2xl w-8 h-8 flex items-center justify-center mb-2"
             >
                 <IoIosArrowBack />
             </button>
+            <div className="flex justify-center items-center mb-6">
+                <img src="/MM_LOGO.png" width={24} height={24} />
+                <h2 className="text-xl ml-2 font-bold bg-gradient-to-r from-[#215AB9] to-[#33B29C] bg-clip-text text-transparent">
+                    MockMingle
+                </h2>
+            </div>
+            <div className="mb-8">
+                <h1 className="text-3xl font-semibold text-center mb-2 text-[#1F4CBD]">Instructions</h1>
+                <p className=" text-center text[20px]">Discover your personality traits, strengths, and areas for growth with our comprehensive assessment.</p>
+            </div>
+            <div className="max-w-[500px] mx-auto">
 
-            <div className="max-w-md mx-auto">
-                <div className="mb-12">
-                    <h1 className="text-3xl font-normal text-center mb-2">Instructions</h1>
-                    <p className=" text-center">Please follow these instructions carefully</p>
-                </div>
 
                 {/* Slides Container */}
-                <div className="bg-blue-300 rounded-xl p-8 mb-8 min-h-64 relative">
-                    {slides.map((slide, index) => (
-                        <div
-                            key={slide.id}
-                            className={`transition-opacity duration-300 ${currentIndex === index ? 'opacity-100' : 'opacity-0 absolute inset-0 p-6'}`}
-                        >
-                            <div className="flex items-center mb-4">
-                                <div className="bg-purple-600 rounded-full w-10 h-10 flex items-center justify-center  font-bold mr-3">
-                                    {index + 1}
-                                </div>
-                                <h3 className="text-xl font-medium">{slide.title}</h3>
-                            </div>
-                            <p className=" text-sm pl-13">{slide.content}</p>
-                        </div>
-                    ))}
+                <div className="relative mb-8">
+                    {/* Blue Corner Border */}
+                    <div className="absolute top-0.8 left-0.8 w-20 h-20 border-l-[5px] border-t-[5px] border-[#2E56C5] rounded-tl-xl z-10"></div>
 
-                    {/* Navigation Dots */}
-                    <div className="flex justify-center mt-6 space-x-2 absolute bottom-4 left-0 right-0">
-                        {slides.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => goToSlide(index)}
-                                className={`w-2 h-2 rounded-full ${currentIndex === index ? 'bg-white' : 'bg-gray-600'}`}
-                                aria-label={`Go to slide ${index + 1}`}
-                            />
+                    {/* Main Card */}
+                    <div className="bg-white rounded-3xl min-h-64 relative shadow-md shadow-gray-300 p-4 mb-8">
+                        {slides.map((slide, index) => (
+                            <div
+                                key={slide.id}
+                                className={`transition-opacity duration-300 ${currentIndex === index
+                                    ? "opacity-100"
+                                    : "opacity-0 absolute inset-0 p-8"
+                                    }`}
+                            >
+                                {/* Inner Gray Border */}
+                                <div className="h-full border border-[#D9D9E6] rounded-3xl px-2 py-6 flex flex-col items-center justify-center relative">
+
+                                    <div className="flex items-center justify-center mb-4">
+                                        <h3 className="text-xl font-semibold bg-gradient-to-b from-[#1F4CBD] to-[#46A38E] bg-clip-text text-transparent">
+                                            {slide.title}
+                                        </h3>
+                                    </div>
+
+                                    <p className="text-sm text-center text-[#222] leading-6 max-w-2xl">
+                                        {slide.content}
+                                    </p>
+
+                                    {/* Navigation Dots */}
+                                    <div className="flex justify-center space-x-2 mt-6">
+                                        {slides.map((_, dotIndex) => (
+                                            <button
+                                                key={dotIndex}
+                                                onClick={() => goToSlide(dotIndex)}
+                                                className={`w-2 h-2 rounded-full transition-colors ${currentIndex === dotIndex
+                                                    ? "bg-[#6F24E8]"
+                                                    : "bg-[#E8E8FB]"
+                                                    }`}
+                                                aria-label={`Go to slide ${dotIndex + 1}`}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         ))}
                     </div>
                 </div>
 
                 {/* Device Test Section */}
-                <div className="bg-blue-300 rounded-xl p-6 mb-6">
-                    <h3 className="text-lg font-medium mb-4">Device Check</h3>
+                <div className="relative bg-white shadow-md shadow-gray-300 rounded-xl p-6 mb-6 overflow-visible">
+                    <div className="absolute -bottom-0.5 -right-0.5 w-20 h-20 border-r-[5px] border-b-[5px] border-[#2E56C5] rounded-br-2xl pointer-events-none"></div>
+
+
+                    <h3 className="text-lg font-semibold mb-4 bg-gradient-to-b from-[#1F4CBD] to-[#46A38E] bg-clip-text text-transparent">Device Check</h3>
 
                     <div className="space-y-4">
                         {/* Speaker Test */}
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                                <FaVolumeUp className="text-blue-400 mr-2" />
-                                <span>Speaker Test</span>
+                        <div className={`${deviceTests.speaker.done ? 'bg-[#D1FAE5] border border-[#16A34A]' : 'bg-white border border-gray-300'} flex items-center justify-between  p-2 rounded-xl`}>
+                            <div className="flex items-center text-[15px]">
+                                <FaVolumeUp className="text-black mx-4" />
+                                <span>
+                                    Speaker Test{" "}
+                                    {deviceTests.speaker.done && (
+                                        <span className="text-green-600 font-medium">
+                                            ✓ Working
+                                        </span>
+                                    )}
+                                </span>
                             </div>
                             {deviceTests.speaker.done ? (
-                                <span className=" text-sm">✓ Tested</span>
+                                <button
+                                    onClick={testSpeaker}
+                                    disabled={deviceTests.speaker.testing}
+                                    className=" text-sm bg-[#16A34A] px-2 py-1 rounded-xl text-white">
+                                    {deviceTests.speaker.testing ? 'Testing...' : 'Re-Test'}
+                                </button>
                             ) : (
                                 <button
                                     onClick={testSpeaker}
                                     disabled={deviceTests.speaker.testing}
-                                    className="text-sm bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded"
+                                    className="text-sm bg-[#6F24E8] text-white px-3 py-1 rounded-xl"
                                 >
                                     {deviceTests.speaker.testing ? 'Testing...' : 'Test'}
                                 </button>
@@ -325,10 +364,17 @@ function Instruction() {
                         </div>
 
                         {/* Microphone Test */}
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center">
-                                <FaMicrophone className="text-blue-400 mr-2" />
-                                <span>Microphone Test</span>
+                        <div className={`${deviceTests.microphone.done ? 'bg-[#D1FAE5] border border-[#16A34A]' : 'bg-white border border-gray-300'} flex items-center justify-between  p-2 rounded-xl`}>
+                            <div className="flex items-center text-[15px]">
+                                <FaMicrophone className="text-black mx-4" />
+                                <span>
+                                    Microphone Test{" "}
+                                    {deviceTests.microphone.done && (
+                                        <span className="text-green-600 font-medium">
+                                            ✓ Working
+                                        </span>
+                                    )}
+                                </span>
                             </div>
                             {deviceTests.microphone.testing ? (
                                 <div className="flex items-center">
@@ -340,15 +386,18 @@ function Instruction() {
                                     <span className="ml-2 text-sm">Listening...</span>
                                 </div>
                             ) : deviceTests.microphone.done ? (
-                                <span className=" text-sm">
-                                    {deviceTests.microphone.status || '✓ Working'}
-                                </span>
+                                <button
+                                    onClick={testMicrophone}
+                                    disabled={deviceTests.microphone.testing}
+                                    className=" text-sm bg-[#16A34A] px-2 py-1 rounded-xl text-white">
+                                    {deviceTests.microphone.testing ? 'Listening...' : 'Re-Test'}
+                                </button>
                             ) : (
                                 <button
                                     onClick={testMicrophone}
                                     disabled={deviceTests.microphone.testing}
-                                    className={`text-sm px-4 py-2 rounded-lg flex items-center 
-              ${deviceTests.microphone.testing ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white'}`}
+                                    className={`text-sm px-4 py-1 rounded-lg flex items-center rounded-xl
+              ${deviceTests.microphone.testing ? 'bg-[#00B4D8] cursor-not-allowed' : 'bg-[#00B4D8] text-white'}`}
                                 >
                                     {deviceTests.microphone.testing ? (
                                         <>
@@ -359,19 +408,22 @@ function Instruction() {
                                 </button>
 
                             )}
+
                         </div>
+
                     </div>
+
                 </div>
 
                 {/* Start Button */}
                 <button
                     onClick={handleStartInterview}
-                    className={`w-full py-3 px-6 rounded-lg font-medium transition-colors ${deviceTests.speaker.done && deviceTests.microphone.done
-                            ? 'bg-white text-black hover:bg-gray-200'
-                            : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                    className={`w-full py-3 px-6 rounded-lg font-medium transition-colors  ${deviceTests.speaker.done && deviceTests.microphone.done
+                        ? 'bg-gradient-to-r from-[#1F4CBD] to-[#46A38E] text-white hover:bg-gray-200'
+                        : 'bg-gradient-to-r from-[#1F4CBD]/50 to-[#46A38E]/50 text-white cursor-not-allowed'
                         }`}
                 >
-                    Start Interview
+                    Complete device check to continue
                 </button>
             </div>
         </div>

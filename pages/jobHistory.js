@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import JobCard from "@/components/jobCard"; // Adjust this import path as needed
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import Footer from "@/components/dashboard/Footer";
 
 export default function HistoryPage() {
     const [savedJobs, setSavedJobs] = useState([]);
@@ -63,9 +64,9 @@ export default function HistoryPage() {
     });
 
     return (
-        <div className="p-4 max-w-full mx-auto min-vh-100">
+        <div className=" max-w-full mx-auto min-vh-100">
             {/* Navigation Header Left / Right Sync Row */}
-            <div className="w-full mb-6 flex items-center justify-between px-2">
+            <div className="w-full my-6 flex items-center justify-between px-2">
                 {/* Left Side: Navigation Link */}
                 <Link 
                     href="/dashboard" 
@@ -141,6 +142,7 @@ export default function HistoryPage() {
                     </div>
                 )}
             </div>
+            <Footer/>
         </div>
     );
 }

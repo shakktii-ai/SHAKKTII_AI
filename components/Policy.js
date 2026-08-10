@@ -1,5 +1,5 @@
 import { useState } from "react";
-export default function PrivacyPolicy() {
+export default function PrivacyPolicy({onClose}) {
       const [open, setOpen] = useState(true); // modal control
 
   if (!open) return null;
@@ -11,7 +11,7 @@ export default function PrivacyPolicy() {
 
         {/* Close Button */}
         <button
-          onClick={() => setOpen(false)}
+          onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl"
         >
           ✕

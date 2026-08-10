@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Lock, Unlock } from "lucide-react";
+import { IoArrowBackCircleOutline } from 'react-icons/io5';
+import Link from 'next/link';
 export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -114,26 +116,42 @@ export default function Login() {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen   relative overflow-hidden bg-black">
+        <div className="flex flex-col justify-center items-center min-h-screen   relative overflow-hidden bg-[#E8E8FB]">
             {/* <img src="/bg.gif" className="absolute top-0 left-0 w-full h-full object-cover z-[-1]" alt="background" /> */}
             <div className="absolute top-4 left-8">
                 <button
                     onClick={() => router.push('/')}
-                    className="flex items-center text-purple-600 hover:text-purple-800 transition-colors"
+                    className="flex items-center text-black "
                 >
-                    <svg width="55" height="54" viewBox="0 0 55 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M14.2929 27.2929C13.9024 27.6834 13.9024 28.3166 14.2929 28.7071L20.6569 35.0711C21.0474 35.4616 21.6805 35.4616 22.0711 35.0711C22.4616 34.6805 22.4616 34.0474 22.0711 33.6569L16.4142 28L22.0711 22.3431C22.4616 21.9526 22.4616 21.3195 22.0711 20.9289C21.6805 20.5384 21.0474 20.5384 20.6569 20.9289L14.2929 27.2929ZM42 28V27L15 27V28V29L42 29V28Z" fill="white" />
-                        <path d="M27.5 0.5C42.4204 0.5 54.5 12.3731 54.5 27C54.5 41.6269 42.4204 53.5 27.5 53.5C12.5796 53.5 0.5 41.6269 0.5 27C0.5 12.3731 12.5796 0.5 27.5 0.5Z" stroke="white" />
-                    </svg>
+                    <IoArrowBackCircleOutline size={24} />
 
                 </button>
             </div>
-            {/* <img src="/Logoo.png" className="absolute top-4 right-8 w-20 mb-4" alt="Logo" /> */}
-            
-            <div className='bg-[#D3E7F6] rounded-lg'>
-                
+            <div className="flex justify-center items-center mb-4">
+                <img src="MM_LOGO.png" width={24} height={24} />
+                <h2 className="text-xl ml-2 font-bold bg-gradient-to-r from-[#215AB9] to-[#33B29C] bg-clip-text text-transparent">
+                    MockMingle
+                </h2>
+            </div>
+            <h2 className='text-black text-3xl font-semibold mb-4'>Welcome Back!</h2>
+            <div className='bg-white shadow-md  rounded-lg'>
+                <div className="flex rounded-full bg-[#E8E8F8] p-1 m-4">
+                    <Link
+                        href="/login"
+                        className="flex-1 rounded-full bg-[#6C2CF0] py-3 text-center text-white shadow-md"
+                    >
+                        Login
+                    </Link>
+
+                    <Link
+                        href="/signup"
+                        className="flex-1 rounded-full py-3 text-center text-gray-600"
+                    >
+                        Register
+                    </Link>
+                </div>
                 <div className="bg-transparent text-center p-4 w-[25rem] ">
-                    <h1 className="flex justify-center text-3xl font-semibold mb-6 ">Login</h1>
+                    {/* <h1 className="flex justify-center text-3xl font-semibold mb-6 text-[#6F24E8]">Login</h1> */}
 
                     <form onSubmit={handleSubmit}>
                         <input
@@ -143,7 +161,7 @@ export default function Login() {
                             value={email}
                             onChange={handleChange}
                             placeholder="Email Address"
-                            className="w-full p-3 rounded-md bg-[#ffffff] bg-opacity-40 text-black text-base mb-4 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-transparent"
+                            className="w-full p-3 rounded-full bg-[#E8E8FB] bg-opacity-40 text-black text-base mb-4 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-transparent border border-[#D3D0D0]"
                         />
 
                         <div className="relative mb-4">
@@ -154,7 +172,7 @@ export default function Login() {
                                 value={password}
                                 onChange={handleChange}
                                 placeholder="Password"
-                                className="w-full p-3 rounded-md bg-white bg-opacity-40 text-black text-base focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-transparent"
+                                className="w-full p-3 rounded-full bg-[#E8E8FB] bg-opacity-40 text-black text-base focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-transparent border border-[#D3D0D0]"
                             />
                             <span
                                 className="absolute top-1/2 transform -translate-y-1/2 right-4 cursor-pointer text-black text-xl"
@@ -163,7 +181,7 @@ export default function Login() {
                                 {showPassword ? <Unlock size={24} className="text-gray-500 " /> : <Lock size={24} className="text-gray-500" />}
                             </span>
                         </div>
-
+                        <a href="/forgot-password" className="text-[#6F24E8] text-sm mt-4 block text-right">Forgot Password?</a>
                         <div className="flex items-center text-black text-sm mb-4">
                             <input type="checkbox" id="remember" className="mr-2" />
                             <label htmlFor="remember">Remember for 30 days</label>
@@ -172,7 +190,7 @@ export default function Login() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full py-3 rounded-md bg-gradient-to-r from-black to-gray-500 text-white text-base transition-all hover:bg-pink-600"
+                            className="w-full py-3 rounded-full bg-[#6F24E8] text-white text-base transition-all"
                         >
                             {loading ? (
                                 <>
@@ -185,11 +203,11 @@ export default function Login() {
                         </button>
                     </form>
 
-                    <a href="/forgot-password" className="text-black text-sm mt-4 block">Forgot Password?</a>
+
 
                     <div className="text-black text-sm mt-4">
                         Don't have an account?
-                        <a href="/signup" className="font-bold text-black">Sign up</a>
+                        <a href="/signup" className="font-semibold text-[#6F24E8] ml-2">Register</a>
                     </div>
                 </div>
             </div>

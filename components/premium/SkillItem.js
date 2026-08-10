@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronDown, ChevronUp, TrendingUp, Play, ExternalLink, Sparkles } from "lucide-react";
+import { ChevronDown, ChevronUp, TrendingUp, Play, ExternalLink, Sparkles, Share2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "../../lib/utils";
 
@@ -24,20 +24,20 @@ export default function SkillItem({
         Good: "bg-[#F0F9FF] text-[#0EA5E9]",
         "Not Attempted": "bg-slate-100 text-slate-500",
     };
-
+  
     return (
         <div className={cn(
-            "overflow-hidden rounded-2xl bg-white shadow-sm border border-slate-100 transition-all duration-300",
+            "overflow-hidden rounded-2xl bg-gradient-to-r from-[#D6C8F5] via-[#E2D6F8] to-[#E4DBF8] shadow-sm border border-slate-100 transition-all duration-300",
             isExpanded ? "border-indigo-200 shadow-md ring-1 ring-indigo-50" : "hover:border-indigo-200 hover:shadow-md"
         )}>
             {/* Header Row (Clickable) */}
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="flex w-full items-center justify-between p-5 outline-none hover:bg-[#F9FBFF] transition-colors duration-200 cursor-pointer"
+                className="flex w-full items-center justify-between p-5 outline-none  transition-colors duration-200 cursor-pointer"
             >
                 <div className="flex items-center gap-6 text-left">
-                    <div className="relative flex h-16 w-16 items-center justify-center">
-                        <svg className="h-16 w-16 -rotate-90 transform">
+                    <div className="relative flex h-18 w-18 items-center justify-center rounded-full bg-white p-1 ">
+                        <svg className="h-16 w-16 -rotate-90 ">
                             <circle
                                 cx="32"
                                 cy="32"
@@ -46,30 +46,37 @@ export default function SkillItem({
                                 stroke="#F1F5F9"
                                 strokeWidth="4"
                             />
+
                             {score !== "-" && (
                                 <circle
                                     cx="32"
                                     cy="32"
                                     r="28"
-                                    fill="transparent"
+                                    fill="#D6C8F5"
                                     stroke={progressColor}
                                     strokeWidth="4"
                                     strokeDasharray={175.9}
-                                    strokeDashoffset={175.9 - (175.9 * (typeof score === 'string' ? 0 : score)) / 10}
+                                    strokeDashoffset={
+                                        175.9 -
+                                        (175.9 * (typeof score === "string" ? 0 : score)) / 10
+                                    }
                                     strokeLinecap="round"
                                 />
                             )}
                         </svg>
-                        <span className="absolute text-lg font-bold text-[#7C3AED]">{score}</span>
+
+                        <span className="absolute text-sm font-bold text-[#6F24E8]">
+                            {score}/10
+                        </span>
                     </div>
 
                     <div>
-                        <h3 className="text-xl font-bold tracking-tight text-[#2563EB]">{skill}</h3>
-                        <div className="flex items-center gap-3 mt-1">
-                            <span className={cn("inline-flex items-center rounded-md px-2 py-0.5 text-xs font-bold", statusColors[status])}>
-                                {status}
+                        <h3 className="text-xl font-semibold tracking-tight text-[#6F24E8]">{skill}</h3>
+                        <div className="flex items-center gap-1 mt-1">
+                            <span className={cn("inline-flex items-center rounded-md px-1 py-0.5 text-[15px] font-normal")}>
+                                {status}.
                             </span>
-                            <span className="text-xs text-slate-500">Last tested: {lastTested}</span>
+                            <span className="text-[15px] text-slate-800">Last tested: {lastTested}</span>
                         </div>
                     </div>
                 </div>
@@ -83,17 +90,17 @@ export default function SkillItem({
             {/* Expanded Content */}
             <div className={cn(
                 "grid transition-all duration-300 ease-in-out",
-                isExpanded ? "grid-rows-[1fr] opacity-100 border-t border-slate-50" : "grid-rows-[0fr] opacity-0"
+                isExpanded ? "grid-rows-[1fr] opacity-100 border-t border-slate-50 bg-white" : "grid-rows-[0fr] opacity-0"
             )}>
                 <div className="overflow-hidden">
                     <div className="p-6 space-y-6">
-                        <p className="text-slate-600 leading-relaxed font-medium">
+                        {/* <p className="text-slate-600 leading-relaxed font-medium">
                             {summary}
-                        </p>
+                        </p> */}
 
-                        <div className="rounded-xl bg-[#F5F3FF] p-5">
-                            <h4 className="text-sm font-bold text-[#5B21B6] mb-2 uppercase tracking-tight">Detailed Feedback</h4>
-                            <p className="text-slate-600 text-sm leading-relaxed">
+                        <div className="rounded-xl bg-[#6F24E8]/15 p-5">
+                            <h4 className="text-sm font-semibold text-[#000000] mb-2 uppercase tracking-tight">Detailed Feedback</h4>
+                            <p className="text-[#4A4A4A] text-sm leading-relaxed">
                                 {detailedFeedback}
                             </p>
                         </div>
@@ -104,11 +111,14 @@ export default function SkillItem({
                                 {opportunities.map((item, index) => (
                                     <li
                                         key={index}
-                                        onClick={() => router.push(`/suggestion?skill=${encodeURIComponent(skill)}`)}
-                                        className="flex items-start gap-2.5 text-sm text-slate-600 hover:text-indigo-600 cursor-pointer group/item transition-colors"
+                                        onClick={() =>
+                                            router.push(`/suggestion?skill=${encodeURIComponent(skill)}`)
+                                        }
+                                        className="flex items-start gap-2.5 text-[14px] text-[#4A4A4A]   group/item transition-colors"
                                     >
-                                        <Sparkles size={14} className="mt-0.5 text-[#10B981] fill-[#10B981] group-hover/item:text-indigo-500 group-hover/item:fill-indigo-500 transition-colors" />
-                                        {item}
+                                        <span className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-[#000000]  transition-colors" />
+
+                                        <span>{item}</span>
                                     </li>
                                 ))}
                             </ul>
@@ -128,16 +138,18 @@ export default function SkillItem({
                                 <ExternalLink size={18} className="text-slate-300 group-hover:text-slate-500 transition-colors" />
                             </div>
                         )}
-
-                        <button
-                            onClick={() => router.push(`/suggestion?skill=${encodeURIComponent(skill)}`)}
-                            className="w-full py-4 rounded-xl bg-[#10B981] hover:bg-[#059669] text-white font-bold text-[15px] transition-all transform active:scale-[0.98] shadow-sm shadow-emerald-100 cursor-pointer"
-                        >
-                            Learning this skills
-                        </button>
+                        <div className="flex justify-end gap-4">
+                            <button
+                                onClick={() => router.push(`/suggestion?skill=${encodeURIComponent(skill)}`)}
+                                className="px-3 py-2 rounded-md bg-[#10B981] hover:bg-[#059669] text-white font-semibold text-[15px] transition-all transform active:scale-[0.98] shadow-sm shadow-emerald-100 cursor-pointer"
+                            >
+                                Learning this skills
+                            </button>
+                           
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+                    </div>
     );
 }

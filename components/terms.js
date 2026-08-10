@@ -1,5 +1,5 @@
 import { useState } from "react";
-export default function TermsAndConditions() {
+export default function TermsAndConditions( {onClose}) {
       const [open, setOpen] = useState(true); // modal control
 
   if (!open) return null;
@@ -11,7 +11,7 @@ export default function TermsAndConditions() {
 
         {/* Close Button */}
         <button
-          onClick={() => setOpen(false)}
+         onClick={onClose}
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-xl"
         >
           ✕

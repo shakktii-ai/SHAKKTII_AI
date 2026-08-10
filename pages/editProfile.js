@@ -264,7 +264,7 @@ function EditProfile() {
       formData.append("education", education);
       if (profileImgFile) formData.append("profileImg", profileImgFile);
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/signup`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/editProfile`, {
         method: 'PUT',
         body: formData // Multer + Cloudinary will handle it
       });

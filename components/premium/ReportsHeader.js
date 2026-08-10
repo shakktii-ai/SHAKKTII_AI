@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Filter, Eye, X, Check, Calendar, Briefcase, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-export default function ReportsHeader({ onViewFullReport, uniqueRoles = [], onFilterChange, activeFilters = { date: null, role: null } }) {
+import { Share2 } from "lucide-react";
+export default function ReportsHeader({ onViewFullReport,onShareReport, uniqueRoles = [], onFilterChange, activeFilters = { date: null, role: null } }) {
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -33,8 +33,8 @@ export default function ReportsHeader({ onViewFullReport, uniqueRoles = [], onFi
     return (
         <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end relative">
             <div>
-                <h1 className="text-3xl font-bold text-[#0F172A] md:text-4xl tracking-tight">Your Progress Report</h1>
-                <p className="mt-2 text-slate-500 text-lg font-medium opacity-80">Track your growth across all skill areas</p>
+                <h1 className="text-3xl font-bold text-[#1F4CBD] md:text-4xl tracking-tight">Your Progress Report</h1>
+                <p className="mt-2 text-black text-lg font-medium opacity-80">Track your growth across all skill areas</p>
             </div>
             <div className="flex items-center gap-3">
                 <div className="relative" ref={dropdownRef}>
@@ -141,6 +141,13 @@ export default function ReportsHeader({ onViewFullReport, uniqueRoles = [], onFi
                 >
                     <Eye size={18} />
                     View Full Report
+                </button>
+                    <button
+                    onClick={onShareReport}
+                    className="flex items-center gap-2 rounded-xl bg-[#1F4CBD] hover:bg-[#173d99] px-4 py-2.5 text-sm font-semibold text-white transition cursor-pointer"
+                >
+                    <Share2 size={18} />
+                    Share Report
                 </button>
             </div>
         </div>

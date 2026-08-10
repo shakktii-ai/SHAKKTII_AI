@@ -36,15 +36,15 @@
 
 // const handleSubmit = async (e) => {
 //     e.preventDefault();
-  
+
 //     if (formData.password !== formData.confirmPassword) {
 //       toast.error("Passwords do not match");
 //       return;
 //     }
-  
+
 //     let endpoint = "";
 //     let body = { ...formData };
-  
+
 //     if (mode === "signup") {
 //       endpoint = "/api/signup";
 //     } else if (mode === "fill") {
@@ -56,33 +56,33 @@
 //       endpoint = "/api/auth/fillProfile";
 //       body = { token, ...formData };
 //     }
-  
+
 //     const res = await fetch(endpoint, {
 //       method: "POST",
 //       headers: { "Content-Type": "application/json" },
 //       body: JSON.stringify(body),
 //     });
-  
+
 //     const data = await res.json();
-  
+
 //     if (data.success) {
 //       // ✅ Save token & user for future visits
 //       if (data.token && data.user) {
 //         localStorage.setItem("token", data.token);
 //         localStorage.setItem("user", JSON.stringify(data.user));
 //       }
-  
+
 //       toast.success(
 //         mode === "signup" ? "Signup successful!" : "Profile updated successfully!"
 //       );
-  
+
 //       // Redirect user after saving
 //       router.push("/dashboard"); // or "/profile"
 //     } else {
 //       toast.error(data.message || "Something went wrong");
 //     }
 //   };
-  
+
 //   return (
 //     <form
 //       onSubmit={handleSubmit}
@@ -352,11 +352,12 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useState } from "react";
-
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { Eye, EyeOff } from "lucide-react";
+import { IoArrowBackCircleOutline } from 'react-icons/io5';
 export default function ProfileForm({ mode }) {
-   const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [formData, setFormData] = useState({
     fullName: "",
@@ -389,8 +390,8 @@ export default function ProfileForm({ mode }) {
     }
   };
 
- // In components/ProfileForm.js - Update the handleSubmit function
-const seedJobsForNewUser = async (userId, jobTitle) => {
+  // In components/ProfileForm.js - Update the handleSubmit function
+  const seedJobsForNewUser = async (userId, jobTitle) => {
     if (!userId || !jobTitle?.trim()) return;
 
     try {
@@ -420,229 +421,247 @@ const seedJobsForNewUser = async (userId, jobTitle) => {
       return;
     }
 
-  if (formData.password !== formData.confirmPassword) {
-    toast.error("Passwords do not match");
-    return;
-  }
-
-  const requestData = { ...formData };
-  delete requestData.confirmPassword;
-
-  try {
-    const token = localStorage.getItem("token");
-    
-    if (!token && mode === "fill") {
-      toast.error("Please log in to update your profile");
+    if (formData.password !== formData.confirmPassword) {
+      toast.error("Passwords do not match");
       return;
     }
 
-    const endpoint = mode === "signup" ? "/api/signup" : "/api/auth/fillProfile";
-    const headers = {
-      "Content-Type": "application/json",
-    };
+    const requestData = { ...formData };
+    delete requestData.confirmPassword;
 
-    // Only add Authorization header in fill mode
-    if (mode === "fill") {
-      headers["Authorization"] = `Bearer ${token}`;
-    }
+    try {
+      const token = localStorage.getItem("token");
 
-    const response = await fetch(endpoint, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(requestData),
-    });
-
-    const data = await response.json();
-    console.log('Response data:', data); // Debug log
-
-    if (!response.ok) {
-      throw new Error(data.message || "Something went wrong");
-    }
-
-    if (data.success) {
-      if (data.token) {
-        localStorage.setItem("token", data.token);
-      }
-      if (data.user) {
-        localStorage.setItem("user", JSON.stringify(data.user));
+      if (!token && mode === "fill") {
+        toast.error("Please log in to update your profile");
+        return;
       }
 
-      if (mode === "signup" && data.user) {
-        const userId = data.user._id || data.user.id;
-        await seedJobsForNewUser(userId, formData.jobTitle);
+      const endpoint = mode === "signup" ? "/api/signup" : "/api/auth/fillProfile";
+      const headers = {
+        "Content-Type": "application/json",
+      };
+
+      // Only add Authorization header in fill mode
+      if (mode === "fill") {
+        headers["Authorization"] = `Bearer ${token}`;
       }
 
-      toast.success(
-        mode === "signup" ? "Signup successful!" : "Profile updated successfully!"
-      );
-      router.push("/dashboard");
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(requestData),
+      });
+
+      const data = await response.json();
+      console.log('Response data:', data); // Debug log
+
+      if (!response.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      if (data.success) {
+        if (data.token) {
+          localStorage.setItem("token", data.token);
+        }
+        if (data.user) {
+          localStorage.setItem("user", JSON.stringify(data.user));
+        }
+
+        if (mode === "signup" && data.user) {
+          const userId = data.user._id || data.user.id;
+          await seedJobsForNewUser(userId, formData.jobTitle);
+        }
+
+        toast.success(
+          mode === "signup" ? "Signup successful!" : "Profile updated successfully!"
+        );
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error(error.message || "An error occurred. Please try again.");
     }
-  } catch (error) {
-    console.error("Error:", error);
-    toast.error(error.message || "An error occurred. Please try again.");
-  }
-};
-  
+  };
+
   return (
-    <div className="flex justify-center items-center bg-black min-h-screen px-4">
-       <ToastContainer position="top-right" autoClose={3000} theme="colored" />
-       {mode==='signup'&& <div className="absolute top-4 left-8">
-                <button
-                    onClick={() => router.push('/')}
-                    className="flex items-center text-purple-600 hover:text-purple-800 transition-colors"
-                >
-                    <svg width="55" height="54" viewBox="0 0 55 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M14.2929 27.2929C13.9024 27.6834 13.9024 28.3166 14.2929 28.7071L20.6569 35.0711C21.0474 35.4616 21.6805 35.4616 22.0711 35.0711C22.4616 34.6805 22.4616 34.0474 22.0711 33.6569L16.4142 28L22.0711 22.3431C22.4616 21.9526 22.4616 21.3195 22.0711 20.9289C21.6805 20.5384 21.0474 20.5384 20.6569 20.9289L14.2929 27.2929ZM42 28V27L15 27V28V29L42 29V28Z" fill="white" />
-                        <path d="M27.5 0.5C42.4204 0.5 54.5 12.3731 54.5 27C54.5 41.6269 42.4204 53.5 27.5 53.5C12.5796 53.5 0.5 41.6269 0.5 27C0.5 12.3731 12.5796 0.5 27.5 0.5Z" stroke="white" />
-                    </svg>
-
-                </button>
-            </div>}
-  <div className="bg-[#D2E9FA] backdrop-blur-lg max-w-3xl w-full p-8 rounded-2xl shadow-lg space-y-6">
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <h2 className="text-3xl font-bold text-center text-gray-800">
-        {mode === "signup" ? "Sign Up" : "Complete Your Profile"}
-      </h2>
-
-      {/* Full Name + Email */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input
-          type="text"
-          name="fullName"
-          placeholder="Full Name"
-          onChange={handleChange}
-          required
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-          required
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-        />
-      </div>
-    
-      {/* Mobile + Address */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input
-          type="text"
-          name="mobileNo"
-          placeholder="Mobile Number"
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-        />
-         <input
-          type="date"
-          name="DOB"
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-        />
-       
-      </div>
-      {/* Password + Confirm Password */}
-       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {/* Password Field */}
-      <div className="relative">
-        <input
-          type={showPassword ? "text" : "password"}
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-          required
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none pr-10"
-        />
+    <div className="flex flex-col justify-center items-center bg-[#E8E8FB] min-h-screen px-4">
+      <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+      {mode === 'signup' && <><div className="absolute top-4 left-8">
         <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+          onClick={() => router.push('/')}
+          className="flex items-center text-black "
         >
-          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          <IoArrowBackCircleOutline size={24} />
+
         </button>
       </div>
+        <div className="flex justify-center items-center mb-4">
+          <img src="MM_LOGO.png" width={24} height={24} />
+          <h2 className="text-xl ml-2 font-bold bg-gradient-to-r from-[#215AB9] to-[#33B29C] bg-clip-text text-transparent">
+            MockMingle
+          </h2>
+        </div></>}
+      <div className="bg-white backdrop-blur-lg max-w-3xl w-full p-8 rounded-2xl shadow-lg space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
 
-      {/* Confirm Password Field */}
-      <div className="relative">
-        <input
-          type={showConfirm ? "text" : "password"}
-          name="confirmPassword"
-          placeholder="Confirm Password"
-          onChange={handleChange}
-          required
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none pr-10"
-        />
-        <button
-          type="button"
-          onClick={() => setShowConfirm(!showConfirm)}
-          className="absolute inset-y-0 right-3 flex items-center text-gray-500"
-        >
-          {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
+          <h2 className="text-3xl font-bold text-center text-[#6F24E8]">
+            {mode === "signup" ? <div className="mx-auto flex w-full max-w-md rounded-full bg-[#E8E8F8] p-1 shadow-inner">
+              <Link
+                href="/login"
+                className="flex-1 rounded-full py-3 text-center text-sm font-medium text-gray-600 transition-all duration-300 hover:text-black"
+              >
+                Login
+              </Link>
+
+              <Link
+                href="/signup"
+                className="flex-1 rounded-full bg-[#6C2CF0] py-3 text-center text-sm font-medium text-white shadow-lg transition-all duration-300"
+              >
+                Register
+              </Link>
+            </div> : "Complete Your Profile"}
+          </h2>
+
+          {/* Full Name + Email */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              name="fullName"
+              placeholder="Full Name"
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-[#D3D0D0] rounded-full bg-[#E8E8FB] focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-2 border border-[#D3D0D0] rounded-full bg-[#E8E8FB] focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          {/* Mobile + Address */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              name="mobileNo"
+              placeholder="Mobile Number"
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-[#D3D0D0] rounded-full bg-[#E8E8FB] focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+            <input
+              type="date"
+              name="DOB"
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-[#D3D0D0] rounded-full bg-[#E8E8FB] focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+
+          </div>
+          {/* Password + Confirm Password */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Password Field */}
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="Password"
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-[#D3D0D0] rounded-full bg-[#E8E8FB] focus:ring-2 focus:ring-blue-500 outline-none pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+              >
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+
+            {/* Confirm Password Field */}
+            <div className="relative">
+              <input
+                type={showConfirm ? "text" : "password"}
+                name="confirmPassword"
+                placeholder="Confirm Password"
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-2 border border-[#D3D0D0] rounded-full bg-[#E8E8FB] focus:ring-2 focus:ring-blue-500 outline-none pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirm(!showConfirm)}
+                className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+              >
+                {showConfirm ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
+
+
+
+          {/* DOB + Education */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <input
+              type="text"
+              name="collageName"
+              placeholder="College Name"
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-[#D3D0D0] rounded-full bg-[#E8E8FB] focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+            <input
+              type="text"
+              name="education"
+              placeholder="Education"
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-[#D3D0D0] rounded-full bg-[#E8E8FB] focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {(mode === "signup") && (
+              <input
+                type="text"
+                name="jobTitle"
+                value={formData.jobTitle}
+                onChange={handleChange}
+                placeholder="Desired Job Title"
+                required
+                className="w-full px-4 py-2 border border-[#D3D0D0] rounded-full bg-[#E8E8FB] focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            )}
+            <input
+              type="text"
+              name="address"
+              placeholder="Address"
+              onChange={handleChange}
+              className="w-full px-4 py-2 border border-[#D3D0D0] rounded-full bg-[#E8E8FB] focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          {/* College + Profile Image */}
+
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="w-full px-3 py-2 border border-[#D3D0D0] rounded-full bg-[#E8E8FB] focus:ring-2 focus:ring-blue-500 outline-none"
+          />
+
+
+          {/* Submit */}
+          <button
+            type="submit"
+            className="w-full bg-[#6F24E8] text-white py-2 rounded-full font-semibold transition duration-200"
+          >
+            {mode === "signup" ? "Sign Up" : "Save"}
+          </button>
+        </form>
       </div>
     </div>
-
-     
-
-      {/* DOB + Education */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-         <input
-          type="text"
-          name="collageName"
-          placeholder="College Name"
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-        />
-        <input
-          type="text"
-          name="education"
-          placeholder="Education"
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-        />
-      </div>
- 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {(mode === "signup") && (
-          <input
-            type="text"
-            name="jobTitle"
-            value={formData.jobTitle}
-            onChange={handleChange}
-            placeholder="Desired Job Title"
-            required
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-          )}
-         <input
-          type="text"
-          name="address"
-          placeholder="Address"
-          onChange={handleChange}
-          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-        />
-        </div>
-    
-      {/* College + Profile Image */}
-      
-        
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-        />
-     
-
-      {/* Submit */}
-      <button
-        type="submit"
-        className="w-full bg-gradient-to-r from-black to-gray-500 hover:bg-blue-700 text-white py-2 rounded-lg font-semibold transition duration-200"
-      >
-        {mode === "signup" ? "Sign Up" : "Save"}
-      </button>
-    </form>
-  </div>
-</div>
- );
+  );
 }

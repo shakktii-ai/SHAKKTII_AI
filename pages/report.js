@@ -526,6 +526,7 @@ import Head from 'next/head';
 import { Target, Calendar, TrendingUp, CalendarDays, Loader2 } from "lucide-react";
 import PremiumNavbar from '@/components/navbar';
 import ReportsHeader from '@/components/premium/ReportsHeader';
+import ShareReportModal from '@/components/premium/ShareReport';
 import StatCard from '@/components/premium/StatCard';
 import SkillItem from '@/components/premium/SkillItem';
 // Lazy load the heavy DetailedReportModal component
@@ -592,6 +593,41 @@ export default function Report() {
   const [analysisText, setAnalysisText] = useState('');
   const [overallScore, setOverallScore] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+ const [showShareModal, setShowShareModal] = useState(false);
+const platforms = [
+    {
+        id: "linkedin",
+        name: "LinkedIn",
+        color: "bg-[#9968E7]",
+        icon: "/Linkedin-Logo.svg",
+         text: "text-[#1F4CBD]",
+    border: "border-[#1F4CBD]",
+    },
+    {
+        id: "instagram",
+        name: "Instagram",
+        color: "bg-[#FF24AB]",
+        icon: "/Instagram-Logo.svg",
+          text: "text-[#FF24AB]",
+    border: "border-[#FF2DA5]",
+    },
+    {
+        id: "twitter",
+        name: "Twitter",
+        color: "bg-black",
+        icon: "/Twitter-Logo.svg",
+            text: "text-[#000000]",
+    },
+    {
+        id: "facebook",
+        name: "Facebook",
+        color: "bg-[#144FFF]",
+        icon: "/Facebook-Logo.svg",
+        text:"text-[#144FFF]"
+    },
+];
+
+const [selectedPlatform, setSelectedPlatform] = useState(platforms[0]);
 
   useEffect(() => {
     if (!localStorage.getItem("token")) {
@@ -820,7 +856,9 @@ export default function Report() {
 
   const skillsList = ["Technical Proficiency", "Communication", "Decision-Making", "Confidence", "Language Fluency"];
   const skills = skillsList.map(s => getSkillData(analysisText, s));
-
+console.log("reportData:", reportData);
+console.log("reportAnalysis:", reportData?.reportAnalysis);
+console.log("analysisText:", analysisText);
   return (
     <div className="min-h-screen bg-[#F5F5FF]">
       <Head>
@@ -829,7 +867,9 @@ export default function Report() {
       {/* <PremiumNavbar /> */}
 
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <ReportsHeader onViewFullReport={() => setIsModalOpen(true)} />
+        <ReportsHeader
+        onViewFullReport={() => setIsModalOpen(true)}  
+        onShareReport={() => setShowShareModal(true)} />
 
         <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {loading ? (
@@ -940,9 +980,21 @@ export default function Report() {
       <DetailedReportModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        reportData={reportData}
+        // reportData={reportData}
+          reportData={{
+        ...reportData,
+        reportAnalysis: analysisText,
+    }}
         jobRole={jobRole}
         date={reportData ? new Date(reportData.createdAt).toLocaleDateString() : ''}
+      />
+       <ShareReportModal
+          open={showShareModal}
+          onClose={() => setShowShareModal(false)}
+          skills={skills}
+          selectedPlatform={selectedPlatform}
+          setSelectedPlatform={setSelectedPlatform}
+          platforms={platforms}
       />
     </div>
   );

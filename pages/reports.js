@@ -8,8 +8,10 @@ import ReportsHeader from '@/components/premium/ReportsHeader';
 import StatCard from '@/components/premium/StatCard';
 import SkillItem from '@/components/premium/SkillItem';
 import DetailedReportModal from '@/components/premium/DetailedReportModal';
+import ShareReportModal from '@/components/premium/ShareReport';
 import { extractSkillFeedback, extractSkillOpportunities } from '@/utils/feedbackParser';
 import { cn } from "@/lib/utils";
+import Footer from '@/components/dashboard/Footer';
 
 // --- Skeleton Components ---
 const StatCardSkeleton = () => (
@@ -62,6 +64,41 @@ export default function PremiumReportsPage() {
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [filters, setFilters] = useState({ date: null, role: null });
+    const [showShareModal, setShowShareModal] = useState(false);
+const platforms = [
+    {
+        id: "linkedin",
+        name: "LinkedIn",
+        color: "bg-[#9968E7]",
+        icon: "/Linkedin-Logo.svg",
+         text: "text-[#1F4CBD]",
+    border: "border-[#1F4CBD]",
+    },
+    {
+        id: "instagram",
+        name: "Instagram",
+        color: "bg-[#FF24AB]",
+        icon: "/Instagram-Logo.svg",
+          text: "text-[#FF24AB]",
+    border: "border-[#FF2DA5]",
+    },
+    {
+        id: "twitter",
+        name: "Twitter",
+        color: "bg-black",
+        icon: "/Twitter-Logo.svg",
+            text: "text-[#000000]",
+    },
+    {
+        id: "facebook",
+        name: "Facebook",
+        color: "bg-[#144FFF]",
+        icon: "/Facebook-Logo.svg",
+        text:"text-[#144FFF]"
+    },
+];
+
+const [selectedPlatform, setSelectedPlatform] = useState(platforms[0]);
 
     // Authentication Guard
     useEffect(() => {
@@ -191,7 +228,7 @@ export default function PremiumReportsPage() {
             </Head>
             {/* <PremiumNavbar user={navUser} Logout={handleLogout} /> */}
 
-            <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <main className="mx-auto max-w-8xl px-4 py-8 sm:px-6 lg:px-8">
                 <div className="mb-6">
                     <Link href="/dashboard" className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors">
                         <ArrowLeft className="mr-2 h-4 w-4" />
@@ -200,6 +237,7 @@ export default function PremiumReportsPage() {
                 </div>
                 <ReportsHeader
                     onViewFullReport={() => setIsModalOpen(true)}
+                     onShareReport={() => setShowShareModal(true)}
                     uniqueRoles={uniqueRoles}
                     onFilterChange={setFilters}
                     activeFilters={filters}
@@ -225,7 +263,8 @@ export default function PremiumReportsPage() {
                                         subValue="/50"
                                         icon={Target}
                                         iconColor="text-white"
-                                        iconBg="bg-[#0D9488]"
+                                        iconBg="bg-[#B99AEC]"
+                                        color="border-l-[#894DEF]"
                                     />
                                     <StatCard
                                         label="Job Role"
@@ -233,21 +272,24 @@ export default function PremiumReportsPage() {
                                         icon={TrendingUp}
                                         iconColor="text-[#059669]"
                                         iconBg="bg-[#ECFDF5]"
-                                        valueClassName="text-lg leading-tight line-clamp-2"
+                                        valueClassName=" leading-tight line-clamp-2"
+                                        color="border-l-[#43C89C]"
                                     />
                                     <StatCard
                                         label="Date"
                                         value={new Date(currentViewReport.createdAt).toLocaleDateString()}
                                         icon={CalendarDays}
-                                        iconColor="text-[#D97706]"
-                                        iconBg="bg-[#FFF7ED]"
+                                        iconColor="text-[#574EE7]"
+                                        iconBg="bg-[#E0DEFD]"
+                                        color="border-l-[#574EE7]"
                                     />
                                     <StatCard
                                         label="Total Reports"
                                         value={reports.length.toString()}
                                         icon={Calendar}
-                                        iconColor="text-[#7C3AED]"
-                                        iconBg="bg-[#F3E8FF]"
+                                        iconColor="text-[#20ACEA]"
+                                        iconBg="bg-[#E0F6FF]"
+                                        color="border-l-[#20ACEA]"
                                     />
                                 </>
                             )}
@@ -372,6 +414,15 @@ export default function PremiumReportsPage() {
                 jobRole={selectedReport?.role || "Interactive Session"}
                 date={selectedReport ? new Date(selectedReport.createdAt).toLocaleDateString() : ''}
             />
+            <ShareReportModal
+    open={showShareModal}
+    onClose={() => setShowShareModal(false)}
+    skills={skills}
+    selectedPlatform={selectedPlatform}
+    setSelectedPlatform={setSelectedPlatform}
+    platforms={platforms}
+/>
+            <Footer/>
         </div>
     );
 }

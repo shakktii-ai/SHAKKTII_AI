@@ -173,7 +173,7 @@ export default function Home() {
   }
 
   return (
-    <div className="font-sans max-w-7xl ">
+    <div className="font-sans max-w-8xl ">
       <div className="w-full bg-white rounded-[24px] border border-[#EFEFFA] pt-11 px-6 pb-10 shadow-[0px_4px_20px_rgba(0,0,0,0.01)]">
         <div className="mb-7">
           <h1 className="text-2xl font-bold text-[#0F172A] tracking-[-0.03em] m-0 leading-[1.2]">
