@@ -380,7 +380,7 @@ export default function dashboard({ Logout, user }) {
     { label: "Progress", href: "/progress" },
     { label: "Reports", href: "/report" },
     { label: "Skills Test", href: "/practices" },
-    { label: "Learn", href: "/suggestion" },
+    // { label: "Learn", href: "/suggestion" },
     { label: "Job History", href: "/jobHistory" },
     // { label: "Resume Builder", href: resumeBuilderUrl },
     // { label: "Logout", href: "#", onClick: () => { Logout(); router.push("/login"); }}

@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import TechnicalReport from '../../models/TechnicalReport';
-
+import baselinetechnicalReport from '../../models/BaselineTechnicalReport';
 const MONGODB_URI = process.env.MONGODB_URI;
 
 let cached = global.mongoose || (global.mongoose = { conn: null, promise: null });
@@ -35,11 +35,21 @@ export default async function handler(req, res) {
     }
 
     // Fetch technical reports for the user, sorted by most recent first
-    const reports = await TechnicalReport.find({ email })
+    const [technicalReports, baselineReports] = await Promise.all([
+       await TechnicalReport.find({ email })
       .sort({ createdAt: -1 })
       .limit(50) // Limit to last 50 reports
-      .lean();
-
+      .lean(),
+      await baselinetechnicalReport.find({ email })
+      .sort({ createdAt: -1 })
+      .limit(50) // Limit to last 50 reports
+      .lean(),
+    ]);
+ const reports = [...technicalReports, ...baselineReports].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() -
+        new Date(a.createdAt).getTime()
+    );
     return res.status(200).json({
       success: true,
       reports: reports,

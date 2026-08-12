@@ -124,30 +124,97 @@ const [selectedPlatform, setSelectedPlatform] = useState(platforms[0]);
         }
     }, []);
 
-    useEffect(() => {
-        if (!email) return;
+    // useEffect(() => {
+    //     if (!email) return;
 
-        const fetchReports = async () => {
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/saveAndGetReport?email=${email}`);
-                if (!response.ok) throw new Error('Failed to fetch reports');
-                const data = await response.json();
+    //     const fetchReports = async () => {
+    //         try {
+    //             const response = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/baseline/saveAndGetReport?email=${email}`);
+    //             if (!response.ok) throw new Error('Failed to fetch reports');
+    //             const data = await response.json();
 
-                if (data.reports && data.reports.length > 0) {
-                    const sorted = data.reports.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-                    setReports(sorted);
-                    setSelectedReport(sorted[0]); // Select latest by default
+    //             if (data.reports && data.reports.length > 0) {
+    //                 const sorted = data.reports.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    //                 setReports(sorted);
+    //                 setSelectedReport(sorted[0]); // Select latest by default
+    //             }
+    //         } catch (err) {
+    //             setError(err.message);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchReports();
+    // }, [email]);
+useEffect(() => {
+    if (!email) return;
+
+    const fetchReports = async () => {
+        setLoading(true);
+        setError(null);
+
+        const baseUrl = process.env.NEXT_PUBLIC_HOST;
+
+        const reportEndpoints = [
+            `${baseUrl}/api/baseline/saveAndGetReport?email=${encodeURIComponent(email)}`,
+            `${baseUrl}/api/saveAndGetReport?email=${encodeURIComponent(email)}`,
+        ];
+
+        try {
+            const results = await Promise.allSettled(
+                reportEndpoints.map(async (url) => {
+                    const response = await fetch(url);
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `Failed to fetch reports: ${response.status}`
+                        );
+                    }
+
+                    return response.json();
+                })
+            );
+
+            const reports = results.flatMap((result) => {
+                if (result.status !== "fulfilled") {
+                    return [];
                 }
-            } catch (err) {
-                setError(err.message);
-            } finally {
-                setLoading(false);
+
+                return Array.isArray(result.value?.reports)
+                    ? result.value.reports
+                    : [];
+            });
+
+            const sortedReports = reports.sort(
+                (a, b) =>
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+            );
+
+            setReports(sortedReports);
+            setSelectedReport(sortedReports[0] ?? null);
+
+            // Only show an error if neither API returned reports.
+            const hasSuccessfulRequest = results.some(
+                (result) => result.status === "fulfilled"
+            );
+
+            if (!hasSuccessfulRequest) {
+                setError("Unable to fetch reports.");
             }
-        };
+        } catch (error) {
+            console.error("Error fetching reports:", error);
+            setError("Unable to fetch reports. Please try again.");
+            setReports([]);
+            setSelectedReport(null);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-        fetchReports();
-    }, [email]);
-
+    fetchReports();
+}, [email]);
     const handleReportSelect = (report) => {
         setSelectedReport(report);
         window.scrollTo({ top: 0, behavior: 'smooth' });

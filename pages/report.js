@@ -804,7 +804,7 @@ const [selectedPlatform, setSelectedPlatform] = useState(platforms[0]);
         setJobRole(data.data.role);
 
         // Fetch YouTube recommendations
-        fetchYoutubeRecommendations(reportText).catch(console.error);
+        // fetchYoutubeRecommendations(reportText).catch(console.error);
 
         localStorage.removeItem('status');
         localStorage.setItem('status', "model 5 min");
@@ -928,7 +928,7 @@ console.log("analysisText:", analysisText);
         </div>
 
         {/* YouTube Recommendations Section - Redesigned */}
-        <div className="mt-16">
+        {/* <div className="mt-16">
           <div className="flex items-center gap-2 mb-8">
             <FaYoutube className="text-3xl text-red-500" />
             <h2 className="text-xl font-bold text-[#0F172A]">Recommended Learning Resources</h2>
@@ -974,7 +974,7 @@ console.log("analysisText:", analysisText);
               ))}
             </div>
           )}
-        </div>
+        </div> */}
       </main>
 
       <DetailedReportModal
