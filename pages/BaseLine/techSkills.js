@@ -41,7 +41,7 @@ function techSkills() {
       icon: Brain,
       color: "#7F3FEE",
       lightColor: "#E9E1FF",
-      link: "/BaseLine/techMock",
+      link: "#",///BaseLine/techMock
     },
 
     // {

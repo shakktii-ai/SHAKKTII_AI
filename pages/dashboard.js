@@ -422,7 +422,7 @@ export default function dashboard({ Logout, user }) {
       icon: Brain,
       color: "teal",
       progress: 60,
-      link: "/skills"
+      link: "#"//skills
     },
     {
       title: "Technical Training",
@@ -430,7 +430,7 @@ export default function dashboard({ Logout, user }) {
       icon: Target,
       color: "gold",
       progress: 25,
-      link: '/techMock'
+      link: '#'//techMock
     },
   ];
 
