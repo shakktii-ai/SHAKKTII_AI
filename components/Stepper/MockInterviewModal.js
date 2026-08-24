@@ -28,10 +28,10 @@ const router = useRouter();
     title: "Decision Assessment",
     completed: progress?.step3_decision,
   },
-  {
-    title: "Soft Skills",
-    completed: progress?.step4_softSkills?.isCompleted,
-  },
+  // {
+  //   title: "Soft Skills",
+  //   completed: progress?.step4_softSkills?.isCompleted,
+  // },
   {
     title: "Technical Skills",
     completed: progress?.step5_techSkills?.isCompleted,
@@ -82,7 +82,7 @@ const isUnlocked =
   progress?.step1_profile &&
   progress?.step2_resume &&
   progress?.step3_decision &&
-  progress?.step4_softSkills?.isCompleted &&
+  // progress?.step4_softSkills?.isCompleted &&
   progress?.step5_techSkills?.isCompleted;
  
   return (

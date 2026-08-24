@@ -2,8 +2,9 @@ const STEP_WEIGHTS = {
   step1_profile: 10,
   step2_resume: 15,
   step3_decision: 15,
-  step4_softSkills: 25,
-  step5_techSkills: 35,
+  // step4_softSkills: 25,
+  step5_techSkills: 25,
+  step6_mockInterview: 35,
 };
 
 function clampScore(value) {
@@ -71,14 +72,17 @@ function getStep5Score(progress = {}, scores = {}) {
   ).length;
   return Math.round((completedCount / 2) * 100);
 }
-
+function getStep6Score(progress = {}, scores = {}) {
+  return clampScore(scores.step6_mockInterview) ?? (progress.step6_mockInterview ? 100 : 0);
+}
 export function calculateReadinessScores(progress = {}, scores = {}) {
   const stepScores = {
     step1_profile: getStep1Score(progress, scores),
     step2_resume: getStep2Score(progress, scores),
     step3_decision: getStep3Score(progress, scores),
-    step4_softSkills: getStep4Score(progress, scores),
+    // step4_softSkills: getStep4Score(progress, scores),
     step5_techSkills: getStep5Score(progress, scores),
+    step6_mockInterview: getStep6Score(progress, scores),
   };
 
   const weightedTotal = Object.entries(STEP_WEIGHTS).reduce(

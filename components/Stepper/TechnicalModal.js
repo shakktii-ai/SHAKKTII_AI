@@ -12,7 +12,7 @@ export default function TechnicalSkillsModal({ onClose, onStart }) {
   // Define modules with custom IDs and navigation routes
   const modules = [
     { id: "excel", name: "Excel Assessment", route: "/BaseLine/excelTest" },
-    { id: "role", name: "Role-Based Assessment", route: "/BaseLine/techMock" },
+    { id: "role", name: "Role-Based Assessment", route: "" }, ///BaseLine/techMock
   ];
 
   const roleExamples = [
