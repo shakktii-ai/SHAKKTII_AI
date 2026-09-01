@@ -54,6 +54,7 @@ export default function dashboard({ Logout, user }) {
   const [userId, setUserId] = useState(null); // State to store userId for resume builder
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // State to control mobile menu
   const [performanceScores, setPerformanceScores] = useState([]);
+  const dropdownRef = useRef(null);
 
   const [interviewStats, setInterviewStats] = useState({
     availableInterviews: 0,
@@ -80,6 +81,18 @@ export default function dashboard({ Logout, user }) {
     loading: true,
   });
   const [userEmail, setUserEmail] = useState('');
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   // Add leaderboard link to the dashboard navigation
   useEffect(() => {
     const navLinks = document.querySelector('.dashboard-links');
@@ -500,20 +513,40 @@ export default function dashboard({ Logout, user }) {
                   </span>
                 </Button>
                 {user?.value ? (
-                  <button className="p-2 flex justify-center items-center gap-2 rounded-full border border-[#D3D0D0] bg-[#ECECFA] text-[#6F24E8]">
-                    <div className="h-6 w-6 rounded-full bg-[#6F24E8] flex items-center justify-center">
-                      <User className="h-4 w-4 text-primary-foreground" />
-                    </div>
-                    <span>My Space</span>
-                  </button>
-
-                ) : (
-                  <Link href="/login">
-                    <button className="px-4 py-2 bg-gradient-to-r  text-white rounded-full  transition duration-300 shadow-lg hover:shadow-xl font-medium">
-                      Login
+                  <div className="relative" ref={dropdownRef}>
+                    <button
+                      type="button"
+                      onClick={() => setDropdown((prev) => !prev)}
+                      className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D3D0D0] bg-[#ECECFA] text-[#6F24E8] transition hover:bg-[#E3E0FF]"
+                      aria-label="User menu"
+                    >
+                      <User className="h-5 w-5" />
                     </button>
-                  </Link>
-                )}
+
+                    {dropdown && (
+                      <div className="absolute right-0 mt-3 w-[170px] sm:w-[192px] bg-white rounded-[16px] shadow-xl border border-gray-100 overflow-hidden py-1 z-50">
+                        <Link
+                          href="/profile"
+                          className="block px-4 py-3 text-[14px] font-bold hover:bg-gray-50 text-[#0A1C40]"
+                          onClick={() => setDropdown(false)}
+                        >
+                          Profile
+                        </Link>
+
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setDropdown(false);
+                            Logout?.();
+                          }}
+                          className="w-full text-left px-4 py-3 text-[14px] font-bold text-red-500 hover:bg-red-50"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                ) : null}
                 {/* Mobile menu button */}
                 <Button
                   variant="ghost"

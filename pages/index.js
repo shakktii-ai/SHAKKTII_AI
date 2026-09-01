@@ -1624,7 +1624,8 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Head from "next/head";
 import Image from "next/image";
-   import { motion } from 'framer-motion';
+import { useRouter } from "next/router";
+import { motion } from 'framer-motion';
 
 import WhyMock from "../components/landingPage/whyMock";
 import ScoreSection from "../components/landingPage/scoreSection";
@@ -1636,6 +1637,35 @@ import DemoVideo from "@/components/landingPage/DemoVideo";
 import WhyFail from "@/components/landingPage/WhyFail";
 import Testimonials from "@/components/landingPage/Testimonials";
 export default function Home() {
+  const router = useRouter();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+
+  useEffect(() => {
+    const getValueFromStorage = (key) => {
+      if (typeof window === "undefined") return null;
+
+      const localValue = localStorage.getItem(key);
+      if (localValue) return localValue;
+
+      const cookieMatch = document.cookie.match(new RegExp(`(?:^|;\\s*)${key}=([^;]+)`));
+      return cookieMatch ? decodeURIComponent(cookieMatch[1]) : null;
+    };
+
+    const token = getValueFromStorage("token");
+    const userData = getValueFromStorage("user");
+
+    if (token && userData) {
+      router.replace("/dashboard");
+      return;
+    }
+
+    setIsCheckingAuth(false);
+  }, [router]);
+
+  if (isCheckingAuth) {
+    return null;
+  }
+
   // Animation Variants
   const fadeInUp = {
     hidden: { opacity: 0, y: 20 },
@@ -1686,7 +1716,7 @@ export default function Home() {
           </motion.p>
 
           <motion.div variants={fadeInUp} className="flex gap-[16px] md:gap-[24px] flex-wrap justify-center md:justify-start">
-            <Link href="/language">
+            <Link href="/dashboard">
               <motion.button 
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
