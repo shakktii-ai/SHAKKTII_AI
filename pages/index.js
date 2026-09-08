@@ -1683,7 +1683,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Shakktii Interview Trainer</title>
+        <title>MockMingle</title>
         <meta name="description" content="Empower your learning journey through skill analysis, real-time chats, and gamified challenges to prepare for mock interviews — with MockMingle" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
