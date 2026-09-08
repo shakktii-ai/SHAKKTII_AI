@@ -91,7 +91,7 @@ const ScoreSection = () => {
           </div>
         </motion.div>
         <div className="flex flex-col items-center">
-     <Link href="/language">
+     <Link href="/dashboard">
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
