@@ -1,481 +1,66 @@
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import AdminLayout from "../../components/admin/AdminLayout";
+import {
+  Users,
+  Search,
+  Filter,
+  Download,
+  Eye,
+  Edit,
+  BarChart3,
+  Calendar,
+  Mail,
+  Phone,
+  GraduationCap,
+  Award,
+  BookOpen,
+  Brain,
+  FileText,
+  X,
+  Sparkles,
+  CheckCircle2,
+  Clock,
+  LayoutGrid,
+  Table as TableIcon,
+  ChevronRight,
+  UserCheck,
+  Plus
+} from "lucide-react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-
-// import React, { useState, useEffect } from 'react';
-// import Image from 'next/image';
-// import { Edit } from 'lucide-react';
-// import EditPopup from '../../component/editPopup'; // Import the EditPopup modal
-// import ReportDetailPopup from '../../component/reportDetailPopup'; // Import the ReportDetailPopup component
-
-// function EmployeeProfiles() {
-//   const [users, setUsers] = useState([]); // State to hold all employees
-//   const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal visibility
-//   const [isReportOpen, setIsReportOpen] = useState(false); // State to control report modal visibility
-//   const [selectedUser, setSelectedUser] = useState(null); // State to hold the user currently being edited
-//   const [selectedReport, setSelectedReport] = useState(null); // State to hold the report for the selected user
-//   const [newFullName, setNewFullName] = useState('');
-//   const [newLastName, setNewLastName] = useState('');
-//   const [newDOB, setNewDOB] = useState('');
-//   const [newMobileNo,setNewMobileNo] = useState('');
-//     const[newAddress ,setNewAddress] = useState('');
-//     const[newEducation ,setNewEducation] = useState('');
-//   const [newEmail, setNewEmail] = useState('');
-//   const collageName = 'SPPU'; // Replace with the actual company name
-
-//   // Fetch user data and their report data in one go
-//   useEffect(() => {
-//     const fetchUserData = async () => {
-//       try {
-//         const response = await fetch(`/api/editStudentProfile?collageName=${collageName}`);
-//         const data = await response.json();
-
-//         if (data.users && data.users.length > 0) {
-//           // Get all emails and fetch reports for all of them at once
-//           const emails = data.users.map(user => user.email);
-//           const reportResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/saveAndGetReport?emails=${JSON.stringify(emails)}`);
-//           const reportData = await reportResponse.json();
-
-//           // Merge the user data and report data
-//           const userReports = data.users.map(user => ({
-//             ...user,
-//             report: reportData.reports[user.email] || [],
-//           }));
-
-//           setUsers(userReports); // Set users with their reports
-//         } else {
-//           console.error('No users found for this company');
-//         }
-//       } catch (error) {
-//         console.error('Error fetching user data:', error);
-//       }
-//     };
-
-//     fetchUserData();
-//   }, [collageName]);
-
-//   // Function to handle the update of the user profile
-//   const updateUserProfile = async () => {
-//     if (!selectedUser) return;
-
-//     const updatedData = {
-//       email: selectedUser.email, // Email stays constant for this update
-//       updatedData: {
-//        fullName:newFullName,
-//         email: newEmail,
-//         DOB: newDOB,
-//         mobileNo: newMobileNo,
-//         address: newAddress ,
-//         education:newEducation
-//       },
-//     };
-
-//     try {
-//       const res = await fetch('/api/editStudentProfile', {
-//         method: 'PUT',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify(updatedData),
-//       });
-
-//       const result = await res.json();
-
-//       if (res.status === 200) {
-//         // Successfully updated the user profile
-//         setUsers((prevUsers) =>
-//           prevUsers.map((user) =>
-//             user.email === selectedUser.email
-//               ? { ...user, fullName: newFullName, DOB: newDOB, email: newEmail, mobileNo: newMobileNo, address: newAddress,education:newEducation }
-//               : user
-//           )
-//         );
-//       } else {
-//         console.error(result.message);
-//         alert('Failed to update user profile');
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       alert('Error updating user profile');
-//     }
-//   };
-
-//   return (
-//     <div className="grid grid-cols-3 gap-3 p-5 bg-[#6c57ec] bg-opacity-20 m-10 rounded-xl">
-//       {users.map((user) => {
-//         const userReport = user.report || []; // No need for a score field, just use the report array length
-
-//         return (
-//           <div key={user.email} className="h-[15rem] p-4 bg-white border border-gray-200 rounded-2xl shadow-md text-center relative">
-//             <div className="flex items-center">
-//               <Image
-//                 src={user.profileImg || '/BOT.png'}
-//                 width={60}
-//                 height={60}
-//                 alt="Profile Picture"
-//                 className="rounded-full border-2 border-white shadow"
-//               />
-//               <div className="ml-10">
-//                 <h1 className="text-lg text-start font-semibold">{user.fullName}</h1>
-//                 <h2 className="text-sm text-start text-gray-600 font-bold">{user.education}</h2>
-//                 <h2 className="text-sm text-start text-gray-600 font-bold">{user.DOB}</h2>
-//                 <div className="text-xs text-start text-gray-500">{user.email}</div>
-//               </div>
-//             </div>
-//             <hr className="h-px mt-2 bg-gray-200 border-0 dark:bg-gray-700" />
-//             <div className="mt-3 text-sm font-medium text-gray-600">NUMBER OF ASSESSMENT</div>
-//             <div className="text-lg font-bold text-gray-700">{userReport.length}</div> {/* Show the number of reports */}
-//             <div className="flex justify-between mt-4">
-//               <button
-//                 onClick={() => {
-//                   setSelectedUser(user);
-//                   setSelectedReport(userReport[0]); // Take the first report, or set null
-//                   setIsReportOpen(true);
-//                 }}
-//                 className="w-1/2 mr-2 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
-//               >
-//                 Detail Report
-//               </button>
-
-//               <button
-//                 onClick={() => {
-//                   setSelectedUser(user);
-//                   setNewFullName(user.fullName);
-//                   setNewDOB(user.DOB);
-//                   setNewEmail(user.email);
-//                   setNewMobileNo(user.mobileNo);
-//                   setNewEducation(user.education);
-//                   setNewAddress(user.address);
-//                   setIsModalOpen(true);
-//                 }}
-//                 className="w-1/2 flex items-center gap-1 px-4 py-2 bg-[#c3baf7] text-white rounded-lg hover:bg-purple-600"
-//               >
-//                 <Edit size={16} /> Edit
-//               </button>
-//             </div>
-//           </div>
-//         );
-//       })}
-
-//       {/* Edit Modal */}
-//       {selectedUser && (
-//         <EditPopup
-//           user={selectedUser}
-//           isOpen={isModalOpen}
-//           setIsOpen={setIsModalOpen}
-//           updateUserProfile={updateUserProfile}
-//           setNewFullName={setNewFullName}
-//           setNewDOB={setNewDOB}
-//           setNewEmail={setNewEmail}
-//           setNewAddress={setNewAddress}
-          
-//           setNewMobileNo={setNewMobileNo}
-//           setNewEducation={setNewEducation}
-
-//           newFullName={newFullName}
-//           newDOB={newDOB}
-//           newEmail={newEmail}
-//           newEducation={newEducation}
-//           newMobileNo={newMobileNo}
-//           newAddress={newAddress}
-
-//         />
-//       )}
-
-//       {/* Report Detail Modal */}
-//       {isReportOpen && (
-//         <ReportDetailPopup
-//           user={selectedUser}
-//           isOpen={isReportOpen}
-//           setIsOpen={setIsReportOpen}
-//         />
-//       )}
-//     </div>
-//   );
-// }
-
-// export default EmployeeProfiles;
-
-
-// import React, { useState, useEffect } from 'react'; 
-// import Image from 'next/image'; 
-// import { Edit } from 'lucide-react'; 
-// import EditPopup from '../../components/editPopup'; 
-// import ReportDetailPopup from '../../components/reportDetailPopup'; 
-// import Chart from '../../components/chart'; // Import the Chart component/components/Chart'; // Import the Chart component
-// import { useRouter } from 'next/router';
-
-// function EmployeeProfiles() { 
-//   const router = useRouter();
-//   const [users, setUsers] = useState([]); 
-//   const [isModalOpen, setIsModalOpen] = useState(false); 
-//   const [isReportOpen, setIsReportOpen] = useState(false); 
-//   const [selectedUser, setSelectedUser] = useState(null); 
-//   const [selectedReport, setSelectedReport] = useState(null); 
-//   const [newFullName, setNewFullName] = useState(''); 
-//   const [newLastName, setNewLastName] = useState(''); 
-//   const [newDOB, setNewDOB] = useState(''); 
-//   const [newMobileNo, setNewMobileNo] = useState(''); 
-//   const [newAddress, setNewAddress] = useState(''); 
-//   const [newEducation, setNewEducation] = useState(''); 
-//   const [newEmail, setNewEmail] = useState(''); 
-//   const collageName = 'SPPU'; // Replace with the actual company name
-//   const [showChart, setShowChart] = useState(false); // State to toggle chart visibility
-//   const [chartData, setChartData] = useState([]); // Store chart data
-
-
-
-// const [user, setUser] = useState(null);
-
-//   useEffect(() => {
-//     if (!localStorage.getItem("Admintoken")) {
-//       router.push("/admin/login");
-//     } else {
-//       const userFromStorage = JSON.parse(localStorage.getItem('admin'));
-//       if (userFromStorage) {
-//         setUser(userFromStorage);
-        
-//       }
-//     }
-//   }, []);
-
-
-//   // Fetch user data and their report data in one go
-//   useEffect(() => { 
-//     const fetchUserData = async () => { 
-//       try { 
-//         const response = await fetch(`/api/editStudentProfile?collageName=${collageName}`); 
-//         const data = await response.json(); 
-//         if (data.users && data.users.length > 0) { 
-//           // Get all emails and fetch reports for all of them at once 
-//           const emails = data.users.map(user => user.email); 
-//           const reportResponse = await fetch(`${process.env.NEXT_PUBLIC_HOST}/api/saveAndGetReport?emails=${JSON.stringify(emails)}`); 
-//           const reportData = await reportResponse.json(); 
-
-//           // Merge the user data and report data 
-//           const userReports = data.users.map(user => ({ 
-//             ...user, 
-//             report: reportData.reports[user.email] || [], 
-//           })); 
-
-//           setUsers(userReports); // Set users with their reports 
-//         } else { 
-//           console.error('No users found for this company'); 
-//         } 
-//       } catch (error) { 
-//         console.error('Error fetching user data:', error); 
-//       } 
-//     };
-
-//     fetchUserData();
-//   }, [collageName]);
-  
-//   const fetchChartData = async (email) => {
-//     try {
-//       const res = await fetch(`/api/overallScore?email=${email}`);
-//       const data = await res.json();
-      
-      
-//       if (data.reports && data.reports.length > 0) {
-//         // Prepare chart data
-//         const scores = data.reports.map(report => ({
-//           x: report.createdAt.toLocaleString(),
-//           y: report.overallScore,
-//         }));
-//         setChartData(scores);
-//       } else {
-//         console.error('No score data available');
-//       }
-//     } catch (error) {
-//       console.error('Error fetching score data:', error);
-//     }
-//   };
-//   // Function to handle the update of the user profile
-//   const updateUserProfile = async () => { 
-//     if (!selectedUser) return;
-
-//     const updatedData = { 
-//       email: selectedUser.email, 
-//       updatedData: { 
-//         fullName: newFullName, 
-//         email: newEmail, 
-//         DOB: newDOB, 
-//         mobileNo: newMobileNo, 
-//         address: newAddress, 
-//         education: newEducation, 
-//       },
-//     };
-
-//     try { 
-//       const res = await fetch('/api/editStudentProfile', { 
-//         method: 'PUT', 
-//         headers: { 
-//           'Content-Type': 'application/json', 
-//         }, 
-//         body: JSON.stringify(updatedData), 
-//       });
-
-//       const result = await res.json();
-//       if (res.status === 200) { 
-//         // Successfully updated the user profile
-//         setUsers((prevUsers) =>
-//           prevUsers.map((user) =>
-//             user.email === selectedUser.email
-//               ? { ...user, fullName: newFullName, DOB: newDOB, email: newEmail, mobileNo: newMobileNo, address: newAddress, education: newEducation }
-//               : user
-//           )
-//         );
-//       } else { 
-//         console.error(result.message); 
-//         alert('Failed to update user profile'); 
-//       } 
-//     } catch (error) { 
-//       console.error(error); 
-//       alert('Error updating user profile'); 
-//     } 
-//   };
-
-//   return (
-//     <div className="grid grid-cols-3 gap-3 p-5 bg-[#6c57ec] bg-opacity-20 m-10 rounded-xl">
-//       {users.map((user) => {
-//         const userReport = user.report || [];
-//         return (
-//           <div key={user.email} className="h-[15rem] p-4 bg-white border border-gray-200 rounded-2xl shadow-md text-center relative">
-//             <div className="flex items-center">
-//               <Image
-//                 src={user.profileImg || '/BOT.png'}
-//                 width={60}
-//                 height={60}
-//                 alt="Profile Picture"
-//                 className="rounded-full border-2 border-white shadow"
-//               />
-//               <div className="ml-10">
-//                 <h1 className="text-lg text-start font-semibold">{user.fullName}</h1>
-//                 <h2 className="text-sm text-start text-gray-600 font-bold">{user.education}</h2>
-//                 <h2 className="text-sm text-start text-gray-600 font-bold">{user.DOB}</h2>
-//                 <div className="text-xs text-start text-gray-500">{user.email}</div>
-//               </div>
-//             </div>
-//             <hr className="h-px mt-2 bg-gray-200 border-0 dark:bg-gray-700" />
-            
-//             <div className="mt-3 text-sm font-medium text-gray-600">NUMBER OF ASSESSMENT</div>
-//             <div className="text-lg font-bold text-gray-700">{userReport.length}</div>
-//             <div className="flex justify-between mt-2">
-//               <button
-//                 onClick={() => {
-//                   setSelectedUser(user);
-//                   setSelectedReport(userReport[0]);
-//                   setIsReportOpen(true);
-//                 }}
-//                 className="w-1/2 px-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100"
-//               >
-//                 Detail Report
-//               </button>
-//               <div className="w-full mt-4 text-center">
-//   <button
-//     onClick={() => {
-//       setShowChart(!showChart);
-//       if (!showChart) {
-//         fetchChartData(user.email); // Fetch chart data when the chart is shown
-//       }
-//     }}
-//     className="px-4 py-2 bg-[#c3baf7] text-white rounded-lg hover:bg-purple-600"
-//   >
-//     {showChart ? 'Hide Chart' : 'Show Chart'}
-//   </button>
-// </div>
-//               <button
-//                 onClick={() => {
-//                   setSelectedUser(user);
-//                   setNewFullName(user.fullName);
-//                   setNewDOB(user.DOB);
-//                   setNewEmail(user.email);
-//                   setNewMobileNo(user.mobileNo);
-//                   setNewEducation(user.education);
-//                   setNewAddress(user.address);
-//                   setIsModalOpen(true);
-//                 }}
-//                 className="w-1/2 flex items-center gap-1 px-4 py-2 bg-[#c3baf7] text-white rounded-lg hover:bg-purple-600"
-//               >
-//                 <Edit size={16} /> Edit
-//               </button>
-//             </div>
-//           </div>
-//         );
-//       })}
-
-//       {/* Chart Toggle Button */}
-      
-
-//       {/* Show Chart component if showChart is true */}
-//       {/* {showChart && <Chart chartData={chartData} />} */}
-//       {showChart && <Chart chartData={chartData} closeChart={() => setShowChart(false)} />}
-//       {/* Edit Modal */}
-//       {selectedUser && (
-//         <EditPopup
-//           user={selectedUser}
-//           isOpen={isModalOpen}
-//           setIsOpen={setIsModalOpen}
-//           updateUserProfile={updateUserProfile}
-//           setNewFullName={setNewFullName}
-//           setNewDOB={setNewDOB}
-//           setNewEmail={setNewEmail}
-//           setNewAddress={setNewAddress}
-//           setNewMobileNo={setNewMobileNo}
-//           setNewEducation={setNewEducation}
-//           newFullName={newFullName}
-//           newDOB={newDOB}
-//           newEmail={newEmail}
-//           newEducation={newEducation}
-//           newMobileNo={newMobileNo}
-//           newAddress={newAddress}
-//         />
-//       )}
-
-//       {/* Report Detail Modal */}
-//       {isReportOpen && (
-//         <ReportDetailPopup
-//           user={selectedUser}
-//           isOpen={isReportOpen}
-//           setIsOpen={setIsReportOpen}
-//         />
-//       )}
-//     </div>
-//   );
-// }
-
-// export default EmployeeProfiles;
-
-
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { Edit } from 'lucide-react';
-import EditPopup from '../../components/editPopup';
-import ReportDetailPopup from '../../components/reportDetailPopup';
-import Chart from '../../components/chart';
-import { useRouter } from 'next/router';
-
-function EmployeeProfiles() {
+export default function StudentProfiles() {
   const router = useRouter();
-
   const [users, setUsers] = useState([]);
-  const [user, setUser] = useState(null);
-  const [collageName, setCollageName] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [collageName, setCollageName] = useState("");
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isReportOpen, setIsReportOpen] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
-  const [selectedReport, setSelectedReport] = useState(null);
+  // Filters and views
+  const [viewMode, setViewMode] = useState("grid"); // 'grid' or 'table'
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all"); // 'all', 'completed', 'pending'
+  const [sortBy, setSortBy] = useState("latest"); // 'latest', 'name', 'reports'
 
-  const [newFullName, setNewFullName] = useState('');
-  const [newDOB, setNewDOB] = useState('');
-  const [newMobileNo, setNewMobileNo] = useState('');
-  const [newAddress, setNewAddress] = useState('');
-  const [newEducation, setNewEducation] = useState('');
-  const [newEmail, setNewEmail] = useState('');
+  // Selected student for detailed assessment dossier
+  const [selectedStudentEmail, setSelectedStudentEmail] = useState(null);
+  const [studentDossier, setStudentDossier] = useState(null);
+  const [dossierLoading, setDossierLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState("interviews"); // 'interviews', 'academic', 'technical', 'psychometric'
 
-  const [showChart, setShowChart] = useState(false);
-  const [chartData, setChartData] = useState([]);
+  // Edit Modal State
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editUser, setEditUser] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    fullName: "",
+    email: "",
+    mobileNo: "",
+    DOB: "",
+    education: "",
+    address: "",
+  });
 
-  /* ---------------- AUTH + ADMIN LOAD ---------------- */
   useEffect(() => {
     const token = localStorage.getItem("Admintoken");
     const adminStr = localStorage.getItem("admin");
@@ -487,318 +72,770 @@ function EmployeeProfiles() {
 
     try {
       const admin = JSON.parse(adminStr);
-      setUser(admin);
-      setCollageName(admin.collageName); // ✅ KEY LINE
+      setCollageName(admin.collageName);
+      fetchStudents(admin.collageName);
     } catch (err) {
-      localStorage.clear();
       router.push("/admin/login");
     }
-  }, []);
+  }, [router]);
 
-  /* ---------------- FETCH STUDENTS (COLLAGE WISE) ---------------- */
+  // Handle search query from query params
   useEffect(() => {
-    if (!collageName) return;
+    if (router.query.search) {
+      setSearchQuery(router.query.search);
+    }
+  }, [router.query]);
 
-    const fetchUserData = async () => {
-      try {
-        const response = await fetch(
-          `/api/editStudentProfile?collageName=${encodeURIComponent(collageName)}`
-        );
-        const data = await response.json();
-
-        if (data.users?.length) {
-          const emails = data.users.map(u => u.email);
-
-          const reportRes = await fetch(
-            `${process.env.NEXT_PUBLIC_HOST}/api/saveAndGetReport?emails=${JSON.stringify(emails)}`
-          );
-          const reportData = await reportRes.json();
-
-          const merged = data.users.map(u => ({
-            ...u,
-            report: reportData.reports?.[u.email] || [],
-          }));
-
-          setUsers(merged);
-        } else {
-          setUsers([]);
-        }
-      } catch (err) {
-        console.error("Fetch error:", err);
-      }
-    };
-
-    fetchUserData();
-  }, [collageName]);
-
-  /* ---------------- CHART DATA ---------------- */
-  const fetchChartData = async (email) => {
+  const fetchStudents = async (college) => {
     try {
-      const res = await fetch(`/api/overallScore?email=${email}`);
+      setLoading(true);
+      const res = await fetch(`/api/editStudentProfile?collageName=${encodeURIComponent(college)}`);
       const data = await res.json();
 
-      if (data.reports?.length) {
-        setChartData(
-          data.reports.map(r => ({
-            x: new Date(r.createdAt).toLocaleString(),
-            y: r.overallScore,
-          }))
-        );
+      if (data.users?.length) {
+        const emails = data.users.map((u) => u.email).filter(Boolean);
+
+        let reportsMap = {};
+        try {
+          const reportRes = await fetch(
+            `${process.env.NEXT_PUBLIC_HOST || ""}/api/saveAndGetReport?emails=${JSON.stringify(emails)}`
+          );
+          const reportData = await reportRes.json();
+          reportsMap = reportData.reports || {};
+        } catch (e) {
+          console.error("Error fetching reports map:", e);
+        }
+
+        const merged = data.users.map((u) => ({
+          ...u,
+          report: reportsMap[u.email] || [],
+        }));
+
+        setUsers(merged);
+      } else {
+        setUsers([]);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Fetch students error:", err);
+      toast.error("Failed to load student profiles");
+    } finally {
+      setLoading(false);
     }
   };
 
-  /* ---------------- UPDATE PROFILE ---------------- */
-  const updateUserProfile = async () => {
-    if (!selectedUser) return;
-
-    const payload = {
-      email: selectedUser.email,
-      updatedData: {
-        fullName: newFullName,
-        email: newEmail,
-        DOB: newDOB,
-        mobileNo: newMobileNo,
-        address: newAddress,
-        education: newEducation,
-      },
-    };
+  /* Open Comprehensive Student Dossier Drawer */
+  const openStudentDossier = async (email) => {
+    setSelectedStudentEmail(email);
+    setDossierLoading(true);
+    setActiveTab("interviews");
 
     try {
-      const res = await fetch('/api/editStudentProfile', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+      const token = localStorage.getItem("Admintoken");
+      const res = await fetch(`/api/admin/getStudentFullProfile?email=${encodeURIComponent(email)}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        setStudentDossier(data);
+      } else {
+        toast.error("Failed to fetch full assessment records");
+      }
+    } catch (err) {
+      console.error("Dossier fetch error:", err);
+      toast.error("Error fetching student details");
+    } finally {
+      setDossierLoading(false);
+    }
+  };
+
+  /* Open Edit Modal */
+  const openEditModal = (user) => {
+    setEditUser(user);
+    setEditFormData({
+      fullName: user.fullName || "",
+      email: user.email || "",
+      mobileNo: user.mobileNo || "",
+      DOB: user.DOB || "",
+      education: user.education || "",
+      address: user.address || "",
+    });
+    setIsEditOpen(true);
+  };
+
+  /* Save Edit Profile */
+  const handleSaveEdit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/editStudentProfile", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: editUser.email,
+          updatedData: editFormData,
+        }),
       });
 
       if (res.ok) {
-        setUsers(prev =>
-          prev.map(u =>
-            u.email === selectedUser.email
-              ? { ...u, ...payload.updatedData }
-              : u
+        setUsers((prev) =>
+          prev.map((u) =>
+            u.email === editUser.email ? { ...u, ...editFormData } : u
           )
         );
-        setIsModalOpen(false);
+        toast.success("Student profile updated successfully");
+        setIsEditOpen(false);
+      } else {
+        toast.error("Failed to update profile");
       }
     } catch (err) {
-      console.error(err);
+      toast.error("Server error updating profile");
     }
   };
 
-  /* ---------------- UI ---------------- */
+  /* CSV Export Function */
+  const handleExportCSV = () => {
+    if (users.length === 0) {
+      toast.warning("No students to export");
+      return;
+    }
 
-return (
-<div className="flex-1 w-full min-h-screen bg-gradient-to-br from-indigo-100 via-purple-100 to-indigo-200 font-sans text-gray-600 pt-16 md:pt-0">    {/* Main Content Container */}
-    <div className="max-w-[1600px] mx-auto p-4 sm:p-6 lg:p-8 space-y-8">
-      
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 bg-white/70 backdrop-blur-xl px-8 py-6 rounded-3xl shadow-lg border border-white/40">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-indigo-800 tracking-tight">
-            Student Profiles
-          </h1>
-          <p className="text-gray-600 text-sm mt-1.5 font-medium">
-            Manage student registrations and performance insights
-          </p>
+    const headers = ["Full Name", "Email", "Mobile", "Education", "Joined Date", "Completed Assessments"];
+    const rows = users.map((u) => [
+      `"${u.fullName || "N/A"}"`,
+      `"${u.email || "N/A"}"`,
+      `"${u.mobileNo || "N/A"}"`,
+      `"${u.education || "N/A"}"`,
+      `"${u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "N/A"}"`,
+      u.report?.length || 0,
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `student_roster_${collageName || "campus"}_${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Student roster CSV downloaded");
+  };
+
+  /* Filtered and Sorted Students */
+  const filteredUsers = users
+    .filter((user) => {
+      const q = searchQuery.toLowerCase().trim();
+      const matchSearch =
+        !q ||
+        (user.fullName && user.fullName.toLowerCase().includes(q)) ||
+        (user.email && user.email.toLowerCase().includes(q)) ||
+        (user.education && user.education.toLowerCase().includes(q)) ||
+        (user.mobileNo && user.mobileNo.includes(q));
+
+      const isCompleted = user.report && user.report.length > 0;
+      const matchStatus =
+        statusFilter === "all" ||
+        (statusFilter === "completed" && isCompleted) ||
+        (statusFilter === "pending" && !isCompleted);
+
+      return matchSearch && matchStatus;
+    })
+    .sort((a, b) => {
+      if (sortBy === "name") {
+        return (a.fullName || "").localeCompare(b.fullName || "");
+      }
+      if (sortBy === "reports") {
+        return (b.report?.length || 0) - (a.report?.length || 0);
+      }
+      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+    });
+
+  return (
+    <AdminLayout
+      title="Student Directory & Profiles"
+      subtitle="Comprehensive roster, individual assessment dossier, and performance records"
+      actionButton={
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportCSV}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs sm:text-sm font-semibold transition-all shadow-sm"
+          >
+            <Download size={15} />
+            <span className="hidden sm:inline">Export CSV</span>
+          </button>
+          <button
+            onClick={() => router.push("/admin/signup")}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-gradient-to-r from-[#7060E7] to-[#0AADD8] hover:opacity-95 text-white text-xs sm:text-sm font-bold shadow-md shadow-purple-500/20 transition-all"
+          >
+            <Plus size={16} />
+            <span className="hidden sm:inline">Create Students</span>
+          </button>
         </div>
+      }
+    >
+      <ToastContainer theme="light" position="top-right" />
+
+      {/* ================= CONTROLS & FILTER BAR ================= */}
+      <div className="bg-white rounded-2xl border border-slate-200/80 p-5 mb-8 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         
-        <div className="flex items-center gap-4 bg-white/50 p-2 pr-5 rounded-2xl border border-white/40 shadow-sm">
-          <div className="h-10 w-10 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-700">
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
+        {/* Search Input */}
+        <div className="relative flex-1 max-w-md">
+          <Search size={17} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by student name, email, education..."
+            className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#7060E7] focus:bg-white transition-all shadow-inner"
+          />
+        </div>
+
+        {/* Filter Badges & View Toggle */}
+        <div className="flex flex-wrap items-center gap-3">
+          
+          {/* Status Filter */}
+          <select
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 font-semibold focus:outline-none focus:ring-2 focus:ring-[#7060E7] cursor-pointer"
+          >
+            <option value="all">All Statuses</option>
+            <option value="completed">Evaluated / Completed</option>
+            <option value="pending">Pending Assessment</option>
+          </select>
+
+          {/* Sort Filter */}
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-700 font-semibold focus:outline-none focus:ring-2 focus:ring-[#7060E7] cursor-pointer"
+          >
+            <option value="latest">Sort: Latest Joined</option>
+            <option value="name">Sort: Student Name</option>
+            <option value="reports">Sort: Assessments Count</option>
+          </select>
+
+          {/* Grid vs Table View Mode */}
+          <div className="flex items-center bg-slate-100 border border-slate-200 rounded-xl p-1">
+            <button
+              onClick={() => setViewMode("grid")}
+              className={`p-1.5 rounded-lg transition-all ${
+                viewMode === "grid" ? "bg-white text-[#7060E7] shadow-sm font-bold" : "text-slate-500 hover:text-slate-800"
+              }`}
+              title="Card Grid View"
+            >
+              <LayoutGrid size={17} />
+            </button>
+            <button
+              onClick={() => setViewMode("table")}
+              className={`p-1.5 rounded-lg transition-all ${
+                viewMode === "table" ? "bg-white text-[#7060E7] shadow-sm font-bold" : "text-slate-500 hover:text-slate-800"
+              }`}
+              title="Dense Table View"
+            >
+              <TableIcon size={17} />
+            </button>
           </div>
-          <div className="flex flex-col">
-             <span className="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Total Students</span>
-             <span className="text-lg font-bold text-indigo-800 leading-none">{users.length}</span>
-          </div>
+
         </div>
       </div>
 
-      {/* Responsive Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {users.map((user) => {
-          const userReport = user.report || [];
-          const hasReport = userReport.length > 0;
-          
-          return (
-            <div 
-              key={user.email} 
-              className="group relative bg-white/70 backdrop-blur-xl rounded-3xl border border-white/40 shadow-sm hover:shadow-xl hover:scale-[1.01] transition-all duration-300 flex flex-col overflow-hidden"
-            >
-              {/* Card Header & Profile */}
-              <div className="p-6 pb-4 flex items-start gap-4">
-                <div className="relative shrink-0">
-                  <div className="w-16 h-16 rounded-2xl p-0.5 bg-gradient-to-br from-indigo-500 to-purple-600 shadow-md">
-                    <div className="bg-white rounded-[14px] w-full h-full overflow-hidden">
-                      <Image
-                        src={user.profileImg || '/BOT.png'}
-                        width={64}
-                        height={64}
-                        alt="Profile"
-                        className="object-cover w-full h-full"
-                      />
+      {/* ================= STUDENT LISTING ================= */}
+      {loading ? (
+        <div className="py-24 text-center">
+          <div className="w-10 h-10 border-3 border-[#7060E7] border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-sm font-semibold text-slate-500">Loading student roster...</p>
+        </div>
+      ) : filteredUsers.length === 0 ? (
+        <div className="bg-white border border-slate-200/80 rounded-2xl p-12 text-center shadow-sm">
+          <Users size={40} className="mx-auto text-slate-400 mb-3" />
+          <h3 className="text-base font-bold text-slate-800">No students found</h3>
+          <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
+            Try adjusting your search query or generate new student access links in Batch User Generator.
+          </p>
+          <button
+            onClick={() => router.push("/admin/signup")}
+            className="mt-5 inline-flex items-center gap-2 px-4 py-2 bg-[#6F24E8] hover:bg-[#5b1dc4] text-white text-xs font-bold rounded-xl transition-all shadow-sm"
+          >
+            <Plus size={16} />
+            Generate Access Links
+          </button>
+        </div>
+      ) : viewMode === "grid" ? (
+        
+        /* ===== CARD GRID VIEW ===== */
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {filteredUsers.map((student) => {
+            const hasReports = student.report && student.report.length > 0;
+            const isPlaceholder = student.email && student.email.includes("@placeholder.local");
+
+            return (
+              <div
+                key={student.email || student._id}
+                className="group relative bg-white rounded-2xl border border-slate-200/80 hover:border-purple-300 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 flex flex-col overflow-hidden"
+              >
+                {/* Card Header & Avatar */}
+                <div className="p-6 pb-4 flex items-start gap-4">
+                  <div className="relative shrink-0">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-r from-[#7060E7] to-[#0AADD8] p-0.5 shadow-sm">
+                      <div className="bg-white rounded-[14px] w-full h-full overflow-hidden flex items-center justify-center font-bold text-[#6F24E8] text-lg">
+                        {student.profileImg ? (
+                          <Image
+                            src={student.profileImg}
+                            width={56}
+                            height={56}
+                            alt="Avatar"
+                            className="object-cover w-full h-full"
+                          />
+                        ) : (
+                          (student.fullName || "S").charAt(0).toUpperCase()
+                        )}
+                      </div>
+                    </div>
+                    {/* Status Dot */}
+                    <span
+                      className={`absolute -bottom-1 -right-1 w-4 h-4 rounded-full border-2 border-white shadow-sm ${
+                        hasReports ? "bg-emerald-500" : isPlaceholder ? "bg-amber-500" : "bg-[#7060E7]"
+                      }`}
+                    />
+                  </div>
+
+                  <div className="flex-1 min-w-0 pt-0.5">
+                    <h3 className="text-base font-bold text-slate-900 truncate group-hover:text-[#6F24E8] transition-colors">
+                      {student.fullName || (isPlaceholder ? "Registered Access Link" : "Student User")}
+                    </h3>
+                    <p className="text-xs text-slate-500 font-medium truncate mb-2">
+                      {student.education || "General Student"}
+                    </p>
+
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 max-w-full text-xs text-slate-600 font-medium truncate">
+                      <Mail size={12} className="text-[#7060E7] shrink-0" />
+                      <span className="truncate">{student.email}</span>
                     </div>
                   </div>
-                  {/* Status Indicator Dot */}
-                  <span className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-[3px] border-white rounded-full shadow-sm"></span>
                 </div>
-                
-                <div className="flex-1 min-w-0 pt-0.5">
-                  <h2 className="text-lg font-bold text-gray-800 truncate group-hover:text-indigo-700 transition-colors">
-                    {user.fullName || 'Unknown User'}
-                  </h2>
-                  <p className="text-sm font-medium text-gray-500 truncate mb-2">{user.education || 'Student'}</p>
-                  
-                  <div className="inline-flex items-center px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-100 max-w-full">
-                    <svg className="w-3 h-3 text-indigo-400 mr-1.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    <span className="text-xs text-indigo-700 font-medium truncate">{user.email}</span>
+
+                {/* Info Bar */}
+                <div className="px-6 py-3 mx-6 my-2 bg-slate-50 rounded-xl border border-slate-100 flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-2">
+                    <Award size={16} className="text-purple-600" />
+                    <div>
+                      <span className="text-[10px] uppercase font-bold text-slate-400 block">Evaluations</span>
+                      <span className="font-bold text-slate-800">{student.report?.length || 0} Reports</span>
+                    </div>
+                  </div>
+
+                  <div className="h-6 w-px bg-slate-200" />
+
+                  <div className="flex items-center gap-2">
+                    <Calendar size={16} className="text-indigo-600" />
+                    <div>
+                      <span className="text-[10px] uppercase font-bold text-slate-400 block">Joined</span>
+                      <span className="font-bold text-slate-800">
+                        {student.createdAt ? new Date(student.createdAt).toLocaleDateString() : "N/A"}
+                      </span>
+                    </div>
                   </div>
                 </div>
+
+                {/* Actions */}
+                <div className="p-6 pt-3 mt-auto grid grid-cols-2 gap-2.5">
+                  <button
+                    onClick={() => openStudentDossier(student.email)}
+                    className="col-span-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-[#7060E7] to-[#0AADD8] hover:opacity-95 text-white text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <BarChart3 size={15} />
+                    View Dossier
+                  </button>
+
+                  <button
+                    onClick={() => openEditModal(student)}
+                    className="col-span-1 py-2.5 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <Edit size={14} />
+                    Edit Profile
+                  </button>
+                </div>
               </div>
-
-              {/* Stats Strip */}
-              <div className="px-6 py-3 mx-6 bg-white/50 rounded-xl border border-white/60 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                     <div className="p-1.5 rounded-full bg-purple-100 text-purple-700">
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" /></svg>
-                     </div>
-                     <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-gray-500 uppercase">Reports</span>
-                        <span className="text-sm font-bold text-gray-700 leading-none">{userReport.length}</span>
-                     </div>
-                  </div>
-                  <div className="h-8 w-px bg-indigo-200/40"></div>
-                  <div className="flex items-center gap-2">
-                     <div className="p-1.5 rounded-full bg-indigo-100 text-indigo-700">
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
-                     </div>
-                     <div className="flex flex-col">
-                        <span className="text-[10px] font-bold text-gray-500 uppercase">Joined</span>
-                        <span className="text-xs font-bold text-gray-700 leading-none">
-                            {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
-                        </span>
-                     </div>
-                  </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="p-6 mt-auto grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => {
-                    setSelectedUser(user);
-                    setSelectedReport(userReport[0]);
-                    setIsReportOpen(true);
-                  }}
-                  disabled={!hasReport}
-                  className={`col-span-1 py-2.5 px-4 text-sm font-semibold rounded-xl border transition-all duration-200 
-                    ${!hasReport
-                      ? 'bg-white/40 text-gray-400 border-white/40 cursor-not-allowed' 
-                      : 'bg-white text-gray-700 border-white/60 hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200 shadow-sm'}`}
-                >
-                  View Report
-                </button>
-
-                <button
-                  onClick={() => {
-                      fetchChartData(user.email);
-                      setShowChart(true);
-                  }}
-                  disabled={!hasReport}
-                  className={`col-span-1 py-2.5 px-4 text-sm font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 shadow-md
-                      ${!hasReport
-                          ? 'bg-white/40 text-gray-400 border border-white/40 cursor-not-allowed shadow-none'
-                          : 'bg-indigo-600 text-white border border-transparent hover:bg-indigo-700 hover:shadow-lg hover:shadow-indigo-200'}`}
-                >
-                    <svg className="w-4 h-4 opacity-90" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                    Analytics
-                </button>
-
-                <button
-                  onClick={() => {
-                    setSelectedUser(user);
-                    setNewFullName(user.fullName);
-                    setNewDOB(user.DOB);
-                    setNewEmail(user.email);
-                    setNewMobileNo(user.mobileNo);
-                    setNewEducation(user.education);
-                    setNewAddress(user.address);
-                    setIsModalOpen(true);
-                  }}
-                  className="col-span-2 mt-2 flex items-center justify-center gap-2 py-2 text-xs font-semibold text-gray-500 hover:text-indigo-700 transition-colors duration-200 group/edit"
-                >
-                  <Edit size={14} className="group-hover/edit:scale-110 transition-transform text-indigo-400" />
-                  Edit Profile Details
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-
-    {/* MODALS SECTION */}
-
-    {/* Analytics Chart Modal */}
-    {showChart && (
-      <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
-        <div className="bg-white rounded-3xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200 ring-1 ring-black/5">
-          <div className="flex items-center justify-between px-8 py-6 border-b border-gray-100 bg-white sticky top-0 z-10">
-              <div>
-                  <h3 className="text-xl font-bold text-gray-800">Performance Analytics</h3>
-                  <p className="text-gray-500 text-sm">Visualizing user progress over time</p>
-              </div>
-              <button 
-                  onClick={() => setShowChart(false)}
-                  className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
-              >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-          </div>
-          <div className="flex-1 overflow-auto p-6 bg-gray-50">
-              <Chart chartData={chartData} closeChart={() => setShowChart(false)} />
+            );
+          })}
+        </div>
+      ) : (
+        
+        /* ===== DENSE TABLE VIEW ===== */
+        <div className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 text-xs font-bold uppercase tracking-wider">
+                  <th className="px-6 py-4">Student Details</th>
+                  <th className="px-6 py-4">Email</th>
+                  <th className="px-6 py-4">Education / Batch</th>
+                  <th className="px-6 py-4">Assessments</th>
+                  <th className="px-6 py-4">Joined Date</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-sm">
+                {filteredUsers.map((student) => (
+                  <tr key={student.email || student._id} className="hover:bg-slate-50/80 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-r from-[#7060E7] to-[#0AADD8] flex items-center justify-center font-bold text-white text-xs shadow-sm">
+                          {(student.fullName || "S").charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-900">{student.fullName || "Student"}</p>
+                          <p className="text-xs text-slate-500">{student.mobileNo || "N/A"}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-slate-600 font-mono text-xs">
+                      {student.email}
+                    </td>
+                    <td className="px-6 py-4 text-slate-600 text-xs font-medium">
+                      {student.education || "General"}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-[#ECECFA] text-[#6F24E8] border border-purple-200">
+                        <Award size={13} />
+                        {student.report?.length || 0} Reports
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-slate-500 text-xs">
+                      {student.createdAt ? new Date(student.createdAt).toLocaleDateString() : "N/A"}
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => openStudentDossier(student.email)}
+                          className="p-2 text-[#7060E7] hover:text-[#5848c9] hover:bg-purple-50 rounded-lg transition-colors"
+                          title="View Assessment Dossier"
+                        >
+                          <BarChart3 size={17} />
+                        </button>
+                        <button
+                          onClick={() => openEditModal(student)}
+                          className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+                          title="Edit Profile"
+                        >
+                          <Edit size={16} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
-      </div>
-    )}
+      )}
 
-    {/* Edit Profile Modal */}
-    {selectedUser && (
-      <EditPopup
-        user={selectedUser}
-        isOpen={isModalOpen}
-        setIsOpen={setIsModalOpen}
-        updateUserProfile={updateUserProfile}
-        setNewFullName={setNewFullName}
-        setNewDOB={setNewDOB}
-        setNewEmail={setNewEmail}
-        setNewAddress={setNewAddress}
-        setNewMobileNo={setNewMobileNo}
-        setNewEducation={setNewEducation}
-        newFullName={newFullName}
-        newDOB={newDOB}
-        newEmail={newEmail}
-        newEducation={newEducation}
-        newMobileNo={newMobileNo}
-        newAddress={newAddress}
-      />
-    )}
+      {/* ================= STUDENT ASSESSMENT DOSSIER DRAWER / MODAL ================= */}
+      {selectedStudentEmail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-4xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            
+            {/* Modal Header */}
+            <div className="p-6 border-b border-slate-100 flex items-start justify-between bg-white sticky top-0 z-10">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-r from-[#7060E7] to-[#0AADD8] p-0.5 shadow-md">
+                  <div className="w-full h-full bg-white rounded-[14px] flex items-center justify-center font-bold text-[#6F24E8] text-lg">
+                    {(studentDossier?.student?.fullName || "S").charAt(0).toUpperCase()}
+                  </div>
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-slate-900">
+                    {studentDossier?.student?.fullName || selectedStudentEmail}
+                  </h2>
+                  <p className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
+                    <span>{studentDossier?.student?.education || "Student"}</span>
+                    <span>•</span>
+                    <span className="text-[#6F24E8] font-mono">{selectedStudentEmail}</span>
+                  </p>
+                </div>
+              </div>
 
-    {/* Report Detail Modal */}
-    {isReportOpen && (
-      <ReportDetailPopup
-        user={selectedUser}
-        isOpen={isReportOpen}
-        setIsOpen={setIsReportOpen}
-      />
-    )}
-  </div>
-);
+              <button
+                onClick={() => setSelectedStudentEmail(null)}
+                className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-colors"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar bg-slate-50/50">
+              {dossierLoading ? (
+                <div className="py-16 text-center">
+                  <div className="w-8 h-8 border-2 border-[#7060E7] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+                  <p className="text-xs text-slate-500 font-semibold">Aggregating assessment history across all engines...</p>
+                </div>
+              ) : (
+                <>
+                  {/* Category Tabs */}
+                  <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-4">
+                    {[
+                      { id: "interviews", label: "AI Mock Interviews", count: studentDossier?.assessments?.mockInterviews?.length || 0, icon: Sparkles },
+                      { id: "academic", label: "Academic Tests", count: studentDossier?.assessments?.academicTests?.length || 0, icon: BookOpen },
+                      { id: "technical", label: "Technical MCQs", count: studentDossier?.assessments?.technicalTests?.length || 0, icon: Award },
+                      { id: "psychometric", label: "Psychometrics", count: studentDossier?.assessments?.psychometric?.length || 0, icon: Brain },
+                    ].map((tab) => {
+                      const Icon = tab.icon;
+                      return (
+                        <button
+                          key={tab.id}
+                          onClick={() => setActiveTab(tab.id)}
+                          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                            activeTab === tab.id
+                              ? "bg-gradient-to-r from-[#7060E7] to-[#0AADD8] text-white shadow-md"
+                              : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
+                          }`}
+                        >
+                          <Icon size={15} />
+                          <span>{tab.label}</span>
+                          <span className={`px-2 py-0.5 rounded-full text-[10px] ${activeTab === tab.id ? "bg-white/20 text-white" : "bg-slate-100 text-slate-500"}`}>
+                            {tab.count}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* TAB 1: AI Mock Interviews */}
+                  {activeTab === "interviews" && (
+                    <div className="space-y-4">
+                      {studentDossier?.assessments?.mockInterviews?.length > 0 ? (
+                        studentDossier.assessments.mockInterviews.map((item, idx) => (
+                          <div key={idx} className="bg-white border border-slate-200/80 rounded-2xl p-5 space-y-4 shadow-sm">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-[#6F24E8]">Mock Interview</span>
+                                <h3 className="text-base font-bold text-slate-900">{item.role || "Job Interview Evaluation"}</h3>
+                                <p className="text-xs text-slate-500">{new Date(item.createdAt).toLocaleString()}</p>
+                              </div>
+                              <div className="text-right">
+                                <span className="text-2xl font-extrabold text-emerald-600">{item.parsedScores?.overall || 80}%</span>
+                                <span className="text-[10px] text-slate-400 block uppercase font-bold">Overall Score</span>
+                              </div>
+                            </div>
+
+                            {/* Competency Meter */}
+                            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-2">
+                              {[
+                                { label: "Technical", score: item.parsedScores?.technical || 7 },
+                                { label: "Communication", score: item.parsedScores?.communication || 8 },
+                                { label: "Decision Making", score: item.parsedScores?.decisionMaking || 7 },
+                                { label: "Confidence", score: item.parsedScores?.confidence || 8 },
+                                { label: "Fluency", score: item.parsedScores?.fluency || 8 },
+                              ].map((c, i) => (
+                                <div key={i} className="bg-slate-50 rounded-xl p-2.5 text-center border border-slate-200">
+                                  <span className="text-[10px] text-slate-500 uppercase font-semibold block">{c.label}</span>
+                                  <span className="text-sm font-extrabold text-slate-900">{c.score} / 10</span>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Analysis Extract */}
+                            {item.reportAnalysis && (
+                              <div className="bg-slate-50 p-4 rounded-xl text-xs text-slate-700 leading-relaxed max-h-40 overflow-y-auto custom-scrollbar border border-slate-200">
+                                <p className="font-bold text-slate-900 mb-1">AI Evaluation Analysis:</p>
+                                <p className="whitespace-pre-line">{item.reportAnalysis.slice(0, 500)}...</p>
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="py-10 text-center text-slate-400 bg-white rounded-2xl border border-slate-200">
+                          <p className="text-sm font-semibold text-slate-600">No AI Mock Interviews taken yet.</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* TAB 2: Academic Tests */}
+                  {activeTab === "academic" && (
+                    <div className="space-y-4">
+                      {studentDossier?.assessments?.academicTests?.length > 0 ? (
+                        studentDossier.assessments.academicTests.map((item, idx) => (
+                          <div key={idx} className="bg-white border border-slate-200/80 rounded-2xl p-5 space-y-3 shadow-sm">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-[#7060E7]">Academic Assessment</span>
+                                <h3 className="text-base font-bold text-slate-900">{item.subject || "Subject Test"} ({item.stream || "General"})</h3>
+                                <p className="text-xs text-slate-500">{new Date(item.completedAt || item.createdAt).toLocaleString()}</p>
+                              </div>
+                              <div className="text-right">
+                                <span className="text-2xl font-extrabold text-[#7060E7]">{item.overallScore || 0}%</span>
+                                <span className="text-[10px] text-amber-500 font-bold block">{"★".repeat(item.stars || 4)}</span>
+                              </div>
+                            </div>
+                            {item.feedback && (
+                              <p className="text-xs text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-200">{item.feedback}</p>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="py-10 text-center text-slate-400 bg-white rounded-2xl border border-slate-200">
+                          <p className="text-sm font-semibold text-slate-600">No Academic Tests taken yet.</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* TAB 3: Technical MCQs */}
+                  {activeTab === "technical" && (
+                    <div className="space-y-4">
+                      {studentDossier?.assessments?.technicalTests?.length > 0 ? (
+                        studentDossier.assessments.technicalTests.map((item, idx) => (
+                          <div key={idx} className="bg-white border border-slate-200/80 rounded-2xl p-5 space-y-3 shadow-sm">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Technical Test</span>
+                                <h3 className="text-base font-bold text-slate-900">{item.subject || "Technical Subject"}</h3>
+                                <p className="text-xs text-slate-500">{new Date(item.createdAt).toLocaleString()}</p>
+                              </div>
+                              <div className="text-right">
+                                <span className="text-2xl font-extrabold text-blue-600">
+                                  {item.percentage || (item.score && item.totalQuestions ? Math.round((item.score / item.totalQuestions) * 100) : 0)}%
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="py-10 text-center text-slate-400 bg-white rounded-2xl border border-slate-200">
+                          <p className="text-sm font-semibold text-slate-600">No Technical MCQs taken yet.</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* TAB 4: Psychometrics */}
+                  {activeTab === "psychometric" && (
+                    <div className="space-y-4">
+                      {studentDossier?.assessments?.psychometric?.length > 0 ? (
+                        studentDossier.assessments.psychometric.map((item, idx) => (
+                          <div key={idx} className="bg-white border border-slate-200/80 rounded-2xl p-5 space-y-3 shadow-sm">
+                            <h3 className="text-base font-bold text-slate-900">Behavioral & Psychometric Profile</h3>
+                            <p className="text-xs text-slate-500">{new Date(item.completedAt || item.createdAt).toLocaleString()}</p>
+                            {item.results?.careerPathRecommendations && (
+                              <div className="mt-3">
+                                <span className="text-xs font-bold text-[#6F24E8] block mb-1">Recommended Career Pathways:</span>
+                                <div className="flex flex-wrap gap-2">
+                                  {item.results.careerPathRecommendations.map((career, cIdx) => (
+                                    <span key={cIdx} className="px-3 py-1 bg-[#ECECFA] text-[#6F24E8] text-xs font-semibold rounded-lg border border-purple-200">
+                                      {career}
+                                    </span>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        ))
+                      ) : (
+                        <div className="py-10 text-center text-slate-400 bg-white rounded-2xl border border-slate-200">
+                          <p className="text-sm font-semibold text-slate-600">No Psychometric evaluations recorded yet.</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ================= EDIT STUDENT PROFILE MODAL ================= */}
+      {isEditOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+          <div className="bg-white border border-slate-200 rounded-3xl w-full max-w-lg p-6 sm:p-8 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+              <h3 className="text-lg font-bold text-slate-900">Edit Student Details</h3>
+              <button
+                onClick={() => setIsEditOpen(false)}
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEdit} className="space-y-4">
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Full Name</label>
+                <input
+                  type="text"
+                  value={editFormData.fullName}
+                  onChange={(e) => setEditFormData({ ...editFormData, fullName: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#7060E7] focus:bg-white"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Education / Stream</label>
+                <input
+                  type="text"
+                  value={editFormData.education}
+                  onChange={(e) => setEditFormData({ ...editFormData, education: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#7060E7] focus:bg-white"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">Mobile Number</label>
+                  <input
+                    type="text"
+                    value={editFormData.mobileNo}
+                    onChange={(e) => setEditFormData({ ...editFormData, mobileNo: e.target.value })}
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#7060E7] focus:bg-white"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-slate-700 block mb-1">Date of Birth</label>
+                  <input
+                    type="text"
+                    value={editFormData.DOB}
+                    onChange={(e) => setEditFormData({ ...editFormData, DOB: e.target.value })}
+                    placeholder="YYYY-MM-DD"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#7060E7] focus:bg-white"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-slate-700 block mb-1">Address</label>
+                <input
+                  type="text"
+                  value={editFormData.address}
+                  onChange={(e) => setEditFormData({ ...editFormData, address: e.target.value })}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#7060E7] focus:bg-white"
+                />
+              </div>
+
+              <div className="pt-4 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setIsEditOpen(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-900 bg-slate-100"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-[#7060E7] to-[#0AADD8] text-white text-xs font-bold shadow-md shadow-purple-500/20"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </AdminLayout>
+  );
 }
-
-export default EmployeeProfiles;

@@ -107,15 +107,10 @@ export default function App({ Component, pageProps }) {
       `}
       </Script>
       {isAdminRoute ? (
-        <div className="flex min-h-screen bg-cover" style={{ backgroundImage: "url('/bg.jpg')" }}>
-          <AdminNav />
-          <Component {...pageProps} user={user} Logout={logout} />
-        </div>
+        <Component {...pageProps} user={user} Logout={logout} />
       ) : (
         <>
-
           {isHomeRoute && <Navbar user={user} Logout={logout} />}
-
           <Component {...pageProps} user={user} Logout={logout} />
         </>
       )}

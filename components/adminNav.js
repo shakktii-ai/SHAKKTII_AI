@@ -1,133 +1,154 @@
-// import React from 'react'
-// import Link from 'next/link'
-// import Image from 'next/image'
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/router";
+import {
+  LayoutDashboard,
+  Users,
+  CreditCard,
+  UserPlus,
+  FileText,
+  BarChart3,
+  BookOpen,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  Building2,
+  ChevronRight,
+  ShieldCheck
+} from "lucide-react";
 
-// function AdminNav() {
-//   return (
-//     <aside className="w-96 bg-[#dee1f8] shadow-lg p-6">
-//     <Image src="/image.png" alt="Logo" width={100} height={100} />
-//     <nav>
-//       <ul className="space-y-4">
-//         <li>
-//           <Link href="/admin" className="block py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-100">
-//             Dashboard Overview
-//           </Link>
-//         </li>
-//         <li>
-//           <Link href="/admin/studentProfiles" className="block  py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-100">
-//             Students Profiles
-//           </Link>
-//         </li>
-//         <li>
-//           <Link href="/admin/signup" className="block py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-100">
-//             Students Registration
-//           </Link>
-//         </li>
-//         {/* <li>
-//           <Link href="#" className="block py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-100">
-//             Query Management
-//           </Link>
-//         </li>
-//         <li>
-//           <Link href="#" className="block py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-100">
-//             Question Pattern Setting
-//           </Link>
-//         </li>
-//         <li>
-//           <Link href="#" className="block py-2 px-4 rounded-lg text-gray-700 hover:bg-indigo-100">
-//             User Credential Management
-//           </Link>
-//         </li> */}
-//       </ul>
-//     </nav>
-//   </aside>
-  
-//   )
-// }
-
-// export default AdminNav
-
-
-
-import { LogOut } from "lucide-react"
-import { useRouter } from "next/router"
-
-
-import React, { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { Menu, X, LayoutDashboard, Users, UserPlus } from "lucide-react"
-
-const navItems = [
-  { 
-    name: "Dashboard Overview", 
-    link: "/admin", 
-    icon: LayoutDashboard 
+export const navItems = [
+  {
+    name: "Dashboard Overview",
+    link: "/admin",
+    icon: LayoutDashboard,
+    badge: null,
   },
-  { 
-    name: "Students Profiles", 
-    link: "/admin/studentProfiles", 
-    icon: Users 
+  {
+    name: "Students Profiles",
+    link: "/admin/studentProfiles",
+    icon: Users,
+    badge: null,
   },
-  { 
-    name: "Students Registration", 
-    link: "/admin/signup", 
-    icon: UserPlus 
+  {
+    name: "Student ID & QR Passes",
+    link: "/admin/user-links",
+    icon: CreditCard,
+    badge: "ID Print",
   },
-]
+  {
+    name: "Batch User Generator",
+    link: "/admin/signup",
+    icon: UserPlus,
+    badge: "Instant",
+  },
+  {
+    name: "Assessment Reports",
+    link: "/admin/reports",
+    icon: FileText,
+    badge: "4 Engines",
+  },
+  {
+    name: "Cohort Analytics",
+    link: "/admin/analytics",
+    icon: BarChart3,
+    badge: "AI Insights",
+  },
+  {
+    name: "Curriculum & Tests",
+    link: "/admin/assessments",
+    icon: BookOpen,
+    badge: null,
+  },
+  {
+    name: "Institution Settings",
+    link: "/admin/settings",
+    icon: Settings,
+    badge: null,
+  },
+];
 
 export default function AdminNav() {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [admin, setAdmin] = useState(null);
+  const router = useRouter();
 
-  const router = useRouter()
+  useEffect(() => {
+    try {
+      const adminStr = localStorage.getItem("admin");
+      if (adminStr) {
+        setAdmin(JSON.parse(adminStr));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
 
-const handleLogout = () => {
-  localStorage.removeItem("Admintoken")
-  localStorage.removeItem("admin")
+  const handleLogout = () => {
+    localStorage.removeItem("Admintoken");
+    localStorage.removeItem("admin");
+    setOpen(false);
+    router.push("/admin/login");
+  };
 
-  setOpen(false)
-  router.push("/admin/login")
-}
+  const isActive = (pathname) => {
+    if (pathname === "/admin") {
+      return router.pathname === "/admin";
+    }
+    return router.pathname.startsWith(pathname);
+  };
 
   return (
     <>
-      {/* ================= MOBILE HEADER ================= */}
-      <header className="md:hidden fixed top-0 left-0 right-0 z-50 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 flex items-center justify-between shadow-sm transition-all">
-        {/* Brand / Logo Section */}
+      {/* ================= MOBILE TOP HEADER ================= */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 h-16 bg-white/90 backdrop-blur-md border-b border-slate-200 px-4 flex items-center justify-between shadow-sm transition-all">
         <div className="flex items-center gap-3">
-          <div className="relative overflow-hidden rounded-lg shadow-sm border border-slate-100">
-            <Image
-              src="/image.png"
-              alt="Logo"
-              width={36}
-              height={36}
-              className="object-cover"
-            />
+          <div className="relative w-9 h-9 rounded-xl bg-gradient-to-r from-[#7060E7] to-[#0AADD8] p-0.5 shadow-sm">
+            <div className="w-full h-full bg-white rounded-[10px] flex items-center justify-center overflow-hidden">
+              <Image
+                src="/MM_LOGO1.png"
+                alt="Logo"
+                width={28}
+                height={28}
+                className="object-contain"
+                onError={(e) => { e.currentTarget.style.display = 'none'; }}
+              />
+            </div>
           </div>
-          <span className="font-bold text-lg text-slate-800 tracking-tight">
-            SHAKTI AI
-          </span>
+          <div className="flex flex-col">
+            <div className="flex items-center gap-1.5">
+              <span className="font-bold text-slate-900 text-base tracking-tight bg-gradient-to-r from-[#215AB9] to-[#33B29C] bg-clip-text text-transparent">
+                MockMingle
+              </span>
+              <span className="text-[10px] px-1.5 py-0.2 bg-[#ECECFA] text-[#6F24E8] border border-purple-200 rounded-full font-bold">
+                ADMIN
+              </span>
+            </div>
+            <span className="text-[11px] text-slate-500 font-medium truncate max-w-[150px]">
+              {admin?.collageName || "Campus Portal"}
+            </span>
+          </div>
         </div>
 
-        {/* Hamburger Button */}
         <button
           onClick={() => setOpen(true)}
-          className="p-2 -mr-2 text-slate-500 hover:bg-slate-100 hover:text-indigo-600 rounded-xl transition-all active:scale-95 focus:outline-none"
+          className="p-2 text-slate-600 hover:text-[#6F24E8] hover:bg-[#ECECFA] rounded-xl transition-all active:scale-95 focus:outline-none"
           aria-label="Open menu"
         >
-          <Menu size={26} />
+          <Menu size={24} />
         </button>
       </header>
 
-      {/* Spacer to prevent content overlap on mobile */}
-      <div className="md:hidden h-16" />
+      {/* Mobile Spacer */}
+      <div className="lg:hidden h-16" />
 
       {/* ================= MOBILE OVERLAY ================= */}
       <div
-        className={`
-          fixed inset-0 bg-slate-900/20 backdrop-blur-sm z-[60] transition-opacity duration-300 md:hidden
-          ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
-        `}
+        className={`fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] transition-opacity duration-300 lg:hidden ${
+          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }`}
         onClick={() => setOpen(false)}
         aria-hidden="true"
       />
@@ -135,90 +156,144 @@ const handleLogout = () => {
       {/* ================= SIDEBAR ================= */}
       <aside
         className={`
-          fixed top-0 left-0 z-[70] h-full w-[280px] md:w-72 
-          bg-white border-r border-slate-200 shadow-2xl md:shadow-none
-          transform transition-transform duration-300 cubic-bezier(0.4, 0, 0.2, 1)
-          md:translate-x-0 md:static md:h-screen flex flex-col shrink-0
+          fixed top-0 left-0 z-[70] h-full w-[290px] lg:w-[280px]
+          bg-white border-r border-slate-200 text-slate-700 shadow-xl lg:shadow-none
+          transform transition-transform duration-300 ease-out
+          lg:translate-x-0 lg:static lg:h-screen flex flex-col shrink-0
           ${open ? "translate-x-0" : "-translate-x-full"}
         `}
       >
-        {/* Sidebar Header */}
-        <div className="flex items-center justify-between p-6 mb-2">
+        {/* Brand Header */}
+        <div className="p-5 pb-4 border-b border-slate-100 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Image
-              src="/image.png"
-              alt="Logo"
-              width={200}
-              height={200}
-              className="rounded-xl bg-black shadow-sm border border-slate-100"
-            />
-            <div className="flex flex-col">
-              {/* <span className="font-bold text-slate-800 text-lg leading-none">SHAKTI AI</span>
-              <span className="text-[11px] font-bold text-indigo-500 uppercase tracking-widest mt-1">Admin Panel</span> */}
+            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-r from-[#7060E7] to-[#0AADD8] p-0.5 shadow-md">
+              <div className="w-full h-full bg-white rounded-[10px] flex items-center justify-center p-1">
+                <Image
+                  src="/MM_LOGO1.png"
+                  alt="Logo"
+                  width={30}
+                  height={30}
+                  className="object-contain"
+                  onError={(e) => { e.currentTarget.style.display = 'none'; }}
+                />
+              </div>
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <span className="font-extrabold text-xl tracking-tight bg-gradient-to-r from-[#215AB9] to-[#33B29C] bg-clip-text text-transparent">
+                  MockMingle
+                </span>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#ECECFA] text-[#6F24E8] font-bold border border-purple-200">
+                  ADMIN
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-500 font-medium">
+                Campus Portal Suite
+              </p>
             </div>
           </div>
 
-          {/* Close Button (Mobile Only) */}
           <button
             onClick={() => setOpen(false)}
-            className="md:hidden p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+            className="lg:hidden p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
           >
             <X size={20} />
           </button>
         </div>
 
-        {/* Navigation Links */}
-        <nav className="flex-1 px-4 overflow-y-auto custom-scrollbar">
-          <p className="px-4 mb-3 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Menu
+        {/* College Profile Banner */}
+        <div className="px-4 py-3 mx-3 my-3 rounded-2xl bg-[#ECECFA]/70 border border-purple-100 flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-white border border-purple-200 flex items-center justify-center text-[#6F24E8] shadow-sm shrink-0">
+            <Building2 size={18} />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[10px] uppercase font-bold tracking-wider text-purple-600">Institution</p>
+            <p className="text-sm font-bold text-slate-800 truncate">{admin?.collageName || "Campus Center"}</p>
+          </div>
+          <ShieldCheck size={16} className="text-emerald-500 shrink-0" />
+        </div>
+
+        {/* Navigation List */}
+        <nav className="flex-1 px-3 py-2 overflow-y-auto space-y-1 custom-scrollbar">
+          <p className="px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">
+            Main Management
           </p>
-          <ul className="space-y-1.5">
+
+          <ul className="space-y-1">
             {navItems.map((item) => {
+              const active = isActive(item.link);
               const Icon = item.icon;
+
               return (
                 <li key={item.name}>
                   <Link
                     href={item.link}
                     onClick={() => setOpen(false)}
-                    className="
-                      group flex items-center gap-3 px-4 py-3 rounded-xl
-                      text-sm font-medium text-slate-600
-                      transition-all duration-200 ease-in-out
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:shadow-sm
-                      active:bg-indigo-100
-                    "
+                    className={`
+                      group relative flex items-center gap-3 px-3.5 py-2.5 rounded-xl
+                      text-sm font-semibold transition-all duration-200
+                      ${
+                        active
+                          ? "bg-gradient-to-r from-[#7060E7] to-[#0AADD8] text-white shadow-md shadow-purple-500/20 font-bold"
+                          : "text-slate-600 hover:bg-[#ECECFA] hover:text-[#6F24E8] active:bg-purple-100"
+                      }
+                    `}
                   >
-                    {/* Icon with hover effect */}
-                    <Icon 
-                      size={20} 
-                      className="text-slate-400 group-hover:text-indigo-600 transition-colors duration-200" 
+                    <Icon
+                      size={19}
+                      className={`shrink-0 transition-transform duration-200 group-hover:scale-110 ${
+                        active ? "text-white" : "text-slate-400 group-hover:text-[#6F24E8]"
+                      }`}
                     />
-                    {item.name}
+
+                    <span className="flex-1 truncate">{item.name}</span>
+
+                    {item.badge && (
+                      <span
+                        className={`text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0 ${
+                          active
+                            ? "bg-white/25 text-white"
+                            : "bg-[#ECECFA] text-[#6F24E8] border border-purple-200 group-hover:bg-white"
+                        }`}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+
+                    {!item.badge && active && (
+                      <ChevronRight size={15} className="text-white/80 shrink-0" />
+                    )}
                   </Link>
                 </li>
               );
             })}
           </ul>
-          {/* ================= LOGOUT ================= */}
-<div className="p-4 border-t border-slate-200">
-  <button
-    onClick={handleLogout}
-    className="
-      w-full flex items-center gap-3 px-4 py-3 rounded-xl
-      text-sm font-semibold text-red-600
-      hover:bg-red-50 hover:shadow-sm
-      transition-all duration-200
-      active:scale-[0.98]
-    "
-  >
-    <LogOut size={20} />
-    Logout
-  </button>
-</div>
-
         </nav>
 
+        {/* Footer & Logout */}
+        <div className="p-3 border-t border-slate-200 bg-slate-50/70">
+          <div className="flex items-center gap-3 px-3 py-2 mb-2 rounded-xl bg-white border border-slate-200 shadow-sm">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-[#7060E7] to-[#0AADD8] flex items-center justify-center text-white text-xs font-bold shadow-sm">
+              {(admin?.email || "A").charAt(0).toUpperCase()}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-bold text-slate-800 truncate">{admin?.email || "admin@campus.edu"}</p>
+              <p className="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                Verified Active
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 transition-all duration-200 active:scale-[0.98]"
+          >
+            <LogOut size={16} />
+            Sign Out Admin
+          </button>
+        </div>
       </aside>
     </>
-  )
+  );
 }
