@@ -21,8 +21,11 @@ export default function RegisterPage() {
     preferredIndustries: [],
     relocationPreference: "",
     hasAadhaar: "",
+    aadhaarNumber: "",
     hasResume: "",
+    resumeUrl: "",
     hasPracticedInterview: "",
+    interviewPracticeDetails: "",
   };
 
   const [formData, setFormData] = useState(initialFormState);
@@ -115,6 +118,14 @@ export default function RegisterPage() {
       return;
     }
 
+    if (formData.hasAadhaar === "Yes") {
+      const cleanAadhaar = formData.aadhaarNumber.replace(/[^0-9]/g, "");
+      if (!cleanAadhaar || cleanAadhaar.length !== 12) {
+        toast.error("Please enter a valid 12-digit Aadhaar Number.");
+        return;
+      }
+    }
+
     if (!formData.hasResume) {
       toast.error("Please answer if you have a resume.");
       return;
@@ -128,6 +139,7 @@ export default function RegisterPage() {
     setIsSubmitting(true);
 
     try {
+      const cleanAadhaar = formData.aadhaarNumber.replace(/[^0-9]/g, "");
       const payload = {
         fullName: formData.fullName.trim(),
         mobileNo: cleanMobile,
@@ -139,8 +151,11 @@ export default function RegisterPage() {
         preferredIndustries: formData.preferredIndustries,
         relocationPreference: formData.relocationPreference,
         hasAadhaar: formData.hasAadhaar,
+        aadhaarNumber: formData.hasAadhaar === "Yes" ? cleanAadhaar : "",
         hasResume: formData.hasResume,
+        resumeUrl: formData.hasResume === "Yes" ? formData.resumeUrl.trim() : "",
         hasPracticedInterview: formData.hasPracticedInterview,
+        interviewPracticeDetails: formData.hasPracticedInterview === "Yes" ? formData.interviewPracticeDetails.trim() : "",
       };
 
       const res = await fetch("/api/register", {
@@ -534,7 +549,7 @@ export default function RegisterPage() {
                 </div>
 
                 {/* Aadhaar Card */}
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <label className="block text-sm font-medium text-gray-900">
                     Do you have an Aadhaar Card? <span className="text-red-600">*</span>
                   </label>
@@ -554,10 +569,33 @@ export default function RegisterPage() {
                       </label>
                     ))}
                   </div>
+
+                  {formData.hasAadhaar === "Yes" && (
+                    <div className="mt-3 p-3.5 bg-purple-50/70 border border-purple-200/70 rounded-md space-y-1.5 transition-all">
+                      <label className="block text-xs font-semibold text-purple-950">
+                        Enter 12-digit Aadhaar Number <span className="text-red-600">*</span>
+                      </label>
+                      <input
+                        type="text"
+                        maxLength={14}
+                        value={formData.aadhaarNumber}
+                        onChange={(e) => {
+                          const raw = e.target.value.replace(/[^0-9]/g, "").slice(0, 12);
+                          const formatted = raw.replace(/(\d{4})(?=\d)/g, "$1 ");
+                          handleInputChange("aadhaarNumber", formatted);
+                        }}
+                        placeholder="XXXX XXXX XXXX"
+                        className="w-full sm:w-3/4 bg-white border border-gray-300 rounded px-3 py-1.5 text-sm focus:border-[#673ab7] focus:ring-1 focus:ring-[#673ab7] outline-none transition placeholder-gray-400"
+                      />
+                      <p className="text-[11px] text-gray-500">
+                        Your Aadhaar is secure and used only for verifying your candidate profile with employers.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Resume */}
-                <div className="space-y-2 pt-2 border-t border-gray-100">
+                <div className="space-y-3 pt-3 border-t border-gray-100">
                   <label className="block text-sm font-medium text-gray-900">
                     Do you have a resume? <span className="text-red-600">*</span>
                   </label>
@@ -576,10 +614,28 @@ export default function RegisterPage() {
                       </label>
                     ))}
                   </div>
+
+                  {formData.hasResume === "Yes" && (
+                    <div className="mt-3 p-3.5 bg-purple-50/70 border border-purple-200/70 rounded-md space-y-1.5 transition-all">
+                      <label className="block text-xs font-semibold text-purple-950">
+                        Resume Link or Note <span className="text-gray-500 font-normal">(Optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.resumeUrl}
+                        onChange={(e) => handleInputChange("resumeUrl", e.target.value)}
+                        placeholder="e.g., Google Drive link, LinkedIn link, or 'Will send on WhatsApp'"
+                        className="w-full sm:w-3/4 bg-white border border-gray-300 rounded px-3 py-1.5 text-sm focus:border-[#673ab7] focus:ring-1 focus:ring-[#673ab7] outline-none transition placeholder-gray-400"
+                      />
+                      <p className="text-[11px] text-gray-500">
+                        If you have a Google Drive link, paste it here. Otherwise, our team can collect it via WhatsApp.
+                      </p>
+                    </div>
+                  )}
                 </div>
 
                 {/* Practiced Interviews */}
-                <div className="space-y-2 pt-2 border-t border-gray-100">
+                <div className="space-y-3 pt-3 border-t border-gray-100">
                   <label className="block text-sm font-medium text-gray-900">
                     Have you practiced interviews? <span className="text-red-600">*</span>
                   </label>
@@ -598,6 +654,21 @@ export default function RegisterPage() {
                       </label>
                     ))}
                   </div>
+
+                  {formData.hasPracticedInterview === "Yes" && (
+                    <div className="mt-3 p-3.5 bg-purple-50/70 border border-purple-200/70 rounded-md space-y-1.5 transition-all">
+                      <label className="block text-xs font-semibold text-purple-950">
+                        Where or how did you practice? <span className="text-gray-500 font-normal">(Optional)</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.interviewPracticeDetails}
+                        onChange={(e) => handleInputChange("interviewPracticeDetails", e.target.value)}
+                        placeholder="e.g., MockMingle AI, College Mock Interview, YouTube, Self-practice"
+                        className="w-full sm:w-3/4 bg-white border border-gray-300 rounded px-3 py-1.5 text-sm focus:border-[#673ab7] focus:ring-1 focus:ring-[#673ab7] outline-none transition placeholder-gray-400"
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
 

@@ -15,8 +15,11 @@ async function handler(req, res) {
         preferredIndustries,
         relocationPreference,
         hasAadhaar,
+        aadhaarNumber = "",
         hasResume,
+        resumeUrl = "",
         hasPracticedInterview,
+        interviewPracticeDetails = "",
         source = "web_registration",
       } = req.body;
 
@@ -94,6 +97,15 @@ async function handler(req, res) {
         });
       }
 
+      const cleanAadhaar = (aadhaarNumber || "").replace(/[^0-9]/g, "");
+      if (hasAadhaar === "Yes" && cleanAadhaar && cleanAadhaar.length !== 12) {
+        return res.status(400).json({
+          success: false,
+          field: "aadhaarNumber",
+          message: "Please provide a valid 12-digit Aadhaar number.",
+        });
+      }
+
       if (!hasResume || !["Yes", "No"].includes(hasResume)) {
         return res.status(400).json({
           success: false,
@@ -132,8 +144,11 @@ async function handler(req, res) {
         preferredIndustries,
         relocationPreference: relocationPreference.trim(),
         hasAadhaar,
+        aadhaarNumber: hasAadhaar === "Yes" ? cleanAadhaar : "",
         hasResume,
+        resumeUrl: hasResume === "Yes" ? (resumeUrl || "").trim() : "",
         hasPracticedInterview,
+        interviewPracticeDetails: hasPracticedInterview === "Yes" ? (interviewPracticeDetails || "").trim() : "",
         status: "New",
         source,
       });

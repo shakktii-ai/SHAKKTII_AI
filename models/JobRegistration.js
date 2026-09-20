@@ -53,15 +53,30 @@ const JobRegistrationSchema = new mongoose.Schema(
       required: [true, "Aadhaar status is required"],
       enum: ["Yes", "No"],
     },
+    aadhaarNumber: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     hasResume: {
       type: String,
       required: [true, "Resume status is required"],
       enum: ["Yes", "No"],
     },
+    resumeUrl: {
+      type: String,
+      default: "",
+      trim: true,
+    },
     hasPracticedInterview: {
       type: String,
       required: [true, "Interview practice status is required"],
       enum: ["Yes", "No"],
+    },
+    interviewPracticeDetails: {
+      type: String,
+      default: "",
+      trim: true,
     },
     status: {
       type: String,

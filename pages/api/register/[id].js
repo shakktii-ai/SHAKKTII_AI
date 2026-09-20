@@ -47,8 +47,11 @@ async function handler(req, res) {
         "preferredIndustries",
         "relocationPreference",
         "hasAadhaar",
+        "aadhaarNumber",
         "hasResume",
+        "resumeUrl",
         "hasPracticedInterview",
+        "interviewPracticeDetails",
         "status",
         "notes",
       ];
