@@ -146,21 +146,28 @@ export default function RegisterPage() {
 
       const data = await res.json();
 
-      if (res.ok || data.success) {
-        setIsSubmitted(true);
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      } else if (data.message && data.message.includes("already exists")) {
-        // Even if user registered before, consider it saved/updated
+      if (res.ok && data.success) {
         setIsSubmitted(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
-        toast.error(data.message || "Failed to submit form. Please try again.");
+        if (data.message && (data.message.includes("mobileNo already exists") || data.message.includes("already exists"))) {
+          toast.error("This Mobile / WhatsApp number is already registered. Please use another number.", {
+            position: "bottom-center",
+            autoClose: 5000,
+          });
+        } else {
+          toast.error(data.message || "Failed to submit form. Please check your details and try again.", {
+            position: "bottom-center",
+            autoClose: 4000,
+          });
+        }
       }
     } catch (error) {
       console.error("Submission error:", error);
-      // Fallback: Show success state for client resilience
-      setIsSubmitted(true);
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      toast.error("Network or server error. Please check your connection and try again.", {
+        position: "bottom-center",
+        autoClose: 4000,
+      });
     } finally {
       setIsSubmitting(false);
     }
