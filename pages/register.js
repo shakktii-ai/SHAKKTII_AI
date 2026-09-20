@@ -131,14 +131,19 @@ export default function RegisterPage() {
       const payload = {
         fullName: formData.fullName.trim(),
         mobileNo: cleanMobile,
-        email: `${cleanMobile}@jobalert.mockmingle.com`,
-        education: formData.highestEducation,
-        jobTitle: `${formData.preferredIndustries.join(", ")} | Location: ${formData.relocationPreference}`,
-        address: `District/Taluka: ${formData.districtTaluka.trim()} | Gender: ${formData.gender} | Exp: ${formData.pastExperience} | Past Work: ${formData.pastWorkDetails.trim() || "None"} | Aadhaar: ${formData.hasAadhaar} | Resume: ${formData.hasResume} | Interview Practiced: ${formData.hasPracticedInterview}`,
-        password: "JobAlertPassword123!",
+        districtTaluka: formData.districtTaluka.trim(),
+        gender: formData.gender,
+        highestEducation: formData.highestEducation,
+        pastExperience: formData.pastExperience,
+        pastWorkDetails: formData.pastWorkDetails.trim(),
+        preferredIndustries: formData.preferredIndustries,
+        relocationPreference: formData.relocationPreference,
+        hasAadhaar: formData.hasAadhaar,
+        hasResume: formData.hasResume,
+        hasPracticedInterview: formData.hasPracticedInterview,
       };
 
-      const res = await fetch("/api/signup", {
+      const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
@@ -150,17 +155,13 @@ export default function RegisterPage() {
         setIsSubmitted(true);
         window.scrollTo({ top: 0, behavior: "smooth" });
       } else {
-        if (data.message && (data.message.includes("mobileNo already exists") || data.message.includes("already exists"))) {
-          toast.error("This Mobile / WhatsApp number is already registered. Please use another number.", {
+        toast.error(
+          data.message || "Failed to submit form. Please check your details and try again.",
+          {
             position: "bottom-center",
             autoClose: 5000,
-          });
-        } else {
-          toast.error(data.message || "Failed to submit form. Please check your details and try again.", {
-            position: "bottom-center",
-            autoClose: 4000,
-          });
-        }
+          }
+        );
       }
     } catch (error) {
       console.error("Submission error:", error);
