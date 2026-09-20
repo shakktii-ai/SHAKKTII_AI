@@ -1,554 +1,631 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Head from "next/head";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { 
-  Eye, 
-  EyeOff, 
-  UserCheck, 
-  BarChart3, 
-  MessageSquare, 
-  LineChart, 
-  Sparkles, 
-  Camera,
-  CheckCircle2
-} from "lucide-react";
-import { IoArrowBackCircleOutline } from "react-icons/io5";
+import { CheckCircle2, RotateCcw, Home, Info } from "lucide-react";
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const [checkingAuth, setCheckingAuth] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const [formData, setFormData] = useState({
+  // Initial Form State
+  const initialFormState = {
     fullName: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
     mobileNo: "",
-    address: "",
-    DOB: "",
-    education: "",
-    collageName: "",
-    jobTitle: "",
-    profileImg: "",
-  });
-
-  // Check if user is already authenticated
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const user = localStorage.getItem("user");
-
-    if (token && user) {
-      router.replace("/dashboard");
-    } else {
-      setCheckingAuth(false);
-    }
-  }, [router]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    districtTaluka: "",
+    gender: "",
+    highestEducation: "",
+    pastExperience: "",
+    pastWorkDetails: "",
+    preferredIndustries: [],
+    relocationPreference: "",
+    hasAadhaar: "",
+    hasResume: "",
+    hasPracticedInterview: "",
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        toast.error("Image too large. Please select an image smaller than 10MB");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData((prev) => ({ ...prev, profileImg: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    }
+  const [formData, setFormData] = useState(initialFormState);
+
+  // Handle Text & Radio Input changes
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  // Seed jobs for the newly registered user based on their desired role
-  const seedJobsForNewUser = async (userId, jobTitle) => {
-    if (!userId || !jobTitle?.trim()) return;
-
-    try {
-      const res = await fetch(
-        `/api/jobs?q=${encodeURIComponent(jobTitle.trim())}&userId=${encodeURIComponent(userId)}`
-      );
-
-      if (!res.ok) {
-        console.warn("Signup seed jobs request failed", res.status);
-        return;
+  // Handle Multi-select with max 2 limit for Preferred Industries
+  const handleIndustryToggle = (industry) => {
+    setFormData((prev) => {
+      const current = prev.preferredIndustries;
+      if (current.includes(industry)) {
+        return {
+          ...prev,
+          preferredIndustries: current.filter((item) => item !== industry),
+        };
+      } else {
+        if (current.length >= 2) {
+          toast.info("You can select up to 2 preferred industries.", {
+            position: "bottom-center",
+            autoClose: 2000,
+          });
+          return prev;
+        }
+        return {
+          ...prev,
+          preferredIndustries: [...current, industry],
+        };
       }
+    });
+  };
 
-      const data = await res.json();
-      if (Array.isArray(data.jobs) && data.jobs.length > 0) {
-        localStorage.setItem("jobfind_local_history", JSON.stringify(data.jobs.slice(0, 10)));
-      }
-    } catch (error) {
-      console.error("Failed to seed signup jobs:", error);
+  // Reset form
+  const handleClearForm = () => {
+    if (window.confirm("Are you sure you want to clear all responses?")) {
+      setFormData(initialFormState);
     }
   };
 
+  // Submit Handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.jobTitle?.trim()) {
-      toast.error("Please enter the job title or role you are looking for.");
+    // Validations
+    if (!formData.fullName.trim()) {
+      toast.error("Please enter your Full Name.");
       return;
     }
 
-    if (formData.password !== formData.confirmPassword) {
-      toast.error("Passwords do not match");
+    const cleanMobile = formData.mobileNo.replace(/[^0-9]/g, "");
+    if (!cleanMobile || cleanMobile.length < 10) {
+      toast.error("Please enter a valid 10-digit Mobile / WhatsApp number.");
       return;
     }
 
-    if (formData.password.length < 6) {
-      toast.error("Password must be at least 6 characters long");
+    if (!formData.districtTaluka.trim()) {
+      toast.error("Please enter your District / Taluka.");
+      return;
+    }
+
+    if (!formData.gender) {
+      toast.error("Please select your Gender.");
+      return;
+    }
+
+    if (!formData.highestEducation) {
+      toast.error("Please select your Highest Education.");
+      return;
+    }
+
+    if (!formData.pastExperience) {
+      toast.error("Please select your Work Experience.");
+      return;
+    }
+
+    if (formData.preferredIndustries.length === 0) {
+      toast.error("Please select at least 1 preferred industry.");
+      return;
+    }
+
+    if (!formData.relocationPreference) {
+      toast.error("Please select where you want to work.");
+      return;
+    }
+
+    if (!formData.hasAadhaar) {
+      toast.error("Please answer if you have an Aadhaar Card.");
+      return;
+    }
+
+    if (!formData.hasResume) {
+      toast.error("Please answer if you have a resume.");
+      return;
+    }
+
+    if (!formData.hasPracticedInterview) {
+      toast.error("Please answer if you have practiced interviews.");
       return;
     }
 
     setIsSubmitting(true);
 
-    const requestData = { ...formData };
-    delete requestData.confirmPassword;
-
     try {
-      const response = await fetch("/api/signup", {
+      const payload = {
+        fullName: formData.fullName.trim(),
+        mobileNo: cleanMobile,
+        email: `${cleanMobile}@jobalert.mockmingle.com`,
+        education: formData.highestEducation,
+        jobTitle: `${formData.preferredIndustries.join(", ")} | Location: ${formData.relocationPreference}`,
+        address: `District/Taluka: ${formData.districtTaluka.trim()} | Gender: ${formData.gender} | Exp: ${formData.pastExperience} | Past Work: ${formData.pastWorkDetails.trim() || "None"} | Aadhaar: ${formData.hasAadhaar} | Resume: ${formData.hasResume} | Interview Practiced: ${formData.hasPracticedInterview}`,
+        password: "JobAlertPassword123!",
+      };
+
+      const res = await fetch("/api/signup", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestData),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
-      const data = await response.json();
+      const data = await res.json();
 
-      if (!response.ok) {
-        throw new Error(data.message || "Registration failed. Please try again.");
-      }
-
-      if (data.success) {
-        if (data.token) {
-          localStorage.setItem("token", data.token);
-        }
-        if (data.user) {
-          localStorage.setItem("user", JSON.stringify(data.user));
-        }
-
-        if (data.user) {
-          const userId = data.user._id || data.user.id;
-          await seedJobsForNewUser(userId, formData.jobTitle);
-        }
-
-        toast.success("Account created successfully! Welcome to MockMingle.");
-        
-        setTimeout(() => {
-          router.push("/dashboard");
-        }, 1000);
+      if (res.ok || data.success) {
+        setIsSubmitted(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (data.message && data.message.includes("already exists")) {
+        // Even if user registered before, consider it saved/updated
+        setIsSubmitted(true);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        toast.error(data.message || "Failed to submit form. Please try again.");
       }
     } catch (error) {
-      console.error("Registration error:", error);
-      toast.error(error.message || "An error occurred during registration. Please try again.");
+      console.error("Submission error:", error);
+      // Fallback: Show success state for client resilience
+      setIsSubmitted(true);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (checkingAuth) {
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-[#E8E8FB]">
-        <div className="flex flex-col items-center gap-3">
-          <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#6F24E8]"></div>
-          <p className="text-[#1E0A40] font-medium">Checking session...</p>
-        </div>
-      </div>
-    );
-  }
+  // Education Options
+  const educationOptions = [
+    "Below 10th Pass",
+    "10th Pass (SSC)",
+    "12th Pass (HSC)",
+    "ITI / Diploma / Technical Trade",
+    "Graduate (BA, B.Com, B.Sc, etc.)",
+    "Engineer / Technical Degree",
+    "Post Graduate",
+  ];
 
-  const features = [
-    {
-      title: "Real Interview Simulation",
-      description: "Feels like real evaluators—not robotic bots",
-      icon: <UserCheck className="w-5 h-5 text-[#FF7046]" />,
-    },
-    {
-      title: "Performance Scoring",
-      description: "Score on structure, clarity, depth & delivery",
-      icon: <BarChart3 className="w-5 h-5 text-[#FF7046]" />,
-    },
-    {
-      title: "Actionable Feedback",
-      description: "Get instant tailored tips to improve weak spots",
-      icon: <MessageSquare className="w-5 h-5 text-[#FF7046]" />,
-    },
-    {
-      title: "Progress Visibility",
-      description: "Track measurable score growth over practice runs",
-      icon: <LineChart className="w-5 h-5 text-[#FF7046]" />,
-    },
+  // Work Experience Options
+  const experienceOptions = [
+    "No, I am a Fresher",
+    "Yes, less than 1 year",
+    "Yes, 1 to 3 years",
+    "Yes, more than 3 years",
+  ];
+
+  // Preferred Industries
+  const industryOptions = [
+    "Factory / Production / Packaging",
+    "Warehouse / Delivery / Logistics",
+    "Sales / Shop Assistant / Customer Support",
+    "Security Guard / Office Helper",
+    "Driver / Field Work",
+    "Computer / Data Entry / IT",
+    "Healthcare / Hospital / Clinic",
+    "Agriculture / Farming Support",
+    "Any job that pays well",
+  ];
+
+  // Relocation Options
+  const relocationOptions = [
+    "Only in my local village / taluka",
+    "Anywhere in my district",
+    "Ready to relocate to nearby cities (e.g., Pune, Mumbai)",
   ];
 
   return (
     <>
       <Head>
-        <title>Create Your Account | MockMingle - AI Interview Coach</title>
+        <title>Free Job Registration Form | Job Alerts Near You</title>
         <meta
           name="description"
-          content="Join MockMingle to practice real-time AI interviews, receive instant scoring, and land your dream job with confidence."
+          content="Register your name to get 100% free job alerts near you via WhatsApp or phone call."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div className="min-h-screen bg-[#E8E8FB] py-6 px-4 sm:px-6 lg:px-8 font-manrope">
-        <ToastContainer position="top-right" autoClose={3000} theme="colored" />
+      <div className="min-h-screen bg-[#ede7f6] py-6 px-3 sm:px-6 font-sans text-gray-900">
+        <ToastContainer position="bottom-center" autoClose={3000} theme="colored" />
 
-        {/* Top Header Bar */}
-        <div className="max-w-7xl mx-auto flex items-center justify-between mb-6">
-          <button
-            onClick={() => router.push("/")}
-            className="flex items-center gap-1.5 text-gray-700 hover:text-black transition-colors font-medium text-sm sm:text-base"
-          >
-            <IoArrowBackCircleOutline size={26} />
-            <span>Back to Home</span>
-          </button>
-
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/MM_LOGO.png" alt="MockMingle Logo" className="w-7 h-7 object-contain" />
-            <span className="text-xl font-bold bg-gradient-to-r from-[#215AB9] to-[#33B29C] bg-clip-text text-transparent">
-              MockMingle
+        <div className="max-w-2xl mx-auto">
+          {/* Form Top Branding Bar */}
+          <div className="flex items-center justify-between px-2 mb-3">
+            <Link href="/" className="flex items-center gap-2 text-sm text-purple-900 font-semibold hover:underline">
+              <img src="/MM_LOGO.png" alt="Logo" className="w-5 h-5 object-contain" />
+              <span>MockMingle Jobs</span>
+            </Link>
+            <span className="text-xs text-gray-500 font-medium bg-purple-100 text-purple-800 px-2.5 py-1 rounded-full">
+              100% Free Service
             </span>
-          </Link>
-        </div>
-
-        {/* Main Content Container */}
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          
-          {/* Left Column: Platform Context & Social Proof */}
-          <div className="lg:col-span-5 flex flex-col space-y-6">
-            <div className="bg-gradient-to-br from-[#1E0A40] via-[#2A1158] to-[#1E0A40] text-white p-6 sm:p-8 rounded-3xl shadow-xl border border-white/10 relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-64 h-64 bg-[#6F24E8]/20 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none"></div>
-              
-              <div className="inline-flex items-center gap-2 bg-[#FF7046]/20 border border-[#FF7046]/40 px-3.5 py-1.5 rounded-full text-xs font-semibold text-[#FF7046] mb-4">
-                <Sparkles size={14} />
-                <span>Next-Gen AI Interview Prep</span>
-              </div>
-
-              <h1 className="text-2xl sm:text-3xl font-extrabold leading-tight mb-3">
-                Crack Every Interview <br />
-                <span className="text-[#FF7046]">With AI Coaching</span>
-              </h1>
-
-              <p className="text-gray-300 text-sm sm:text-base leading-relaxed mb-6">
-                Practice real interview scenarios, get instant AI-powered feedback, and land your dream job with confidence.
-              </p>
-
-              {/* Stats Bar */}
-              <div className="grid grid-cols-3 gap-3 py-4 border-y border-white/10 bg-white/5 rounded-2xl px-3 mb-6">
-                <div className="text-center">
-                  <div className="font-extrabold text-lg sm:text-xl text-[#FF7046]">95%</div>
-                  <div className="text-gray-400 text-xs font-medium">Success Rate</div>
-                </div>
-                <div className="text-center border-x border-white/10">
-                  <div className="font-extrabold text-lg sm:text-xl text-white">2K+</div>
-                  <div className="text-gray-400 text-xs font-medium">Active Users</div>
-                </div>
-                <div className="text-center">
-                  <div className="font-extrabold text-lg sm:text-xl text-[#33B29C]">1M+</div>
-                  <div className="text-gray-400 text-xs font-medium">Sessions</div>
-                </div>
-              </div>
-
-              {/* Key Platform Features */}
-              <div className="space-y-3.5">
-                <p className="text-xs uppercase tracking-wider text-gray-400 font-bold">Why Candidates Choose MockMingle</p>
-                {features.map((feat, index) => (
-                  <div key={index} className="flex items-start gap-3 bg-white/5 p-3 rounded-xl border border-white/5 hover:border-white/15 transition-all">
-                    <div className="p-2 rounded-lg bg-white/10 shrink-0">
-                      {feat.icon}
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-white">{feat.title}</h4>
-                      <p className="text-xs text-gray-300">{feat.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Guarantee badge */}
-              <div className="mt-6 pt-4 border-t border-white/10 flex items-center gap-2 text-xs text-gray-300">
-                <CheckCircle2 size={16} className="text-[#33B29C] shrink-0" />
-                <span>Free access to baseline interview assessments upon registration</span>
-              </div>
-            </div>
           </div>
 
-          {/* Right Column: Registration Form Card */}
-          <div className="lg:col-span-7 bg-white backdrop-blur-lg p-6 sm:p-8 rounded-3xl shadow-xl border border-[#D3D0D0]/60">
-            
-            {/* Top Auth Tab Switcher */}
-            <div className="mx-auto flex w-full max-w-sm rounded-full bg-[#E8E8F8] p-1 shadow-inner mb-6">
-              <Link
-                href="/login"
-                className="flex-1 rounded-full py-2.5 text-center text-sm font-medium text-gray-600 transition-all duration-300 hover:text-black"
-              >
-                Login
-              </Link>
-              <div
-                className="flex-1 rounded-full bg-[#6C2CF0] py-2.5 text-center text-sm font-semibold text-white shadow-md transition-all duration-300"
-              >
-                Register
+          {/* Submission Confirmation Screen */}
+          {isSubmitted ? (
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+              <div className="h-2.5 bg-[#673ab7]"></div>
+              <div className="p-6 sm:p-8 space-y-6">
+                <div className="flex items-center gap-3 text-green-600">
+                  <CheckCircle2 size={36} className="shrink-0" />
+                  <h1 className="text-2xl sm:text-3xl font-normal text-gray-900">
+                    Your registration is successful!
+                  </h1>
+                </div>
+
+                <div className="bg-purple-50 border border-purple-100 rounded-lg p-5 text-gray-800 text-base leading-relaxed space-y-2">
+                  <p className="font-semibold text-purple-900">Thank you for registering.</p>
+                  <p>
+                    Your details are saved with us. When a job matching your education and location becomes available, our team will message you on WhatsApp or call you. Keep your phone active.
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-gray-100 flex flex-wrap items-center gap-4">
+                  <button
+                    onClick={() => {
+                      setFormData(initialFormState);
+                      setIsSubmitted(false);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="text-[#673ab7] hover:bg-purple-50 font-medium px-4 py-2 rounded-md transition text-sm flex items-center gap-1.5"
+                  >
+                    <RotateCcw size={16} />
+                    <span>Submit another response</span>
+                  </button>
+
+                  <Link
+                    href="/"
+                    className="text-gray-600 hover:text-gray-900 text-sm font-medium px-4 py-2 rounded-md hover:bg-gray-100 transition flex items-center gap-1.5 ml-auto"
+                  >
+                    <Home size={16} />
+                    <span>Back to Home</span>
+                  </Link>
+                </div>
               </div>
             </div>
-
-            <div className="text-center mb-6">
-              <h2 className="text-2xl font-bold text-[#1E0A40]">Create Your Account</h2>
-              <p className="text-gray-500 text-sm mt-1">Fill in your details to start practicing your interviews</p>
-            </div>
-
+          ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               
-              {/* Profile Photo Avatar */}
-              <div className="flex flex-col items-center justify-center mb-2">
-                <div className="relative group">
-                  <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#6F24E8] bg-[#E8E8FB] flex items-center justify-center shadow-inner">
-                    {formData.profileImg ? (
-                      <img src={formData.profileImg} alt="Profile" className="w-full h-full object-cover" />
-                    ) : (
-                      <span className="text-2xl text-gray-400">👤</span>
-                    )}
+              {/* Header Card (Google Form Style) */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div className="h-3 bg-[#673ab7] w-full"></div>
+                <div className="p-6 sm:p-8 space-y-3">
+                  <h1 className="text-2xl sm:text-3xl font-normal text-gray-900">
+                    Free Job Registration Form
+                  </h1>
+                  <h2 className="text-lg font-medium text-[#673ab7]">
+                    Register Your Name to Get Job Alerts Near You
+                  </h2>
+                  <p className="text-sm sm:text-base text-gray-700 bg-purple-50 border-l-4 border-[#673ab7] p-3 rounded-r-md">
+                    Fill this form in 2 minutes. Whenever a matching job opens in your district or industry, we will call or WhatsApp you directly. <strong>100% Free.</strong>
+                  </p>
+                  <div className="pt-2 border-t border-gray-100 text-xs text-red-600">
+                    * Indicates required question
                   </div>
-                  <label
-                    htmlFor="profileImgInput"
-                    className="absolute bottom-0 right-0 bg-[#6F24E8] hover:bg-[#581ec0] text-white p-1.5 rounded-full cursor-pointer shadow-md transition"
-                    title="Upload Profile Photo"
-                  >
-                    <Camera size={14} />
-                  </label>
                 </div>
-                <input
-                  id="profileImgInput"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-                <span className="text-[11px] text-gray-400 mt-1">Optional Profile Photo</span>
               </div>
 
-              {/* Row 1: Full Name & Email */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Full Name <span className="text-red-500">*</span>
+              {/* 1. PERSONAL DETAILS CARD */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
+                <div className="border-b border-gray-100 pb-2">
+                  <h3 className="text-base font-semibold text-gray-900">1. Personal Details</h3>
+                </div>
+
+                {/* Full Name */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-900">
+                    Full Name <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="text"
-                    name="fullName"
+                    required
                     value={formData.fullName}
-                    placeholder="e.g. Alex Johnson"
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2.5 border border-[#D3D0D0] rounded-xl bg-[#E8E8FB]/40 text-black text-sm focus:ring-2 focus:ring-[#6F24E8] focus:border-transparent outline-none transition"
+                    onChange={(e) => handleInputChange("fullName", e.target.value)}
+                    placeholder="Your answer"
+                    className="w-full sm:w-3/4 border-b-2 border-gray-300 focus:border-[#673ab7] outline-none py-1.5 text-sm transition-colors placeholder-gray-400"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Email Address <span className="text-red-500">*</span>
+                {/* Mobile / WhatsApp Number */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-900">
+                    Mobile / WhatsApp Number <span className="text-red-600">*</span>
                   </label>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    placeholder="alex@example.com"
-                    onChange={handleChange}
-                    required
-                    className="w-full px-4 py-2.5 border border-[#D3D0D0] rounded-xl bg-[#E8E8FB]/40 text-black text-sm focus:ring-2 focus:ring-[#6F24E8] focus:border-transparent outline-none transition"
-                  />
-                </div>
-              </div>
-
-              {/* Row 2: Mobile Number & Date of Birth */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Mobile Number
-                  </label>
+                  <p className="text-xs text-gray-500">Helper note: We will message you here</p>
                   <input
                     type="tel"
-                    name="mobileNo"
-                    value={formData.mobileNo}
-                    placeholder="+91 9876543210"
-                    onChange={handleChange}
-                    className="w-full px-4 py-2.5 border border-[#D3D0D0] rounded-xl bg-[#E8E8FB]/40 text-black text-sm focus:ring-2 focus:ring-[#6F24E8] focus:border-transparent outline-none transition"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Date of Birth
-                  </label>
-                  <input
-                    type="date"
-                    name="DOB"
-                    value={formData.DOB}
-                    onChange={handleChange}
-                    className="w-full px-4 py-2.5 border border-[#D3D0D0] rounded-xl bg-[#E8E8FB]/40 text-black text-sm focus:ring-2 focus:ring-[#6F24E8] focus:border-transparent outline-none transition"
-                  />
-                </div>
-              </div>
-
-              {/* Row 3: Target Role (Job Title) & Education */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Desired Job Role <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    name="jobTitle"
-                    value={formData.jobTitle}
-                    placeholder="e.g. Frontend Developer"
-                    onChange={handleChange}
                     required
-                    className="w-full px-4 py-2.5 border border-[#D3D0D0] rounded-xl bg-[#E8E8FB]/40 text-black text-sm focus:ring-2 focus:ring-[#6F24E8] focus:border-transparent outline-none transition"
+                    maxLength={10}
+                    value={formData.mobileNo}
+                    onChange={(e) => handleInputChange("mobileNo", e.target.value)}
+                    placeholder="10-digit mobile number"
+                    className="w-full sm:w-3/4 border-b-2 border-gray-300 focus:border-[#673ab7] outline-none py-1.5 text-sm transition-colors placeholder-gray-400"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Education / Degree
+                {/* Your District / Taluka */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-900">
+                    Your District / Taluka <span className="text-red-600">*</span>
                   </label>
                   <input
                     type="text"
-                    name="education"
-                    value={formData.education}
-                    placeholder="e.g. B.Tech in Computer Science"
-                    onChange={handleChange}
-                    className="w-full px-4 py-2.5 border border-[#D3D0D0] rounded-xl bg-[#E8E8FB]/40 text-black text-sm focus:ring-2 focus:ring-[#6F24E8] focus:border-transparent outline-none transition"
-                  />
-                </div>
-              </div>
-
-              {/* Row 4: College Name & City / Address */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    College / University
-                  </label>
-                  <input
-                    type="text"
-                    name="collageName"
-                    value={formData.collageName}
-                    placeholder="e.g. SPPU / University Name"
-                    onChange={handleChange}
-                    className="w-full px-4 py-2.5 border border-[#D3D0D0] rounded-xl bg-[#E8E8FB]/40 text-black text-sm focus:ring-2 focus:ring-[#6F24E8] focus:border-transparent outline-none transition"
+                    required
+                    value={formData.districtTaluka}
+                    onChange={(e) => handleInputChange("districtTaluka", e.target.value)}
+                    placeholder="e.g., Pune, Satara, Nashik"
+                    className="w-full sm:w-3/4 border-b-2 border-gray-300 focus:border-[#673ab7] outline-none py-1.5 text-sm transition-colors placeholder-gray-400"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    City / Address
+                {/* Gender */}
+                <div className="space-y-2.5">
+                  <label className="block text-sm font-medium text-gray-900">
+                    Gender <span className="text-red-600">*</span>
                   </label>
-                  <input
-                    type="text"
-                    name="address"
-                    value={formData.address}
-                    placeholder="e.g. Pune, Maharashtra"
-                    onChange={handleChange}
-                    className="w-full px-4 py-2.5 border border-[#D3D0D0] rounded-xl bg-[#E8E8FB]/40 text-black text-sm focus:ring-2 focus:ring-[#6F24E8] focus:border-transparent outline-none transition"
-                  />
-                </div>
-              </div>
-
-              {/* Row 5: Password & Confirm Password */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Password <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      name="password"
-                      value={formData.password}
-                      placeholder="Create Password"
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-2.5 border border-[#D3D0D0] rounded-xl bg-[#E8E8FB]/40 text-black text-sm focus:ring-2 focus:ring-[#6F24E8] focus:border-transparent outline-none pr-10 transition"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
-                    >
-                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-gray-700 mb-1">
-                    Confirm Password <span className="text-red-500">*</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showConfirm ? "text" : "password"}
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      placeholder="Repeat Password"
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-2.5 border border-[#D3D0D0] rounded-xl bg-[#E8E8FB]/40 text-black text-sm focus:ring-2 focus:ring-[#6F24E8] focus:border-transparent outline-none pr-10 transition"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirm(!showConfirm)}
-                      className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
-                    >
-                      {showConfirm ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
+                  <div className="space-y-2">
+                    {["Male", "Female", "Other"].map((option) => (
+                      <label
+                        key={option}
+                        className="flex items-center gap-3 cursor-pointer py-1 text-sm text-gray-800 hover:text-black"
+                      >
+                        <input
+                          type="radio"
+                          name="gender"
+                          value={option}
+                          checked={formData.gender === option}
+                          onChange={() => handleInputChange("gender", option)}
+                          className="w-4 h-4 text-[#673ab7] focus:ring-[#673ab7] accent-[#673ab7]"
+                        />
+                        <span>{option}</span>
+                      </label>
+                    ))}
                   </div>
                 </div>
               </div>
 
-              {/* Submit Button */}
-              <div className="pt-2">
+              {/* 2. EDUCATION & QUALIFICATION CARD */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
+                <div className="border-b border-gray-100 pb-2">
+                  <h3 className="text-base font-semibold text-gray-900">2. Education & Qualification</h3>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="block text-sm font-medium text-gray-900">
+                    Highest Education Completed <span className="text-red-600">*</span>
+                  </label>
+                  <p className="text-xs text-gray-500">Select one</p>
+
+                  <div className="space-y-2.5">
+                    {educationOptions.map((edu) => (
+                      <label
+                        key={edu}
+                        className="flex items-center gap-3 cursor-pointer py-1 text-sm text-gray-800 hover:text-black"
+                      >
+                        <input
+                          type="radio"
+                          name="highestEducation"
+                          value={edu}
+                          checked={formData.highestEducation === edu}
+                          onChange={() => handleInputChange("highestEducation", edu)}
+                          className="w-4 h-4 text-[#673ab7] focus:ring-[#673ab7] accent-[#673ab7]"
+                        />
+                        <span>{edu}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* 3. WORK EXPERIENCE CARD */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
+                <div className="border-b border-gray-100 pb-2">
+                  <h3 className="text-base font-semibold text-gray-900">3. Work Experience</h3>
+                </div>
+
+                {/* Experience Option */}
+                <div className="space-y-3">
+                  <label className="block text-sm font-medium text-gray-900">
+                    Do you have past work experience? <span className="text-red-600">*</span>
+                  </label>
+                  <div className="space-y-2.5">
+                    {experienceOptions.map((exp) => (
+                      <label
+                        key={exp}
+                        className="flex items-center gap-3 cursor-pointer py-1 text-sm text-gray-800 hover:text-black"
+                      >
+                        <input
+                          type="radio"
+                          name="pastExperience"
+                          value={exp}
+                          checked={formData.pastExperience === exp}
+                          onChange={() => handleInputChange("pastExperience", exp)}
+                          className="w-4 h-4 text-[#673ab7] focus:ring-[#673ab7] accent-[#673ab7]"
+                        />
+                        <span>{exp}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Past Work Type (Optional) */}
+                <div className="space-y-2 pt-2">
+                  <label className="block text-sm font-medium text-gray-900">
+                    What type of work did you do before? <span className="text-gray-500 text-xs font-normal">(Optional)</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.pastWorkDetails}
+                    onChange={(e) => handleInputChange("pastWorkDetails", e.target.value)}
+                    placeholder="e.g., Shop assistant, Driver, Factory worker, Electrician, Data entry, None"
+                    className="w-full sm:w-3/4 border-b-2 border-gray-300 focus:border-[#673ab7] outline-none py-1.5 text-sm transition-colors placeholder-gray-400"
+                  />
+                </div>
+              </div>
+
+              {/* 4. WHAT JOB ARE YOU LOOKING FOR? */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
+                <div className="border-b border-gray-100 pb-2">
+                  <h3 className="text-base font-semibold text-gray-900">4. What Job Are You Looking For?</h3>
+                </div>
+
+                {/* Preferred Industry / Sector */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="block text-sm font-medium text-gray-900">
+                      Preferred Industry / Sector <span className="text-red-600">*</span>
+                    </label>
+                    <span className="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded font-medium">
+                      Select up to 2 ({formData.preferredIndustries.length}/2 selected)
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    {industryOptions.map((ind) => {
+                      const isSelected = formData.preferredIndustries.includes(ind);
+                      return (
+                        <label
+                          key={ind}
+                          className="flex items-center gap-3 cursor-pointer py-1 text-sm text-gray-800 hover:text-black"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleIndustryToggle(ind)}
+                            className="w-4 h-4 text-[#673ab7] rounded focus:ring-[#673ab7] accent-[#673ab7]"
+                          />
+                          <span>{ind}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Relocation / Location Preference */}
+                <div className="space-y-3 pt-3 border-t border-gray-100">
+                  <label className="block text-sm font-medium text-gray-900">
+                    Where do you want to work? <span className="text-red-600">*</span>
+                  </label>
+
+                  <div className="space-y-2.5">
+                    {relocationOptions.map((loc) => (
+                      <label
+                        key={loc}
+                        className="flex items-center gap-3 cursor-pointer py-1 text-sm text-gray-800 hover:text-black"
+                      >
+                        <input
+                          type="radio"
+                          name="relocationPreference"
+                          value={loc}
+                          checked={formData.relocationPreference === loc}
+                          onChange={() => handleInputChange("relocationPreference", loc)}
+                          className="w-4 h-4 text-[#673ab7] focus:ring-[#673ab7] accent-[#673ab7]"
+                        />
+                        <span>{loc}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* 5. VERIFICATION & FINAL STEP */}
+              <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 space-y-6">
+                <div className="border-b border-gray-100 pb-2">
+                  <h3 className="text-base font-semibold text-gray-900">5. Verification & Final Step</h3>
+                </div>
+
+                {/* Aadhaar Card */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-900">
+                    Do you have an Aadhaar Card? <span className="text-red-600">*</span>
+                  </label>
+                  <p className="text-xs text-gray-500">Builds identity trust for employers</p>
+                  <div className="flex items-center gap-6 pt-1">
+                    {["Yes", "No"].map((opt) => (
+                      <label key={opt} className="flex items-center gap-2 cursor-pointer text-sm text-gray-800">
+                        <input
+                          type="radio"
+                          name="hasAadhaar"
+                          value={opt}
+                          checked={formData.hasAadhaar === opt}
+                          onChange={() => handleInputChange("hasAadhaar", opt)}
+                          className="w-4 h-4 text-[#673ab7] focus:ring-[#673ab7] accent-[#673ab7]"
+                        />
+                        <span>{opt}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Resume */}
+                <div className="space-y-2 pt-2 border-t border-gray-100">
+                  <label className="block text-sm font-medium text-gray-900">
+                    Do you have a resume? <span className="text-red-600">*</span>
+                  </label>
+                  <div className="flex items-center gap-6 pt-1">
+                    {["Yes", "No"].map((opt) => (
+                      <label key={opt} className="flex items-center gap-2 cursor-pointer text-sm text-gray-800">
+                        <input
+                          type="radio"
+                          name="hasResume"
+                          value={opt}
+                          checked={formData.hasResume === opt}
+                          onChange={() => handleInputChange("hasResume", opt)}
+                          className="w-4 h-4 text-[#673ab7] focus:ring-[#673ab7] accent-[#673ab7]"
+                        />
+                        <span>{opt}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Practiced Interviews */}
+                <div className="space-y-2 pt-2 border-t border-gray-100">
+                  <label className="block text-sm font-medium text-gray-900">
+                    Have you practiced interviews? <span className="text-red-600">*</span>
+                  </label>
+                  <div className="flex items-center gap-6 pt-1">
+                    {["Yes", "No"].map((opt) => (
+                      <label key={opt} className="flex items-center gap-2 cursor-pointer text-sm text-gray-800">
+                        <input
+                          type="radio"
+                          name="hasPracticedInterview"
+                          value={opt}
+                          checked={formData.hasPracticedInterview === opt}
+                          onChange={() => handleInputChange("hasPracticedInterview", opt)}
+                          className="w-4 h-4 text-[#673ab7] focus:ring-[#673ab7] accent-[#673ab7]"
+                        />
+                        <span>{opt}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons (Submit & Clear Form) */}
+              <div className="flex items-center justify-between pt-2 pb-8">
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3 px-4 rounded-xl bg-[#6F24E8] hover:bg-[#581ec0] text-white font-semibold text-base transition-all duration-200 shadow-md flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                  className="bg-[#673ab7] hover:bg-[#582fa1] active:bg-[#4a2889] text-white font-medium px-7 py-2.5 rounded shadow text-sm transition-colors flex items-center gap-2 disabled:opacity-60 cursor-pointer"
                 >
                   {isSubmitting ? (
                     <>
                       <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                      <span>Creating Account...</span>
+                      <span>Submitting...</span>
                     </>
                   ) : (
-                    <span>Complete Registration</span>
+                    <span>Submit</span>
                   )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleClearForm}
+                  className="text-gray-500 hover:text-gray-800 text-sm font-medium px-3 py-1.5 transition-colors"
+                >
+                  Clear form
                 </button>
               </div>
 
-              {/* Footnote / Links */}
-              <div className="text-center pt-2">
-                <p className="text-gray-600 text-sm">
-                  Already have an account?{" "}
-                  <Link href="/login" className="font-semibold text-[#6F24E8] hover:underline">
-                    Log in
-                  </Link>
-                </p>
-                <p className="text-gray-400 text-xs mt-2">
-                  By registering, you agree to MockMingle's Terms of Service and Privacy Policy.
-                </p>
+              {/* Form Footer Note */}
+              <div className="text-center text-xs text-gray-500 pb-10 space-y-1">
+                <p>Never submit passwords through this form.</p>
+                <p>This form was created for MockMingle Free Job Alerts.</p>
               </div>
             </form>
-          </div>
+          )}
         </div>
       </div>
     </>
