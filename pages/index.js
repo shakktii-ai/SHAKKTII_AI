@@ -1683,10 +1683,64 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>MockMingle</title>
-        <meta name="description" content="Empower your learning journey through skill analysis, real-time chats, and gamified challenges to prepare for mock interviews — with MockMingle" />
+        {/* Primary Meta Tags */}
+        <title>MockMingle | AI-Powered Mock Interviews, Resume ATS Analyzer & Career Coaching</title>
+        <meta
+          name="description"
+          content="Crack every job interview with MockMingle's AI coaching. Experience realistic mock interviews, optimize your resume for ATS, test technical & psychometric skills, and get instant actionable performance feedback."
+        />
+        <meta
+          name="keywords"
+          content="MockMingle, AI mock interview, interview practice, AI interview coaching, resume analyzer, ATS resume optimizer, career assessment, technical mock test, psychometric test, job interview questions, real-time interview feedback, placement preparation"
+        />
+        <meta name="author" content="MockMingle" />
+        <meta name="application-name" content="MockMingle" />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#6F24E8" />
         <link rel="icon" href="/favicon.ico" />
+
+        {/* Open Graph / Facebook / LinkedIn */}
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="MockMingle" />
+        <meta property="og:title" content="MockMingle | AI-Powered Mock Interviews & Career Assessment" />
+        <meta
+          property="og:description"
+          content="Practice real interview scenarios with AI evaluators, receive instant multi-metric performance feedback, and optimize your resume to land your dream job."
+        />
+        <meta property="og:image" content="/student_logo.png" />
+        <meta property="og:image:alt" content="MockMingle AI Interview Coach" />
+        <meta property="og:locale" content="en_US" />
+
+        {/* Twitter Cards */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="MockMingle | AI-Powered Mock Interviews & Career Coaching" />
+        <meta
+          name="twitter:description"
+          content="Practice realistic mock interviews, analyze your resume for ATS, and improve with instant AI feedback on MockMingle."
+        />
+        <meta name="twitter:image" content="/student_logo.png" />
+
+        {/* Structured JSON-LD Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              name: "MockMingle",
+              applicationCategory: "EducationalApplication",
+              operatingSystem: "Web",
+              description:
+                "AI-powered mock interview practice, ATS resume analysis, psychometric evaluations, and comprehensive career coaching platform.",
+              offers: {
+                "@type": "Offer",
+                price: "0",
+                priceCurrency: "INR",
+              },
+            }),
+          }}
+        />
       </Head>
 
   
