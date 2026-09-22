@@ -20,6 +20,7 @@ export default function RegisterPage() {
     pastWorkDetails: "",
     preferredIndustries: [],
     relocationPreference: "",
+    jobType: "",
     hasAadhaar: "",
     aadhaarNumber: "",
     hasResume: "",
@@ -113,6 +114,11 @@ export default function RegisterPage() {
       return;
     }
 
+    if (!formData.jobType) {
+      toast.error("Please select your preferred Job / Employment Type.");
+      return;
+    }
+
     if (!formData.hasAadhaar) {
       toast.error("Please answer if you have an Aadhaar Card.");
       return;
@@ -150,6 +156,7 @@ export default function RegisterPage() {
         pastWorkDetails: formData.pastWorkDetails.trim(),
         preferredIndustries: formData.preferredIndustries,
         relocationPreference: formData.relocationPreference,
+        jobType: formData.jobType,
         hasAadhaar: formData.hasAadhaar,
         aadhaarNumber: formData.hasAadhaar === "Yes" ? cleanAadhaar : "",
         hasResume: formData.hasResume,
@@ -226,6 +233,16 @@ export default function RegisterPage() {
     "Only in my local village / taluka",
     "Anywhere in my district",
     "Ready to relocate to nearby cities (e.g., Pune, Mumbai)",
+  ];
+
+  // Job / Employment Type Options
+  const jobTypeOptions = [
+    "Full-time",
+    "Part-time",
+    "Internship",
+    "Project-based / Freelance",
+    "Gig Work / Contractual",
+    "Any / Open to all",
   ];
 
   return (
@@ -538,6 +555,31 @@ export default function RegisterPage() {
                         <span>{loc}</span>
                       </label>
                     ))}
+                  </div>
+                </div>
+
+                {/* Job / Employment Type Dropdown */}
+                <div className="space-y-3 pt-3 border-t border-gray-100">
+                  <label className="block text-sm font-medium text-gray-900">
+                    Preferred Job / Employment Type <span className="text-red-600">*</span>
+                  </label>
+                  <p className="text-xs text-gray-500">Choose what type of employment you are looking for</p>
+                  <div className="relative w-full sm:w-3/4">
+                    <select
+                      required
+                      value={formData.jobType}
+                      onChange={(e) => handleInputChange("jobType", e.target.value)}
+                      className="w-full border-b-2 border-gray-300 focus:border-[#673ab7] outline-none py-2 text-sm bg-transparent transition-colors text-gray-900 cursor-pointer"
+                    >
+                      <option value="" disabled>
+                        -- Select Employment Type --
+                      </option>
+                      {jobTypeOptions.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>

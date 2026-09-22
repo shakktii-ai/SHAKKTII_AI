@@ -48,6 +48,11 @@ const JobRegistrationSchema = new mongoose.Schema(
       required: [true, "Relocation preference is required"],
       trim: true,
     },
+    jobType: {
+      type: String,
+      default: "Full-time",
+      trim: true,
+    },
     hasAadhaar: {
       type: String,
       required: [true, "Aadhaar status is required"],

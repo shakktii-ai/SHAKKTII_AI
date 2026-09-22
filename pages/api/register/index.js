@@ -14,6 +14,7 @@ async function handler(req, res) {
         pastWorkDetails = "",
         preferredIndustries,
         relocationPreference,
+        jobType = "Full-time",
         hasAadhaar,
         aadhaarNumber = "",
         hasResume,
@@ -143,6 +144,7 @@ async function handler(req, res) {
         pastWorkDetails: (pastWorkDetails || "").trim(),
         preferredIndustries,
         relocationPreference: relocationPreference.trim(),
+        jobType: (jobType || "Full-time").trim(),
         hasAadhaar,
         aadhaarNumber: hasAadhaar === "Yes" ? cleanAadhaar : "",
         hasResume,
@@ -164,6 +166,7 @@ async function handler(req, res) {
           mobileNo: newRegistration.mobileNo,
           districtTaluka: newRegistration.districtTaluka,
           preferredIndustries: newRegistration.preferredIndustries,
+          jobType: newRegistration.jobType,
           createdAt: newRegistration.createdAt,
         },
       });
@@ -194,6 +197,7 @@ async function handler(req, res) {
         gender = "",
         status = "",
         industry = "",
+        jobType = "",
         page = 1,
         limit = 50,
       } = req.query;
@@ -228,6 +232,10 @@ async function handler(req, res) {
 
       if (industry) {
         filter.preferredIndustries = { $in: [industry] };
+      }
+
+      if (jobType) {
+        filter.jobType = jobType;
       }
 
       const pageNum = Math.max(1, parseInt(page, 10) || 1);

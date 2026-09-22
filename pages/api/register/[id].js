@@ -46,6 +46,7 @@ async function handler(req, res) {
         "pastWorkDetails",
         "preferredIndustries",
         "relocationPreference",
+        "jobType",
         "hasAadhaar",
         "aadhaarNumber",
         "hasResume",
