@@ -338,6 +338,33 @@ export default function Progress() {
     );
   }
 
+  // Do not mount Chart.js with empty datasets. There is no progress to chart
+  // until the user completes their first interview.
+  if (reports.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        <main className="flex-1 flex items-center justify-center px-4 py-12">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-10 text-center shadow-lg">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-purple-50 text-3xl">
+              📊
+            </div>
+            <h1 className="text-2xl font-bold text-gray-800">No progress data yet</h1>
+            <p className="mt-3 text-gray-500">
+              Complete an interview to see your skill scores, performance trends, and progress comparisons here.
+            </p>
+            <button
+              onClick={() => router.push('/dashboard')}
+              className="mt-6 rounded-lg bg-purple-600 px-5 py-2.5 font-semibold text-white transition-colors hover:bg-purple-700"
+            >
+              Back to Dashboard
+            </button>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   const chartData = prepareChartData();
 
   return (
@@ -375,7 +402,7 @@ export default function Progress() {
                 {reports.length > 0 && (
                   <div className="bg-gray-50 border border-gray-200 px-3 py-1 rounded-lg text-xs font-medium flex items-center shadow-sm">
                     <span className="text-gray-700">Latest Interview:</span>
-                    <span className="text-gray-900 ml-1">{new Date(reports[reports.length - (reports.length - 1)].date).toLocaleDateString()}</span>
+                    <span className="text-gray-900 ml-1">{new Date(reports[reports.length - 1].date).toLocaleDateString()}</span>
                   </div>
                 )}
                 {reports.length > 0 && reports[reports.length - 1].role && (
