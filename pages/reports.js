@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
-import { Target, Calendar, TrendingUp, CalendarDays, Loader2, ChevronRight, FileText, Clock, ArrowLeft } from "lucide-react";
+import { Target, Calendar, TrendingUp, CalendarDays, Loader2, ChevronRight, FileText, Clock, ArrowLeft, Filter } from "lucide-react";
 import PremiumNavbar from '@/components/navbar';
 import ReportsHeader from '@/components/premium/ReportsHeader';
 import StatCard from '@/components/premium/StatCard';
@@ -166,6 +166,11 @@ useEffect(() => {
                 reportEndpoints.map(async (url) => {
                     const response = await fetch(url);
 
+                    // An empty account is a valid state, not a request failure.
+                    if (response.status === 404) {
+                        return { reports: [] };
+                    }
+
                     if (!response.ok) {
                         throw new Error(
                             `Failed to fetch reports: ${response.status}`
@@ -278,6 +283,7 @@ useEffect(() => {
         progressColor: "#E2E8F0",
         summary: "No data available.",
         detailedFeedback: "Take an interview to see your detailed breakdown here.",
+        opportunities: [],
     });
 
     const handleLogout = () => {

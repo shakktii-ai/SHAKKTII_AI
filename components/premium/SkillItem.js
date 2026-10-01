@@ -13,7 +13,7 @@ export default function SkillItem({
     progressColor,
     summary,
     detailedFeedback,
-    opportunities,
+    opportunities = [],
     resource
 }) {
     const router = useRouter();

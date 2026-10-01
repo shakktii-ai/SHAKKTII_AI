@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Head from 'next/head';
-import { Target, Calendar, TrendingUp, CalendarDays, Loader2, ChevronRight, FileText, Clock, ArrowLeft } from "lucide-react";
+import { Target, Calendar, TrendingUp, CalendarDays, Loader2, ChevronRight, FileText, Clock, ArrowLeft, Filter } from "lucide-react";
 import PremiumNavbar from '@/components/navbar';
 import ReportsHeader from '@/components/premium/ReportsHeader';
 import StatCard from '@/components/premium/StatCard';
@@ -211,6 +211,7 @@ const [selectedPlatform, setSelectedPlatform] = useState(platforms[0]);
         progressColor: "#E2E8F0",
         summary: "No data available.",
         detailedFeedback: "Take an interview to see your detailed breakdown here.",
+                    opportunities: [],
     });
 
     const handleLogout = () => {
