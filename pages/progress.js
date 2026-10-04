@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Line, Radar, Bar } from 'react-chartjs-2';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 import InterviewProgress from '../components/InterviewProgress';
 import {
   Chart as ChartJS,
@@ -370,17 +372,11 @@ export default function Progress() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div>
-          <button
-            onClick={() => router.push('/dashboard')}
-            className="flex items-center text-purple-600 hover:text-purple-800 transition-colors"
-          >
-            <svg width="30" height="30" viewBox="0 0 55 54" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M14.2929 27.2929C13.9024 27.6834 13.9024 28.3166 14.2929 28.7071L20.6569 35.0711C21.0474 35.4616 21.6805 35.4616 22.0711 35.0711C22.4616 34.6805 22.4616 34.0474 22.0711 33.6569L16.4142 28L22.0711 22.3431C22.4616 21.9526 22.4616 21.3195 22.0711 20.9289C21.6805 20.5384 21.0474 20.5384 20.6569 20.9289L14.2929 27.2929ZM42 28V27L15 27V28V29L42 29V28Z" fill="black" />
-              <path d="M27.5 0.5C42.4204 0.5 54.5 12.3731 54.5 27C54.5 41.6269 42.4204 53.5 27.5 53.5C12.5796 53.5 0.5 41.6269 0.5 27C0.5 12.3731 12.5796 0.5 27.5 0.5Z" stroke="black" />
-            </svg>
-
-          </button>
+        <div className="mb-6">
+          <Link href="/dashboard" className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-indigo-600 transition-colors">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Dashboard
+          </Link>
         </div>
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <h1 className="text-3xl font-bold text-center text-gray-800">My Interview Progress</h1>
@@ -849,9 +845,9 @@ export default function Progress() {
             </div>
           </div>
         </div>
-       
+
       </div>
-       <Footer/>
+      <Footer />
     </div>
   );
 }
